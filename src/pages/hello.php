@@ -1,5 +1,7 @@
 <?php
-
+#############################################################################'
+#####   DAS MUSS AUCH NOCH BESSER WERDEN
+#############################################################################
 function get_podium($nr){
     global $g_pdo;
     
@@ -94,9 +96,9 @@ function gewinner(){
 
 #if (allow_verwaltung()){
 
-    leader();
+    //leader();
 
-    gewinner();
+//    gewinner();
 #}
                     
 ?>

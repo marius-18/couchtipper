@@ -95,7 +95,7 @@ function check_game_date($spieltag, $sp_nr) {
 }
 
 function akt_spieltag() {
-    ##return 4;
+    //return 4;
     ### Das kann bestimmt auch die Datenbank!
     global $g_pdo;
     $datum = 1;
@@ -134,7 +134,7 @@ function last_spieltag(){
 
 function spt_select(){
     global $g_pdo;
-    //return 31;
+    //return 3;
     $ende = 1;
     $spt = 0;
 

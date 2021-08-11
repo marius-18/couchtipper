@@ -195,7 +195,7 @@ MENÜ
 -->
 
 <div class = "sticky-top">
-    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+    <nav class="navbar navbar-expand-xl bg-dark navbar-dark">
         <a class="navbar-brand" href="/">
             <?php
                 if (!is_logged()){

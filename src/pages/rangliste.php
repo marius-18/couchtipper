@@ -1,4 +1,9 @@
 <?php
+
+##############################################################
+######    Hinrunde / Rückrunde Tabelle!!
+##############################################################
+
 require_once('src/include/code/rangliste.inc.php');
 
 function print_rangliste($begin, $ende, $modus){
@@ -9,9 +14,9 @@ function print_rangliste($begin, $ende, $modus){
     echo "
     <div class=\"table-responsive\">
         <table class=\"table table-sm table-striped  table-hover text-center center text-nowrap\" align=\"center\">
-        <tr class=\"thead-dark\"><th>Pl</th><th>Spieler</th><th>&#931</th>";#<th>Spt.</th><th>&#216;</th>
+        <tr class=\"thead-dark\"><th>Pl</th><th>Spieler</th><th>&#931</th><th>Spt.</th><th>&#216;</th>";
 
-    echo "<th>heute</th><th>letzter</th><th></th><tr>";
+    echo "<th><i class=\"fas fa-arrow-down\"></th><th><i class=\"fas fa-arrow-left\"></th><th></th><tr>";
 
     foreach ($user as $i => $nr){
         if ($user[$i] == get_usernr()){
@@ -35,10 +40,10 @@ function print_rangliste($begin, $ende, $modus){
         echo "  <tr $logged>
                 <td>$platz[$nr].</td>
                 <td>".get_username_from_nr($user[$i])."</td>
-                <td>$punkte[$i]</td>";
-        #       <td>$spiele[$i]</td>
-        #       <td>$schnitt[$i]</td>
-        echo "  <td>$akt_punkte[$i]</td>
+                <td>$punkte[$i]</td> 
+                <td>$spiele[$i]</td>
+                <td>$schnitt[$i]</td>
+                <td>$akt_punkte[$i]</td>
                 <td>$letzte_punkte[$i]</td>"; 
 
         echo "<th>$aenderung</th>";

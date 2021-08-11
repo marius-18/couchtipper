@@ -15,8 +15,11 @@
 
 function print_games($args, $modus, $change){
 
-    $endung = "png";
-
+    if (get_wettbewerb_code() == "Buli"){
+        $endung = "gif";
+    } else {
+        $endung = "png";
+    }
     list ($datum, $team_heim, $team_aus, $tore_heim, $tore_aus, $team_heim_nr, 
             $team_aus_nr, $real_sp_nr, $real_spieltag, $anz_spiele) = $args;
 

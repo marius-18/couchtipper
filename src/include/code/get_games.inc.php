@@ -17,7 +17,7 @@ function get_games ($spieltag, $modus, $change, $user_nr) {
     $real_spieltag = $spieltag;
     $add = "0";
 
-    if (($spieltag > 17) && ($g_modus == "BULI")){
+    if (($spieltag > 17) && (get_wettbewerb_code() == "Buli")){
         $teil1 = "2";
         $teil2 = "1";
         $spieltag = $spieltag - 17;

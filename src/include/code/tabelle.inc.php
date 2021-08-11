@@ -141,10 +141,11 @@ echo "<br>";
 }
 
 
-function print_tabelle($args){
+function print_tabelle($args, $id, $show){
 
 list($punkte, $tore, $gegentore, $diff, $team_name, $sieg, $unentschieden, $niederlage, $modus) = $args;
 
+echo "<div class=\"container\" id=\"$id\" style=\"display: $show;\">";
 if ($modus == "Heim") {
   echo "<b>Heimtabelle</b>";
 }
@@ -164,40 +165,40 @@ if ($modus == "Heim") {
   echo "<b>Tabelle</b>";
 }
 
-
-echo "<table border=\"0\" align=\"center\">";
-echo "<tr bgcolor=\"#B6B6B4\"><th>Pl</th><th>Team</th><th>Sp</th><th>S</th><th>U</th><th>N</th><th>Tore</th><th>Diff</th><th>Pkt</th></tr>";
+echo "<div class=\"table-responsive\">";
+echo "<table class=\"table table-sm  table-hover text-center center\">";
+echo "<tr bgcolor=\"#B6B6B4\"><th>Pl</th><th>Team</th><th>Sp</th><th>S</th><th>U</th><th>N</th><th>Tore</th><th class=\"d-none d-sm-table-cell\">Diff</th><th>Pkt</th></tr>";
 
 $a = 1;
 
 foreach ($team_name AS $i => $team){
 
-  if ($i < 3) {
-    $color = " bgcolor=\"green\"";
+  if ($i < 4) {
+    $color = "class=\"table-success\"";
   }
-  if ($i == 3) {
-    $color = " bgcolor=\"lightgreen\"";
+  if ($i == 4) {
+    $color = "class=\"table-info\"";
   }
-  if ($i > 3) {
-    $color = " bgcolor=\"#F88017\"";
+  if ($i == 5) {
+    $color = "class=\"table-primary\"";
   }
-  if ($i==6) {
-   $color=" bgcolor=\"#FFFFFF\"";
+  if ($i == 6) {
+   $color = "";
    }
   if ($i > 6) {
     $color = "";
   }
   if ($i == 15) {
-    $color = " bgcolor=\"E77471\"";
+    $color = "class=\"table-warning\"";
   }
   if ($i > 15) {
-    $color = " bgcolor=\"red\"";
+    $color = "class=\"table-danger\"";
   }
 
   $spiele = $sieg[$i] + $unentschieden[$i] + $niederlage[$i];
 
    echo " 
-<tr$color> 
+<tr $color> 
 <th>$a</th> 
 <th>$team</th>
 <th>$spiele</th> 
@@ -205,14 +206,14 @@ foreach ($team_name AS $i => $team){
 <th>$unentschieden[$i]</th> 
 <th>$niederlage[$i]</th> 
 <th>$tore[$i]:$gegentore[$i]</th> 
-<th>$diff[$i]</th> 
+<th class=\"d-none d-sm-table-cell\">$diff[$i]</th> 
 <th>$punkte[$i]</th> 
 </tr>";
 $a++;
 }
 
 
-echo "</table>";
+echo "</table></div></div>";
 
 }
 
