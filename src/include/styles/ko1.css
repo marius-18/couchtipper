@@ -1,0 +1,78 @@
+td.oben {
+ font-weight: bold;
+ color: white;
+ background-color: #999999;
+ text-align: left;
+}
+
+td.erg_top  {
+ border-top: 3px solid #21609f;
+ text-align: center;
+ background-color: white;
+ width: 2%; 
+ color: black;
+ font-size: larger;
+}
+
+td.erg_down {
+ border-bottom: 3px solid #21609f;
+ text-align: center;
+ background-color: white;
+ width: 2%; 
+ color: black;
+ font-size:larger;
+}
+
+td.spiel_top {
+ border-top: 3px solid #21609f;
+ text-align: left;
+ background-color: #e8e8e8;
+ //width: 23%;
+ color: black;
+}
+
+td.spiel_down {
+ border-bottom: 3px solid #21609f;
+ text-align: left;
+ background-color: #e8e8e8;
+ //width: 23%;
+ color: black;
+}
+
+td.final {
+ font-weight: bold;
+ color: white;
+ background-color: #999999;
+ text-align: center;
+}
+
+td.final_name {
+ font-weight: bold;
+ text-align: center;
+ background-color: white;
+ width: 23%; color: black;
+}
+
+td.final_erg {
+ font-weight: bold;
+ text-align: center;
+ background-color: #e8e8e8;
+ width: 5%; color: black;
+}
+td.strich{
+ background-color: grey;
+ height: 5px;
+}
+td.title{
+ text-align: center;
+ background-color: #999999;
+ font-weight: bold;
+ color:white;
+ border-top:10px solid #CC9900;
+}
+td.titlevf{
+ text-align: center;
+ background-color: #999999;
+ font-weight: bold;
+ color:white;
+}
