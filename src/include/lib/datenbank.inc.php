@@ -5,15 +5,17 @@
  *
  */
 
+ 
+ //hole credentials aus der auth-datenbank
+ 
 
 $db_host="rdbms.strato.de";
 
-$db_ben="dbu377425";
+$db_ben=get_wettbewerb_db_user();
 
-$db_pass="&Z&32e-d4zH8fS&Tuu?y-ur4zx?yu32edTMS,568&ZrfSxMS,56H88";
+$db_pass=get_wettbewerb_db_pw();
 
-$db_name="dbs2016292";
-
+$db_name=get_wettbewerb_db_name();
 
 
 

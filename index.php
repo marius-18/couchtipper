@@ -4,8 +4,12 @@ session_start();
 require_once("../auth/include/security.inc.php");
 is_logged();
 
+$g_modus = "Buli";
+$g_wett_id = "4";
+
 require_once("../auth/include/permissions.inc.php");
 require_once("../auth/include/check_in.inc.php");
+require_once("../auth/include/wettbewerbe.inc.php");
 
 //require_once("src/include/wettbewerb_main.inc.php");
 //require_once("src/functions/main.inc.php");
@@ -16,8 +20,6 @@ require_once("src/include/lib/time.inc.php");
 
 $index = $_GET["index"];
 
-$g_modus = "EM";
-$g_wett_id = "3";
 
 // Wettbewerb check in
 check_in();
@@ -41,7 +43,7 @@ if ((!check_cash($g_wett_id)) && (!$_SESSION['bezahlt']) && is_logged() && (get_
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <title>EM-Tippspiel</title>
+  <title><?php echo get_wettbewerb_title();?></title> <!-- hier aus db -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
@@ -53,6 +55,7 @@ if ((!check_cash($g_wett_id)) && (!$_SESSION['bezahlt']) && is_logged() && (get_
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
   <script src="src/include/scripts/tabelle.js"></script>
 
+  <!-- das zeug in die CSS datei!! -->
   <style>
   .stockerl {
     width: 30%;
@@ -213,13 +216,13 @@ MENÜ
         <div class="collapse navbar-collapse" id="collapsibleNavbar">
             <ul class="nav navbar-nav navbar-left">
                 <li class="nav-item">
-                    <a class="nav-link" href="?index=1#main">Gruppenphase</a>
+                    <a class="nav-link" href="?index=1#main">Bundesliga-Tabelle</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="?index=2#main">KO-Runde</a>
+                    <a class="nav-link" href="?index=2#main">Spieltage</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="?index=3#main">Spieltage</a>
+                    <a class="nav-link" href="?index=3#main">Restprogramm</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="?index=4#main">Rangliste</a>
@@ -307,8 +310,8 @@ MENÜ
 
 <div class="container-fluid hintergrund" style="padding-bottom:30px; padding-top:30px;" >
 <div class="container jumbotron text-center grey" style="margin-bottom:0">
-    <h1> Willkommen zum EM-Tippspiel! </h1> 
-    <p><i class="fas fa-futbol"></i> (em.couchtipper.de) <i class="fas fa-futbol"></i></p> 
+    <h1> Willkommen zum <?php echo get_wettbewerb_title();?>! </h1> 
+    <p><i class="fas fa-futbol"></i> couchtipper.de <i class="fas fa-futbol"></i></p> 
 </div>
 </div>
 
@@ -336,11 +339,13 @@ MENÜ
                     include_once("src/pages/rangliste.php");
                 }
                 
+                /*
                 if ($index == 2){
                     echo "<h2>Gruppen-Tabellen:</h2>";
                     include_once("src/pages/nur_tabelle.php");
 
                 }
+                */
                 
             ?>
 
@@ -361,18 +366,18 @@ MENÜ
                 }
       
                 if ($index == 1) {
-                    echo "<h2> Gruppenphase</h2>";
-                    include_once("src/pages/wm_tabelle.php");
+                    echo "<h2> Bundesliga-Tabelle</h2>";
+                    include_once("src/pages/tabelle.php");
                 }
       
                 if ($index == 2) {
-                    echo "<h2>KO-Phase</h2>";
-                    include_once("src/pages/ko.php");
+                    echo "<h2>Spieltage</h2>";
+                    include_once("src/pages/spieltag.php");
                 }
 
                 if ($index == 3) {
-                    echo "<h2>Spieltage</h2>";
-                    include_once("src/pages/spieltag.php");
+                    echo "<h2>Rstprogramm</h2>";
+                    include_once("src/pages/restprogramm.php");
                 }
 
                 if ($index == 4) {
