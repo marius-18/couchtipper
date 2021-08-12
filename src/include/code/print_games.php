@@ -90,7 +90,7 @@ function print_games($args, $modus, $change){
             echo "<td align=\"right\"  onclick=\"myFunction($i1)\"><img src=\"images/Vereine/$team_heim_nr[$i].$endung\" width=\"30\"></td>";
         }
     
-        echo "<td align=\"center\"><b>$tore_heim[$i] : $tore_aus[$i]</b></td>";
+        echo "<td align=\"center\" class=\"text-nowrap\"><b>$tore_heim[$i] : $tore_aus[$i]</b></td>";
     
         if (($modus == "Spieltag") && ($team_aus_nr[$i] <= 32)) {
             echo "<td align=\"left\"  onclick=\"myFunction($i1)\"><img src=\"images/Vereine/$team_aus_nr[$i].$endung\" width=\"30\"></td>";

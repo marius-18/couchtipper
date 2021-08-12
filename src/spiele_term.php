@@ -23,11 +23,11 @@ $teil1 = "1";
 $teil2 = "2";
 $real_spieltag = $spieltag;
 
-//if ($spieltag > 17){
-//    $teil1 = "2";
-//    $teil2 = "1";
-//    $spieltag = $spieltag - 17;
-//}
+if (($spieltag > 17) && (get_wettbewerb_code() == "Buli") ){
+    $teil1 = "2";
+    $teil2 = "1";
+    $spieltag = $spieltag - 17;
+}
 
 echo "<div class = \"content\"><br>";
 
@@ -113,7 +113,7 @@ if ($show_formular){
 
 
 
-   if (false) {
+   if ($tag == 5) {
 
       echo "
       <tr>
@@ -121,7 +121,6 @@ if ($show_formular){
       <td align = \"center\">Fr</td>
       <td colspan = \"2\" align = \"center\">Sa</td>
       <td colspan = \"3\" align = \"center\">So</td>
-      <td align = \"center\">Mo</td>
       </tr>
 
       <tr>
@@ -129,10 +128,9 @@ if ($show_formular){
       <td align = \"center\">20</td>
       <td align = \"center\">15</td>
       <td align = \"center\">18</td>
-      <td align = \"center\">13</td>
       <td align = \"center\">15</td>
-      <td align = \"center\">18</td> 
-      <td align = \"center\">20</td>
+      <td align = \"center\">17</td>
+      <td align = \"center\">19</td> 
 
       </tr>
 
@@ -143,8 +141,7 @@ if ($show_formular){
       <td align = \"center\">30</td>
       <td align = \"center\">30</td>
       <td align = \"center\">30</td>
-      <td align = \"center\">00</td> 
-      <td align = \"center\">30</td>
+      <td align = \"center\">30</td> 
 
       </tr>
       ";
@@ -152,14 +149,16 @@ if ($show_formular){
 
    }
 
-   if (false) {
+
+
+
+   if ($tag == 6) {
 
       echo "
       <tr>
       <td></td>
       <td colspan = \"3\" align = \"center\">Sa</td>
       <td colspan = \"3\" align = \"center\">So</td>
-      <td align = \"center\">Mo</td>
       </tr>
 
       <tr>
@@ -167,9 +166,41 @@ if ($show_formular){
       <td align = \"center\">15</td>
       <td align = \"center\">18</td>
       <td align = \"center\">20</td>
-      <td align = \"center\">13</td>
       <td align = \"center\">15</td>
-      <td align = \"center\">18</td> 
+      <td align = \"center\">17</td> 
+      <td align = \"center\">19</td>
+
+      </tr>
+
+      <tr>
+      <td></td>
+      <td align = \"center\">30</td>
+      <td align = \"center\">30</td>
+      <td align = \"center\">30</td>
+      <td align = \"center\">30</td>
+      <td align = \"center\">30</td>
+      <td align = \"center\">30</td> 
+
+      </tr>
+      ";
+
+
+   }
+   
+   if ($tag == 2) {
+
+      echo "
+      <tr>
+      <td></td>
+      <td colspan = \"2\" align = \"center\">Di</td>
+      <td colspan = \"2\" align = \"center\">Mi</td>
+      </tr>
+
+      <tr>
+      <td></td>
+      <td align = \"center\">18</td>
+      <td align = \"center\">20</td>
+      <td align = \"center\">18</td>
       <td align = \"center\">20</td>
 
       </tr>
@@ -180,32 +211,12 @@ if ($show_formular){
       <td align = \"center\">30</td>
       <td align = \"center\">30</td>
       <td align = \"center\">30</td>
-      <td align = \"center\">30</td>
-      <td align = \"center\">00</td> 
-      <td align = \"center\">30</td>
 
       </tr>
       ";
 
 
    }
-
-
-   if (true) {
-
-      echo "
-      <tr>
-      <td></td>
-      <td align = \"center\">15:00</td>
-      <td align = \"center\">18:00</td>
-      <td align = \"center\">21:00</td>
-
-
-      </tr>
-      ";
-
-   }
-
 
 
    $sql = "SELECT sp_nr, t1.team_name AS Team_name$teil1, t2.team_name AS Team_name$teil2,sp_nr
@@ -260,13 +271,13 @@ if ($error) {
 function spiele_term($main_datum, $sp_nr, $time){
    global $g_modus;
 
-   if ($g_modus == "WM"){
+   if (get_wettbewerb_code() == "WM"){
       wm_spiele_term($main_datum, $sp_nr, $time);
    }
-   if ($g_modus == "EM"){
+   if (get_wettbewerb_code() == "EM"){
       em_spiele_term($main_datum, $sp_nr, $time);
    }
-   if ($g_modus == "BULI"){
+   if (get_wettbewerb_code() == "Buli"){
       buli_spiele_term($main_datum, $sp_nr, $time);
    }
 }
@@ -347,124 +358,85 @@ function buli_spiele_term($main_datum, $sp_nr, $time) {
 
 
    $tag = date("N",$main_datum);
+   
 
 
-   if ($tag == 5){ // FReitag oder Samstag
 
-      $fr = $main_datum + (20*60*60) + 30*60;
-      $sa1 = $main_datum + (24*60*60) + (15*60*60) + (30*60);
-      $sa2 = $sa1 + 3*60*60;
-      $so1 = $sa1 + 24*60*60;
-      $so2 = $so1 + 2*60*60+30*60;
-      $so_frueh = $so1 - 2*60*60;
-      $mo = $fr + (3*24*60*60);
+    if (($tag == 5) || ($tag == 6)) { // FReitag oder Samstag
 
+        if ($tag == 5){ //Samstag Beginn
+            $sp1  = strtotime(date("d.m.Y 20:30:59", $main_datum));
+            $sp2 = strtotime(date("d.m.Y 15:30:59", $main_datum + 60*60*24));
+            $sp3 = strtotime(date("d.m.Y 18:30:59", $main_datum + 60*60*24));
+            $sp4 = strtotime(date("d.m.Y 15:30:59", $main_datum + 60*60*24*2));
+            $sp5 = strtotime(date("d.m.Y 17:30:59", $main_datum + 60*60*24*2));
+            $sp6 = strtotime(date("d.m.Y 19:30:59", $main_datum + 60*60*24*2));
+        } else{
+            $sp1 = strtotime(date("d.m.Y 15:30:59", $main_datum));
+            $sp2 = strtotime(date("d.m.Y 18:30:59", $main_datum));
+            $sp3 = strtotime(date("d.m.Y 20:30:59", $main_datum));
+            $sp4 = strtotime(date("d.m.Y 15:30:59", $main_datum + 60*60*24));
+            $sp5 = strtotime(date("d.m.Y 17:30:59", $main_datum + 60*60*24));
+            $sp6 = strtotime(date("d.m.Y 19:30:59", $main_datum + 60*60*24));
+        }
+      
 
-      if ($time == $fr) {
+    if ($time == $sp1) {
          $checked1 = "checked";
       }
-      if ($time == $sa1) {
+      if ($time == $sp2) {
          $checked2 = "checked";
       }
-      if ($time == $sa2) {
+      if ($time == $sp3) {
          $checked3 = "checked";
       }
-      if ($time == $so1) {
+      if ($time == $sp4) {
          $checked4 = "checked";
       }
-      if ($time == $so2) {
+      if ($time == $sp5) {
          $checked5 = "checked";
       }
-      if ($time == $so_frueh) {
+      if ($time == $sp6) {
          $checked6 = "checked";
-      }
-      if ($time == $mo) {
-         $checked7 = "checked";
       }
 
 
       echo "
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$fr\" $checked1></td>
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$sa1\" $checked2></td>
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$sa2\" $checked3></td>
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$so_frueh\" $checked6></td>
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$so1\" $checked4></td>
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$so2\" $checked5></td>
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$mo\" $checked7></td>
-      ";
-   }
-
-   if ($tag == 6){ // FReitag oder Samstag
-
-      $sa1 = $main_datum + (15*60*60) + (30*60);
-      $sa2 = $sa1 + 3*60*60;
-      $sa3 = $sa2 + 2*60*60;
-      $so1 = $sa1 + 24*60*60;
-      $so2 = $so1 + 2*60*60+30*60;
-      $so_frueh = $so1 - 2*60*60;
-      $mo = $fr + (3*24*60*60);
-
-
-      if ($time == $sa3) {
-         $checked1 = "checked";
-      }
-      if ($time == $sa1) {
-         $checked2 = "checked";
-      }
-      if ($time == $sa2) {
-         $checked3 = "checked";
-      }
-      if ($time == $so1) {
-         $checked4 = "checked";
-      }
-      if ($time == $so2) {
-         $checked5 = "checked";
-      }
-      if ($time == $so_frueh) {
-         $checked6 = "checked";
-      }
-      if ($time == $mo) {
-         $checked7 = "checked";
-      }
-
-
-      echo "
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$sa1\" $checked2></td>
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$sa2\" $checked3></td>
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$sa3\" $checked1></td>
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$so_frueh\" $checked6></td>
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$so1\" $checked4></td>
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$so2\" $checked5></td>
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$mo\" $checked7></td>
+      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$sp1\" $checked1></td>
+      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$sp2\" $checked2></td>
+      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$sp3\" $checked3></td>
+      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$sp4\" $checked4></td>
+      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$sp5\" $checked5></td>
+      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$sp6\" $checked6></td>
       ";
    }
 
 
    if ($tag == 2) {
-      $di1 = $main_datum + 18*60*60 + 30*60;
-      $di2 = $di1 + 2*60*60;
-      $mi1 = $di1 + 24 * 60*60;
-      $mi2 = $di2 + 24*60*60;
 
+        $sp1 = strtotime(date("d.m.Y 18:30:59", $main_datum));
+        $sp2 = strtotime(date("d.m.Y 20:30:59", $main_datum));
+        $sp3 = strtotime(date("d.m.Y 18:30:59", $main_datum + 60*60*24));
+        $sp4 = strtotime(date("d.m.Y 20:30:59", $main_datum + 60*60*24));
 
-      if ($time == $di1) {
+      if ($time == $sp1) {
          $checked1 = "checked";
       }
-      if ($time == $di2) {
+      if ($time == $sp2) {
          $checked2 = "checked";
       }
-      if ($time == $mi1) {
+      if ($time == $sp3) {
          $checked3 = "checked";
       }
-      if ($time == $mi2) {
+      if ($time == $sp4) {
          $checked4 = "checked";
       }
 
       echo "
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$di1\" $checked1></td>
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$di2\" $checked2></td>
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$mi1\" $checked3></td>
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$mi2\" $checked4></td>
+      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$sp1\" $checked1></td>
+      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$sp2\" $checked2></td>
+      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$sp3\" $checked3></td>
+      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$sp4\" $checked4></td>
       ";
    }
 
