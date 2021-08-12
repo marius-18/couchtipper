@@ -111,7 +111,14 @@ function gewinner(){
 <div class="alert alert-secondary"><h5>Sch&ouml;n, dass du (wieder) bei unserer Tipp-Gruppe dabei bist. <i class="far fa-smile"></i>
 <br><br>
 Bei Fragen zum Tippspiel, schau mal auf der Seite <a href="?index=11#main">"FAQ"</a> nach. 
-<br> <br>
+<br><br>
+<div class="alert alert-success">
+<span class="badge badge-pill badge-danger">NEW!</span> Ab dieser Saison gibt es eine zusätzliche Möglichkeit, etwas zu gewinnen!<br><br>
+An jeden Spieltagssieger werden zusätzlich 5€ ausgezahlt! <br>
+Mehr dazu unter <a href="?index=11#main">"FAQ"</a>.
+
+</div>
+<br>
 Viel Spa&szlig; beim Tippen! </h5></div>
 
 

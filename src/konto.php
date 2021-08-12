@@ -112,7 +112,8 @@ echo "<br><br>";
 echo "<hr>";
 echo "<div style=\"text-align:left\"><font size =\"+2\"><u>Tippgruppen</u></font></div><br>";
 
-echo "<font size=\"+1\">EM 2020:<br><br>";
+echo "<font size=\"+1\">".get_wettbewerb_name()." ".get_wettbewerb_jahr().":<br><br>";
+
 
 $hin = check_cash($g_wett_id);
 if ($hin){
@@ -120,6 +121,21 @@ echo "Du hast schon bezahlt&nbsp; <img src = \"images/check.png\" width=\"20\" h
 } else {
 echo "Du hast noch <b>nicht</b> bezahlt&nbsp; <img src = \"images/remove.svg\" width=\"20\" height=\"20\"><br>";
 }
+
+
+if (user_is_in_wettbewerb($g_wett_id + 1)){
+echo "<br><br>";
+echo "<font size=\"+1\">".get_wettbewerb_name($g_wett_id + 1)." ".get_wettbewerb_jahr($g_wett_id + 1).":<br><br>";
+
+$hin = check_cash($g_wett_id +1);
+if ($hin){
+echo "Du hast schon bezahlt&nbsp; <img src = \"images/check.png\" width=\"20\" height=\"20\"><br>";
+} else {
+echo "Du hast noch <b>nicht</b> bezahlt&nbsp; <img src = \"images/remove.svg\" width=\"20\" height=\"20\"><br>";
+}
+
+}
+
 
 echo "</font>";
 

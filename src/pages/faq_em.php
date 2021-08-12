@@ -5,7 +5,7 @@
     <i class="fas fa-question-circle"></i> <b>Was kostet mich das Tippspiel und bis wann muss ich bezahlen?</b>
 </div>
 <div class="alert alert-success">
-    Das Tippspiel kostet <strong>20€</strong> pro Halbserie (jeweils für Hin- und Rückrunde). Bitte zahle im Laufe der ersten 10 Spieltage.
+    Das Tippspiel kostet einmalig 10€. Bitte zahle bis sp&auml;testens zum Ende der Gruppenphase.
 </div>
 
 
@@ -16,24 +16,6 @@
 <div class="alert alert-success">
     Entweder &uuml;ber Paypal (marius@ing-hagemann.de) oder direkt in Bar an mich <br>
     (Bei Paypal &Uuml;berweisungen sollte nat&uuml;rlich erkennbar sein, f&uuml;r welchen Nutzer bezahlt wurde...) <i class="far fa-smile-wink"></i>
-</div>
-
-<div class="alert alert-secondary">
-    <i class="fas fa-question-circle"></i> <b>Was kann man gewinnen?</b>
-</div>
-<div class="alert alert-success">
-    Der komplette Einsatz wird als Gewinn ausgeschüttet. Die Aufteilung, welcher Platz wie viel Gewinn bedeutet, findet ihr unter dem Punkt <a href="?index=10#main">"Gewinnverteilung"</a> im Menü.<br><br>
-    <span class="badge badge-danger badge-pill"> NEW!</span> <strong> Zusätzlich werden an jeden Spieltagssieger (derjenige, der am Wochenende die meisten Punkte erreicht hat) 5€ ausgezahlt!</strong>
-</div>
-
-
-<div class="alert alert-secondary">
-    <i class="fas fa-question-circle"></i> <b>Was passiert mit dem Gewinn bei Punktgleichheit?</b>
-</div>
-<div class="alert alert-success">
-    Wenn mehrere Spieler am Ende die gleiche Anzahl an Punkten haben, werden die
-    Gewinne der einzelnen Plätze addiert und durch die Anzahl an den punktgleichen Spielern geteilt.<br><br>
-    <span class="badge badge-danger badge-pill"> NEW!</span> <strong> Haben mehrere Spieler die meisten Punkte an einem Spieltag, werden die 5€ unter ihnen aufgeteilt.</strong>
 </div>
 
 
@@ -62,6 +44,17 @@
 </div>
 
 
+
+<div class="alert alert-secondary">
+    <i class="fas fa-question-circle"></i> <b>Was passiert mit dem Gewinn bei Punktgleichheit?</b>
+</div>
+<div class="alert alert-success">
+    Wenn mehrere Spieler am Ende die gleiche Anzahl an Punkten haben, werden die
+    Gewinne der einzelnen Plätze addiert und durch die Anzahl an den punktgleichen Spielern geteilt.
+</div>
+
+
+
 <div class="alert alert-secondary">
     <i class="fas fa-question-circle"></i> <b>Kann man auch die Tipps der anderen Spieler sehen? </b>
 </div>
@@ -72,14 +65,7 @@
 
 
 
-<div class="alert alert-secondary">
-    <i class="fas fa-question-circle"></i> <b>Kann ich sehen, ob ich schon bezahlt habe? </b>
-</div>
-<div class="alert alert-success">
-    Ja, schau mal unter <a href="?index=7#main">"Mein Konto"</a> nach.
-</div>
 
-<!--
 <div class="alert alert-secondary">
     <i class="fas fa-question-circle"></i> <b>Was passiert, wenn ein Spiel im Elfmeterschießen oder der Verlängerung entschieden wird?</b>
 </div>
@@ -88,7 +74,7 @@
     <br>
     Bei KO-Spielen macht es also wenig Sinn auf Unentschieden zu tippen.....
 </div>
--->
+
 
 
 

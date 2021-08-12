@@ -162,7 +162,7 @@ if ((!check_cash($g_wett_id)) && (!$_SESSION['bezahlt']) && is_logged() && (get_
 .modal .modal-dialog {
   width: 90%;
   max-width: none;
-  height: 90%;
+  height: 100%;
   margin: auto;
   vertical-align: middle;
   align: middle;
@@ -221,9 +221,9 @@ MENÜ
                 <li class="nav-item">
                     <a class="nav-link" href="?index=2#main">Spieltage</a>
                 </li>
-                <li class="nav-item">
+                <!--<li class="nav-item">
                     <a class="nav-link" href="?index=3#main">Restprogramm</a>
-                </li>
+                </li>-->
                 <li class="nav-item">
                     <a class="nav-link" href="?index=4#main">Rangliste</a>
                 </li>   

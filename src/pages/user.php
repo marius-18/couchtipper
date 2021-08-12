@@ -27,7 +27,8 @@ echo "<center><table class=\"table table-striped table-hover text-center\">";
 
 echo "<tr class=\"thead-dark\">
       <th>Username</th>
-      <th>bezahlt</th>
+      <th>Hinrunde</th>
+      <th>R&uumlckrunde</th>
       <tr>
       ";
 
