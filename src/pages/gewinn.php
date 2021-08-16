@@ -1,7 +1,7 @@
 <?php
 //include_once("src/functions/main.inc.php");
 
-function gewinn($E, $S, $G, $d){
+function gewinn($E, $S, $G, $d, $praemie){
 
 // Das sollte irgendwo in ein template.. die funktion braucht man nochmal für die startseite!
 
@@ -13,10 +13,24 @@ function gewinn($E, $S, $G, $d){
    }
 
    $help = $E * ($S-$G)/$sum;
+   
+   
+   $abzug = 17 * $praemie;
+   
+   $max = $E * $S - $abzug;
+   
+   $help = ($max - $G*$E) / $sum;
 
    for ($i = 1; $i <= $G; $i++){
-      $gewinn[$i] = round(pow(($G-$i),$d) * $help + $E -0.1, 0); //-0.1 damit 0.5 abgerundet wird. --> gewinn geht immer auf!
-      $prozent[$i] = round($gewinn[$i]/($E*$S)*100,1);
+        $gewinn[$i] = round(pow(($G-$i),$d) * $help + $E -0.1, 0); //-0.1 damit 0.5 abgerundet wird. --> gewinn geht immer auf!
+        $prozent[$i] = round($gewinn[$i]/($max)*100,1);     
+      
+      //$prozent[$i] = (pow(($G-$i),$d) * $help_neu + 1/$S);
+      //$gewinn[$i] = round( $prozent[$i] * ($E*$S - $abzug) -0.1, 0);
+      //$prozent[$i] = round($prozent[$i], 1); 
+
+      //$gewinn[$i] = round(pow(($G-$i),$d) * $help + $E -0.1, 0); //-0.1 damit 0.5 abgerundet wird. --> gewinn geht immer auf!
+      //$prozent[$i] = round($gewinn[$i]/($E*$S)*100,1);
    }
 
   return array($gewinn,$prozent);
@@ -27,30 +41,37 @@ function gewinn($E, $S, $G, $d){
 <div class="alert alert-danger">
 <strong>Achtung:</strong> der Gewinn hängt davon ab, wie viele User mittippen. Damit kann sich die Verteilung noch ändern.</div>
 Der Gewinn für Platz x berechnet sich mittels: <br><br> 
-<img src="images/gewinn.png" width = "300px" max-width = "200px"><br><br>
+<img src="images/gewinn_neu.png" max-width = "200px"><br><br>
+
 
 <?php
 
-$sql = "SELECT einsatz, anz_user,gewinner,daempfung FROM Saison WHERE jahr = '2017' AND runde = '1'";
-foreach ($g_pdo->query($sql) as $row) {
-   $E = $row['einsatz'];
+//$sql = "SELECT einsatz, anz_user,gewinner,daempfung FROM Saison WHERE jahr = '2017' AND runde = '1'";
+
+//foreach ($g_pdo->query($sql) as $row) {
+
+$sql = "SELECT einsatz, anteil_gewinner, daempfung, spieltagspraemie FROM Wettbewerbe WHERE id = $g_wett_id";
+foreach ($g_auth_pdo->query($sql) as $row) {
+    $E = $row['einsatz'];
    //$S = $row['anz_user'];
-   $g = $row['gewinner'];
+   $g = $row['anteil_gewinner'];
    $d = $row['daempfung'];
+   $praemie = $row['spieltagspraemie'];
 }
 
 $S = anz_user();
 $G = round($S*$g); // Anzahl der Gewinner
 
 
-list($gewinn,$prozent) =  gewinn($E,$S,$G,$d);
+list($gewinn,$prozent) =  gewinn($E,$S,$G,$d, $praemie);
 
-
+$max = $E * $S  - 17 * $praemie;
 echo "
 wobei <br>
 E = Einsatz (=$E&#8364;)<br>
 G = Anzahl gewinnender Spieler (=$G)<br>
-S = Anzahl der Spieler (=$S)
+S = Anzahl der Spieler (=$S)<br>
+max = Summe die ausgezahlt wird (E * S - 17 * $praemie&#8364; = $max&#8364;)
 ";
 
 echo"
@@ -67,7 +88,7 @@ echo "
 <tr>
 <th> $i </th>
 <th>". $prozent[$i]."</th>
-<th>". $gewinn[$i]."</th>
+<th>".$gewinn[$i]."</th>
 </tr>";
 }
 

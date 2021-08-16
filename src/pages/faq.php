@@ -8,7 +8,13 @@
     Das Tippspiel kostet <strong>20€</strong> pro Halbserie (jeweils für Hin- und Rückrunde). Bitte zahle im Laufe der ersten 10 Spieltage.
 </div>
 
-
+<div class="alert alert-secondary">
+    <i class="fas fa-question-circle"></i> <b>Wie lange dauert das Tippspiel?</b>
+</div>
+<div class="alert alert-success">
+    Das Tippspiel l&auml;uft jeweils für eine Halbserie der Bundesliga Saison. Die Gewinne werden nach der Hin- und Rückrunde ausgezahlt. 
+    Die Rangliste wird nach der Hinrunde wieder auf null gesetzt.
+</div>
 
 <div class="alert alert-secondary">
     <i class="fas fa-question-circle"></i> <b>Wie kann ich bezahlen?</b>
@@ -44,10 +50,10 @@
 <div class="alert alert-success">
 
     <table align = "center">
-        <tr><td>3 Punkte:</td><td> richtiges Ergebnis</td></tr>
-        <tr><td>2 Punkte:</td><td> richtige Differenz</td></tr>
-        <tr><td>1 Punkt:</td><td> richtige Tendenz</td></tr>
-        <tr><td>0 Punkte:</td><td> komplett falsch</td></tr>
+        <tr><td align = "left">3 Punkte:</td><td align = "left"> richtiges Ergebnis</td></tr>
+        <tr><td align = "left">2 Punkte:</td><td align = "left"> richtige Differenz</td></tr>
+        <tr><td align = "left">1 Punkt:</td><td align = "left"> richtige Tendenz</td></tr>
+        <tr><td align = "left">0 Punkte:</td><td align = "left"> komplett falsch</td></tr>
     </table>
 </div>
 

@@ -147,8 +147,8 @@ function spt_select(){
             $datum = $row['datum'];
         }
 
-        //if (date("w", $datum) == 2){ // FALLS ENGLISCHE WOCHE!
-        if (true){
+        if (date("w", $datum) == 2){ // FALLS ENGLISCHE WOCHE!
+        //if (true){
             $ende = $datum + (1*24*60*60);
         } else {
             $ende = $datum + (4*24*60*60);
