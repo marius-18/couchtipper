@@ -3,7 +3,7 @@
 
 function select_spieltag ($spieltag) { // ACHTUNG WM EDITION
 
-    if (get_wettbewerb_code() == "Buli"){
+    if (get_wettbewerb_code(get_curr_wett()) == "Buli"){
         $max_spieltage = 34;
     }
     else {
@@ -45,7 +45,7 @@ function select_spieltag ($spieltag) { // ACHTUNG WM EDITION
             $select = "selected";
         }
         
-        if (get_wettbewerb_code() == "EM"){
+        if (get_wettbewerb_code(get_curr_wett()) == "EM"){
         
             // Das ist nur für das KO-System
             if ($i == 14){
@@ -107,5 +107,40 @@ function select_spieltag ($spieltag) { // ACHTUNG WM EDITION
 
 }
 
+
+
+
+
+
+function select_team(){
+    global $g_pdo;
+
+    $my_team = $_POST['team'];
+    if ($my_team == ""){
+        $my_team = 12; #my_team(); // get_my favorite
+    }
+    
+    echo"<form method=\"post\"><select name=\"team\" class=\"form-control\" onchange=\"this.form.submit()\">";
+
+    $sql = " SELECT team_nr, team_name FROM `Teams` WHERE 1 ORDER BY team_name ASC";
+    foreach ($g_pdo->query($sql) as $row) {
+        $team_nr    = $row['team_nr'];
+        $team_name  = $row['team_name'];
+
+        if ($team_nr == $my_team){
+            $selected = " selected";
+        } else { $selected = "";}
+
+        echo " <option value=\"$team_nr\" $selected>$team_name</option>";
+    }
+
+    echo "
+        </select>
+        </form>
+
+        ";
+        
+    return $my_team;
+}
 
 ?>

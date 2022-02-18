@@ -1,4 +1,14 @@
+<br>
+<!--
+<div class="alert alert-success">
+<span class="badge badge-pill badge-danger">NEW!</span> Die &Uuml;bersicht der Tagessieger ist jetzt verf&uuml;gbar. Einfach im Men&uuml; unter "Tagessieger" oder <a href="?index=12#main">hier</a> klicken!
+</div>
+-->
+
 <?php
+include_once("src/include/code/gewinn.inc.php");
+echo "<div class=\"container\">";
+
 #############################################################################'
 #####   DAS MUSS AUCH NOCH BESSER WERDEN
 #############################################################################
@@ -75,31 +85,27 @@ function leader(){
 
                     
 function gewinner(){
-// Das sollte bitte automatisch erscheinen!! :)
-    echo "<table class=\"table table-sm table-striped  table-hover text-center center text-nowrap\">";
     
-    echo "<tr class=\"thead-dark\"><th>Pl</th><th>Spieler</th><th>Gewinn</th></tr>";
-    
-    echo "<tr> <th> 1 </th> <th> BigFuckingGerman </th> <th> 50,5 &euro;</th> </tr>";
-    echo "<tr> <th> 1 </th> <th> Zib </th> <th> 50,5 &euro;</th> </tr>";
-    echo "<tr> <th> 3 </th> <th> Unbeatable </th> <th> 37 &euro;</th> </tr>";
-    echo "<tr> <th> 4 </th> <th> LukasKugelblitz </th> <th> 23 &euro;</th> </tr>";
-    echo "<tr> <th> 4 </th> <th> DerDummeDäne </th> <th> 23 &euro;</th> </tr>";
-    echo "<tr> <th> 4 </th> <th> Hartmut </th> <th> 23 &euro;</th> </tr>";
-    echo "<tr> <th> 7 </th> <th> Conrad </th> <th> 12 &euro;</th> </tr>";
-    echo "<tr> <th> 8 </th> <th> ZibMitHals </th> <th> 5 &euro;</th> </tr>";
-    echo "<tr> <th> 8 </th> <th> Lucky </th> <th> 5 &euro;</th> </tr>";
+    echo "<div class=\"alert alert-success\">
+            <span class=\"badge badge-pill badge-danger\">Die R&uuml;ckrunde ist abgeschlossen! </span> 
+            <br>Hier seht ihr die Verteilung der Gewinner 
+            <br>(erstmal ohne Gew&auml;hr, weil sich das Couchtipper-Team nicht sicher ist, ob das so klappt.. <i class=\"far fa-laugh-squint\"></i>)
+        </div>";
+        
+    print_gesamt_gewinner(get_curr_wett());
 
-    echo "</table>";
 
 }
 
-#if (allow_verwaltung()){
 
-    //leader();
 
-//    gewinner();
-#}
+if (!spieltag_running(34) && akt_spieltag() == 34){
+           gewinner();
+}   
+
+
+leader();
+
                     
 ?>
 
@@ -121,6 +127,9 @@ Mehr dazu unter <a href="?index=11#main">"FAQ"</a>.
 <br>
 Viel Spa&szlig; beim Tippen! </h5></div>
 
+
+
+</div>
 
 
 <?php //leader() ?>

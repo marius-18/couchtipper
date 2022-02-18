@@ -1,5 +1,5 @@
 <?php
-require_once("src/mobil_header.php");
+//require_once("src/mobil_header.php");
 
 ?>
 

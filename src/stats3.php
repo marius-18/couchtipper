@@ -20,7 +20,7 @@
           height: 600,
           type: 'line',
           zoom: {
-            enabled: true
+            enabled: false
           },
           animations:{
             enabled: false
@@ -47,6 +47,15 @@
         },
         yaxis:{
             reversed: true,
+            min:1,
+            max:<?php echo anz_user_wett(get_curr_wett()); ?>
+        },
+        tooltip:{
+            x:{
+                formatter: function(value, { series, seriesIndex, dataPointIndex, w }) {
+                                return value+". Spieltag"
+                            } 
+            }
         }
         
         };
@@ -58,18 +67,18 @@
  
  
  <?php
-function get_platz(){
+ get_platz();
+
+ function get_platz(){
     global $g_pdo;
     
-    $sql = "SELECT user_nr FROM `Rangliste` WHERE 1 group by user_nr order by user_nr ASC";
     $ret = "series: [";
-    foreach ($g_pdo->query($sql) as $row) {
-        $user_nr = $row['user_nr'];
+    foreach (all_user(get_curr_wett()) as $user_nr => $name){
         $user[$user_nr] = $user_nr;
         
-        $sql = "SELECT `platz` FROM `Rangliste` WHERE user_nr = $user_nr ORDER BY spieltag ASC";
+        $sql = "SELECT `platz` FROM `Rangliste` WHERE user_nr = $user_nr AND spieltag > 17 ORDER BY spieltag ASC";
         
-        $str[$user_nr] = "{name: \"".get_username_from_nr($user_nr)."\",
+        $str[$user_nr] = "{name: \"".$name."\",
         data:
         [";
         
@@ -96,10 +105,9 @@ function hide_anything(){
     // vllt nicht in dem chart ding ausblenden, sondern generell nur 1-3 kurven plotten..
     // default mit eigener kurven
     // nach wunsch noch andere auswählen
-    // ylim 1 - anzahl_spieler..
     $str = "";
     
-    $names = all_user();
+    $names = all_user_wett(get_curr_wett());
     
     foreach ($names as $id => $name  ) {
 
@@ -115,7 +123,7 @@ function hide_anything(){
 
 function get_date(){
     $str =  "[";
-    for ($i = 1; $i<= akt_spieltag(); $i++){
+    for ($i = 18; $i<= akt_spieltag(); $i++){
         $str .= "$i, ";
     }
     

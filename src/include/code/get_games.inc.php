@@ -17,7 +17,7 @@ function get_games ($spieltag, $modus, $change, $user_nr) {
     $real_spieltag = $spieltag;
     $add = "0";
 
-    if (($spieltag > 17) && (get_wettbewerb_code() == "Buli")){
+    if (($spieltag > 17) && (get_wettbewerb_code(get_curr_wett()) == "Buli")){
         $teil1 = "2";
         $teil2 = "1";
         $spieltag = $spieltag - 17;
@@ -139,6 +139,85 @@ function get_games ($spieltag, $modus, $change, $user_nr) {
 
 }
 
+function get_open_db_spieltag($modus, $jahr, $spieltag){
+    $url = "https://www.openligadb.de/api/getmatchdata/$modus/$jahr/$spieltag";
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+    $output = curl_exec($ch);
+    curl_close($ch);
+
+    $matches = json_decode($output, true);
+    
+    return $matches;
+}
+
+
+
+function get_tore($spieltag, $sp_nr,$modus){
+    global $g_pdo;
+    #return 0;
+    // DB Abfrage je nach modus.. Hier bisher nur buli!
+    $matches = get_open_db_spieltag("bl1", "2021", $spieltag);
+
+    if ($spieltag <= 17) {
+        $heim = "Heim";
+        $aus = "Aus";
+    } else {
+        $heim = "Aus";
+        $aus = "Heim";
+        $spieltag = $spieltag - 17;
+    }
+    $sql = "SELECT team1, team2, TeamHeim.open_db_name as $heim, TeamAus.open_db_name as $aus
+            FROM `Spieltage`, Teams as TeamHeim, Teams as TeamAus 
+            WHERE (spieltag = $spieltag && sp_nr = $sp_nr) and (team1 = TeamHeim.team_nr) and (team2 = TeamAus.team_nr)";
+    foreach ($g_pdo->query($sql) as $row) {
+        $team1 = $row['Heim'];
+        $team2 = $row['Aus'];
+        
+    }
+
+    foreach ($matches as $match) {
+        
+        if (!strnatcmp($match["Team1"]["TeamName"], $team1) and !strcmp($match["Team2"]["TeamName"], $team2)) {
+            // Das ist das aktuelle Spiel!
+            $ret = "<table align=\"center\">";
+            $t1 = 0;
+            $t2 = 0;
+            foreach ($match["Goals"] as $goal){
+                if ($goal["ScoreTeam1"] >  $t1) {
+                    $ret .= "<tr class=\"table-info\">";
+                }
+                if ($goal["ScoreTeam2"] >  $t2) {
+                    $ret .= "<tr class=\"table-primary\">";
+                }               
+                
+                $zusatz = "";
+                if ($goal["IsPenalty"]){
+                    $zusatz = "(11m)";
+                }
+                if ($goal["IsOwnGoal"]){
+                    $zusatz = "(ET)";
+                }
+                $ret .= "<td>'".$goal["MatchMinute"]."</td>";
+                $ret .= "<td>".$goal["ScoreTeam1"]." : ".$goal["ScoreTeam2"]."</td>";
+                $ret .= "<td>".$goal["GoalGetterName"]."</td>";
+                $ret .= "<td>$zusatz</td>";
+                $ret .= "</tr>";
+                
+                $t1 = $goal["ScoreTeam1"];
+                $t2 = $goal["ScoreTeam2"];
+
+            }
+            $ret .= "</table>";
+
+        }
+    }
+    
+    return $ret;
+}
+
 function get_other_tipps($spieltag, $sp_nr, $modus) {
     global $g_pdo;
     
@@ -180,19 +259,15 @@ function get_other_tipps($spieltag, $sp_nr, $modus) {
             
                 if (($tore1 == $tipp1) && ($tore2 == $tipp2)){
                     $punkte[$i] = "+3";
-                    #    echo "jo1";
                 }
                 elseif ($tore1 - $tore2 == $tipp1 - $tipp2){  
                     $punkte[$i] = "+2";
-                    #    echo "jo2";
                 }
                 elseif ((($tore1 - $tore2 > 0) && ($tipp1 - $tipp2 > 0)) || (($tore1 - $tore2 < 0) && ($tipp1 - $tipp2 < 0)) ){
                     $punkte[$i] = "+1";
-                    #    echo "jo3";
                 }
                 else {
                     $punkte[$i] = "";
-                    #    echo "jo4";
                 }
             }
         
@@ -200,17 +275,95 @@ function get_other_tipps($spieltag, $sp_nr, $modus) {
     
     }
     
-    
-
-    
-
-
     if (!check_game_date($spieltag,$sp_nr)){
         #return 0;
         return array($user_nr, $user_name, $tipp, $vorname, $nachname, $punkte);
     }
 }
 
+
+function get_next_games(){
+    ### Gibt die Spiele zurück die als nächstes starten
+    global $g_pdo;
+    list($wett_id, $part) = get_curr_wett();
+    if (wettbewerb_has_parts($wett_id)){
+        $part += 1;
+        $date = "datum$part";
+    } else {
+        $date = "datum";   
+    }
+    
+    $time = time();
+    $sql = "SELECT sp_nr, $date AS date FROM `Spieltage` WHERE $date = (SELECT min($date) FROM `Spieltage` WHERE $date > $time)";
+
+    foreach ($g_pdo->query($sql) as $row) {
+        $sp_nr = $row['sp_nr'];
+        $spiel[$sp_nr] = $sp_nr;
+        $datum = $row['date'];
+    }
+    
+    return array($spiel, $datum);
+}
+
+function get_bot_spiele($user_nr, $next_games, $mode){
+    ### $mode == "gameday": Erstellt eine Liste von Spielen des Spieltags
+    ### $mode == "Tipps"  : Erstellt selbe Liste und prüft ob Spiele schon getippt wurden.. 
+    list($datum, $team_heim, $team_aus, $tore_heim, $tore_aus, $team_heim_nr, $team_aus_nr, $real_sp_nr, $real_spieltag, $anz_spiele, $gruppe) = get_games(akt_spieltag(), "Tipps", 0, $user_nr);
+    $spiele = "";
+    $fav_team = 12; // fav team zu §user_nr aus DB
+    
+    if ($mode == "tipps"){
+        $tipped = false; // Nur true, wenn mind 1 Spiel noch nicht getippt ist... 
+        foreach ($team_heim as $index => $team){
+            if (in_array($real_sp_nr[$index], $next_games) and !is_numeric($tore_heim[$index])){
+                if (($team_heim_nr[$index] == $fav_team) || ($team_aus_nr[$index] == $fav_team) ){
+                    $spiele .= "<b>";
+                } 
+                $spiele .= $team;
+                if (is_numeric($tore_heim[$index])){
+                    $spiele .= " " . $tore_heim[$index];
+                } else { $tipped = true;}
+                        
+                $spiele .= " - ";
+                if (is_numeric($tore_aus[$index])){
+                    $spiele .= $tore_aus[$index] . " ";
+                } else { $tipped = true;}
+                        
+                $spiele .= $team_aus[$index];
+                if (($team_heim_nr[$index] == $fav_team) || ($team_aus_nr[$index] == $fav_team) ){
+                    $spiele .= "</b>";
+                }       
+                $spiele .= "\n";
+                $time = round(($datum[$index] - time()) / (60*60),1);
+                $time .= " Stunden";
+            }
+                    
+        }
+    }
+    
+    if ($mode == "gameday"){
+        foreach ($team_heim as $key => $team){
+            if (($team_heim_nr[$key] == $fav_team) || ($team_aus_nr[$key] == $fav_team) ){
+                $spiele .= "<b>";
+            } 
+            $spiele .= $team;
+            $spiele .= " - ";
+            $spiele .= $team_aus[$key];
+            if (($team_heim_nr[$key] == $fav_team) || ($team_aus_nr[$key] == $fav_team) ){
+                $spiele .= "</b>";
+            }       
+            $spiele .= "\n";
+        }
+    }
+    
+    ## HTML - Codes umwandeln
+    $search  = array('&auml;', '&uuml;', '&ouml;');
+    $replace = array('ä', 'ü', 'ö');
+    $spiele =  str_replace($search, $replace, $spiele);
+    
+    return array($spiele, $tipped, $time);
+                
+}
 
 
 function get_group_games($gruppe){

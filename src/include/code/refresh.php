@@ -195,9 +195,19 @@ function update_rangliste($spieltag) {
 function update_rangliste_position($spieltag) {
     global $g_pdo;
     
+    // Bei modus buli vllt einfach ab 18 wieder von 0 anfangen.. wenn jemand nicht getippt hatte, dann einfach mit max( spieler) vollmachen... // Das muss auf jeden fall zum spieler eintritt..
+    // oder halt einfach bei der statistik am ende alles auf max setzen.. ist vermutlich einfacher..
+    
+    // ACHTUNG, NUR IM BULI MODUS!
+    if ($spieltag > 17){
+        $start = 18;
+    } else {
+        $start = 1;
+    }
+    
      $sql = "SELECT sum(punkte) as p, Rangliste.user_nr  
             FROM `Rangliste`
-            WHERE (Rangliste.spieltag >= 1 AND Rangliste.spieltag <= $spieltag) 
+            WHERE (Rangliste.spieltag >= $start AND Rangliste.spieltag <= $spieltag) 
             GROUP BY Rangliste.user_nr
             ORDER BY p DESC";
 
@@ -233,7 +243,8 @@ function update_rangliste_position($spieltag) {
 
 }
 
-#update_rangliste_position();
+
+#update_rangliste_position(18);
 #clear_rangliste();
 
 function clear_rangliste() {

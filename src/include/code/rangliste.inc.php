@@ -25,6 +25,8 @@ function rangliste ($begin, $ende, $gruppe){
         //$user_name[$user_nr] = $row['user_nr']; // Hier etwas pfusch.. da wird nur die Nummer übergeben
         $akt_punkte[$user_nr] = 0;
         $letzte_punkte[$user_nr] = 0;
+        $spieltagssieger[$user_nr] = 0;
+        $spieltagssieger_last[$user_nr] = 0;
   
         $sql1 = "SELECT count(distinct(spieltag)) as spiele FROM `Tipps` WHERE (user_nr = $user_nr AND spieltag <= $akt_spieltag AND spieltag >= $begin AND spieltag <= $ende)";
 
@@ -51,18 +53,34 @@ function rangliste ($begin, $ende, $gruppe){
             $user_nr = $row['user_nr'];
             $akt_punkte [$user_nr] = $row['punkte'];
         }
+        
+        if ($akt_spieltag != 18){ // Neu hinzugefügt!
+            $sql = "SELECT punkte, user_nr FROM `Rangliste` WHERE spieltag = $letzter_spieltag"; 
 
-        $sql = "SELECT punkte, user_nr FROM `Rangliste` WHERE spieltag = $letzter_spieltag"; 
-
-        foreach ($g_pdo->query($sql) as $row){
-            $user_nr = $row['user_nr'];
-            $letzte_punkte [$user_nr] = $row['punkte'];
+            foreach ($g_pdo->query($sql) as $row){
+                $user_nr = $row['user_nr'];
+                $letzte_punkte [$user_nr] = $row['punkte'];
+            }
         }
     }
-
     
-    array_multisort($punkte, SORT_DESC, $spiele, SORT_ASC, $akt_punkte,SORT_DESC, $schnitt, $letzte_punkte, $user); //SORTIERUNG HIER MIT GLEICHEN PLÄTZEN
- 
+    
+    $sql = "SELECT user_nr FROM `Rangliste` WHERE punkte = (SELECT max(punkte) FROM `Rangliste` WHERE spieltag = $akt_spieltag) and spieltag = $akt_spieltag";
+
+    foreach ($g_pdo->query($sql) as $row){
+        $user_nr = $row['user_nr'];
+        $spieltagssieger[$user_nr] = 1;
+    }
+
+    $sql = "SELECT user_nr FROM `Rangliste` WHERE punkte = (SELECT max(punkte) FROM `Rangliste` WHERE spieltag = $letzter_spieltag) and spieltag = $letzter_spieltag";
+
+    foreach ($g_pdo->query($sql) as $row){
+        $user_nr = $row['user_nr'];
+        $spieltagssieger_last[$user_nr] = 1;
+    }
+    
+    array_multisort($punkte, SORT_DESC, $spiele, SORT_ASC, $akt_punkte,SORT_DESC, $schnitt, $letzte_punkte, $user, $spieltagssieger, $spieltagssieger_last); //SORTIERUNG HIER MIT GLEICHEN PLÄTZEN
+
 
     $platz = 1;
     
@@ -81,10 +99,67 @@ function rangliste ($begin, $ende, $gruppe){
 
     }
 
-    return array($punkte, $spiele, $akt_punkte, $schnitt, $letzte_punkte, $user, $platz_r);
+    return array($punkte, $spiele, $akt_punkte, $schnitt, $letzte_punkte, $user, $platz_r, $spieltagssieger, $spieltagssieger_last);
 
 }
 
+
+
+function print_rangliste($begin, $ende, $modus){
+
+    list($punkte1, $spiele1, $akt_punkte1, $schnitt1, $letzte_punkte1, $user1, $platz_alt, $spieltagssieger, $spieltagssieger_last) = rangliste($begin, $ende-1, $modus);
+    list($punkte, $spiele, $akt_punkte, $schnitt, $letzte_punkte, $user, $platz, $spieltagssieger, $spieltagssieger_last) = rangliste($begin, $ende, $modus);
+
+    echo "
+    <div class=\"table-responsive\">
+        <table class=\"table table-sm table-striped  table-hover text-center center text-nowrap\" align=\"center\">
+        <tr class=\"thead-dark\"><th>Pl</th><th>Spieler</th><th>&#931</th><th class=\"d-none d-sm-table-cell\">Spt.</th><th>&#216;</th>";
+
+    echo "<th><i class=\"fas fa-arrow-down\"></th><th><i class=\"fas fa-arrow-left\"></th><th></th><tr>";
+
+    foreach ($user as $i => $nr){
+        if ($user[$i] == get_usernr()){
+            $logged=" class=\"table-success\"";
+        } else {
+            $logged ="";
+        }
+        $dif[$i] = $platz_alt[$nr] - $platz[$nr] ;
+        if ($platz_alt[$nr] < $platz[$nr]){
+            $aenderung = "<span class=\"badge badge-pill badge-danger\"><i class=\"fas fa-arrow-down\"></i> " . -$dif[$i] ." </span>";
+        }
+
+        if ($platz_alt[$nr] == $platz[$nr]){
+            $aenderung = "";
+        }   
+  
+        if ($platz_alt[$nr] > $platz[$nr]){
+            $aenderung = "<span class=\"badge badge-pill badge-success\"><i class=\"fas fa-arrow-up\"></i> " . $dif[$i] . "</span>";
+        }
+        
+        if ($spieltagssieger[$i]){
+            $akt_punkte[$i] = "<span class=\"badge badge-pill badge-warning\">" . $akt_punkte[$i] . "</span>";
+        }
+        
+        if ($spieltagssieger_last[$i]){
+            $letzte_punkte[$i] = "<span class=\"badge badge-pill badge-warning\">" . $letzte_punkte[$i] . "</span>";
+        }        
+
+        echo "  <tr $logged>
+                <td>$platz[$nr].</td>
+                <td>".get_username_from_nr($user[$i])."</td>
+                <td>$punkte[$i]</td> 
+                <td  class=\"d-none d-sm-table-cell\">$spiele[$i]</td>
+                <td>$schnitt[$i]</td>
+                <td>$akt_punkte[$i]</td>
+                <td>$letzte_punkte[$i]</td>"; 
+
+        echo "<th>$aenderung</th>";
+        echo "
+            </tr>";
+   }
+   
+   echo "</table></div>";
+}
 
 
 

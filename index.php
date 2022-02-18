@@ -4,36 +4,46 @@ session_start();
 require_once("../auth/include/security.inc.php");
 is_logged();
 
+## if subdomain == ?? do..
 $g_modus = "Buli";
-$g_wett_id = "4";
+$global_wett_id = "4";
 
-require_once("../auth/include/permissions.inc.php");
-require_once("../auth/include/check_in.inc.php");
+### Bindet alle Wettbewerbs Sachen ein
+### Muss zuerst stehen, da sonst nicht auf Datenbank o.Ä. zugegriffen werden kann. 
 require_once("../auth/include/wettbewerbe.inc.php");
 
-//require_once("src/include/wettbewerb_main.inc.php");
-//require_once("src/functions/main.inc.php");
-
+### Stellt die Verbindung zur Datenbank her. Zugangsdaten kommen aus der Wettbewerbs-DB
 require_once("src/include/lib/datenbank.inc.php");
+
+### Library für alle möglichen Zeit-Berechnungen
 require_once("src/include/lib/time.inc.php");
+
+### Bindet die Befugnisse ein. Wer darf was ?
+require_once("../auth/include/permissions.inc.php");
+
+### Checkt neue Besucher in den jeweiligen Wettbewerb ein.. Das kann man auch noch schöner machen.. 
+require_once("../auth/include/check_in.inc.php");
 
 
 $index = $_GET["index"];
+if ($index == "api"){
+    include_once("api.php");
+    exit;
+}
 
 
 // Wettbewerb check in
-check_in();
+check_in_modal();
 
 ####### DU HAST NOCH NICHT BEZAHLT
 ### BITTE BITTE SCHÖNER MACHEN!!
 
 
-if ((!check_cash($g_wett_id)) && (!$_SESSION['bezahlt']) && is_logged() && (get_usernr() != -10) && is_checked_in() && false){
-        //$name123 = get_usernr();
-        echo "<script language='javascript'>alert ('Du hast noch nicht bezahlt!\\nDenk bitte daran, demnächst zu bezahlen :)')</script>";
-        $_SESSION['bezahlt'] = 1;
-}
-
+#if ((!check_cash(get_curr_wett())) && (!$_SESSION['bezahlt']) && is_logged() && (get_usernr() != -10) && is_checked_in() && false){
+#        //$name123 = get_usernr();
+#        echo "<script language='javascript'>alert ('Du hast noch nicht bezahlt!\\nDenk bitte daran, demnächst zu bezahlen :)')</script>";
+#        $_SESSION['bezahlt'] = 1;
+#}
 
 
 
@@ -43,23 +53,24 @@ if ((!check_cash($g_wett_id)) && (!$_SESSION['bezahlt']) && is_logged() && (get_
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <title><?php echo get_wettbewerb_title();?></title> <!-- hier aus db -->
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
-  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-  <!--<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">-->
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
-  <script src="src/include/scripts/tabelle.js"></script>
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
-</script>
-<script type="text/javascript"
-  src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
+    <title><?php echo get_wettbewerb_title(get_curr_wett());?></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+
+    <script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
+
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+
+    <script src=https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.16.0/bootstrap-table.min.js></script> <!-- sortierbare Tabellen! (braucht jquery) --> 
+    <link href=https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.16.0/bootstrap-table.min.css rel=stylesheet> <!-- stylesheet für sortierbare Tabellen -->
+
+    <script src="src/include/scripts/ausblenden1.js"></script> <!-- Zum Ein- und ausblenden verschiedener Elemente -->
+  
+
   <!-- das zeug in die CSS datei!! -->
   <style>
   .stockerl {
@@ -158,6 +169,11 @@ if ((!check_cash($g_wett_id)) && (!$_SESSION['bezahlt']) && is_logged() && (get_
    background-color: lightgray;
 }
 
+.main{
+   padding-right: 0%;
+   padding-left: 0%;
+
+}
 
 .modal {
   padding: 0 !important; // override inline padding-right added from js
@@ -226,9 +242,9 @@ MENÜ
                 <li class="nav-item">
                     <a class="nav-link" href="?index=2#main">Spieltage</a>
                 </li>
-                <!--<li class="nav-item">
+                <li class="nav-item">
                     <a class="nav-link" href="?index=3#main">Restprogramm</a>
-                </li>-->
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="?index=4#main">Rangliste</a>
                 </li>   
@@ -244,6 +260,9 @@ MENÜ
                 </li>";
                 }
                 ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="?index=12#main">Tagessieger</a>
+                </li>
                 <?php if (is_logged()){ echo "
                 <li class=\"nav-item\">
                     <a class=\"nav-link\" href=\"?index=7#main\">Mein Konto</a>
@@ -268,6 +287,7 @@ MENÜ
                 </li>";
                 }
                 ?> 
+                 
                 <?php if (is_logged()){ echo "
                 <li class=\"nav-item\">
                     <a class=\"nav-link\" href=\"?index=10#main\">Gewinnverteilung</a>
@@ -296,7 +316,7 @@ MENÜ
 
     <?php
     
-        if ((!check_cash($g_wett_id)) && (is_logged())) {  
+        if ((!check_cash(get_curr_wett())) && (is_logged())) {  
             echo "<div class=\"alert alert-danger text-center\" style=\"margin-bottom:0\">
                 <strong>Achtung!</strong> Du hast noch nicht bezahlt! <a href=\"?index=11#main\" class=\"alert-link\"> <i class=\"fas fa-info-circle\"></i></a>
                 </div>";
@@ -315,7 +335,7 @@ MENÜ
 
 <div class="container-fluid hintergrund" style="padding-bottom:30px; padding-top:30px;" >
 <div class="container jumbotron text-center grey" style="margin-bottom:0">
-    <h1> Willkommen zum <?php echo get_wettbewerb_title();?>! </h1> 
+    <h1> Willkommen zum <?php echo get_wettbewerb_title(get_curr_wett());?>! </h1> 
     <p><i class="fas fa-futbol"></i> couchtipper.de <i class="fas fa-futbol"></i></p> 
 </div>
 </div>
@@ -329,21 +349,26 @@ MENÜ
 -->
 
 <div class="container-fluid hintergrund" style="margin-top:0px; padding-bottom:55px" id="main">
-    <div class="row centering">
+    <div class="row centering justify-content-around">
     
         <!-- NICHT SICHTBAR; QUASI LINKER RAHMEN -->
-        <div class="col-lg-1 d-none d-xl-block d-lg-block text-center">
+        <div class="col-lg-0 d-none d-lg-block d-lg-block text-center">
             <hr class="d-sm-none">
         </div>
         
         <!-- Linkes Fenster, Standard Rangliste, sonst ...? mobil nicht sichtbar! -->
-        <div class="col-lg-3 d-none d-xl-block d-lg-block text-center fenster rounded">
+        <div class="col-lg-4 d-none d-xl-block d-lg-block text-center fenster rounded main">
             <?php
-                if (($index != 4) && ($index != 2)){
+                if (($index != 4) && ($index != 2) && ($index != 5) ){
                     echo "<h2>Rangliste:</h2>";
                     include_once("src/pages/rangliste.php");
                 }
-                
+
+                 if ($index == 5){
+                    echo "<h2>Bundesliga-Tabelle:</h2>";
+                    include_once("src/pages/tabelle.php");
+
+                }
                 /*
                 if ($index == 2){
                     echo "<h2>Gruppen-Tabellen:</h2>";
@@ -358,77 +383,84 @@ MENÜ
         </div>
 
         <!-- NICHT SICHTBAR; QUASI - MITTEL - RAHMEN -->
-        <div class="col-lg-1 d-none d-xl-block d-lg-block text-center">
+        <div class="col-lg-0 d-none d-xl-block d-lg-block text-center">
             <hr class="d-sm-none">
         </div>
     
         <!-- HAUPTFELD  -->
-        <div class="col-lg-6 hidden-md-up fenster text-center rounded">
+        <div class="col-lg-6 hidden-md-up fenster text-center rounded main">
       
             <?php
-                if ($index == "") {
-                    include_once("src/pages/hello.php");
+                switch ($index) {
+                    case "":
+                        include_once("src/pages/hello.php");
+                        break;
+                    case 1:
+                        echo "<h2> Bundesliga-Tabelle</h2>";
+                        include_once("src/pages/tabelle.php");
+                        break;
+                    case 2: 
+                        echo "<h2>Spieltage</h2>";
+                        include_once("src/pages/spieltag.php");
+                        break;
+                    case 3:
+                        echo "<h2>Restprogramm</h2>";
+                        include_once("src/pages/restprogramm.php");
+                        break;
+                    case 4:
+                        echo "<h2>Rangliste</h2>";
+                        include_once("src/pages/rangliste.php");
+                        break;
+                    case 5:
+                        echo "<h2>Tipps</h2>";
+                        include_once("src/pages/tipp.php");
+                        break;
+                    case 6:
+                        echo "<h2>Ergebnisse eingeben</h2>";
+                        include_once("src/pages/ergebnis.php");
+                        break;
+                    case 7:
+                        echo "<h2>Mein Konto</h2>";
+                        include_once("src/pages/konto.php");
+                        break;
+                    case 8:
+                        echo "<h2>Datum eingeben</h2>";
+                        include_once("src/set_date.php");
+                        echo "<h2>Spiele terminieren</h2>";
+                        include_once("src/spiele_term.php");
+                        break;
+                    case 9:
+                        echo "<h2>Verwaltung</h2>";
+                        include_once("src/pages/user.php");
+                        break;
+                    case 10:
+                        echo "<h2>Gewinnverteilung</h2>";
+                        include_once("src/pages/gewinn.php");
+                        break;
+                    case 11:
+                        echo "<h2>FAQ</h2>";
+                        include_once("src/pages/faq.php");
+                        break;
+                    case 12: 
+                        echo "<h2>Tagessieger</h2>";
+                        include_once("src/pages/tagessieger.php");
+                        break;
+                    case 15:
+                        echo "<h2>Statistiken</h2>";
+                        include_once("src/stats3.php");
+                        #include_once("src/newbot.php");
+                        break;
+                    default:
+                        include_once("src/pages/error.php");
+                        break;
+                    
                 }
-      
-                if ($index == 1) {
-                    echo "<h2> Bundesliga-Tabelle</h2>";
-                    include_once("src/pages/tabelle.php");
-                }
-      
-                if ($index == 2) {
-                    echo "<h2>Spieltage</h2>";
-                    include_once("src/pages/spieltag.php");
-                }
-
-                if ($index == 3) {
-                    echo "<h2>Rstprogramm</h2>";
-                    include_once("src/pages/restprogramm.php");
-                }
-
-                if ($index == 4) {
-                    echo "<h2>Rangliste</h2>";
-                    include_once("src/pages/rangliste.php");
-                }
-  
-                if ($index == 5) {
-                    echo "<h2>Tipps</h2>";
-                    include_once("src/pages/tipp.php");
-                }
-                if ($index == 6) {
-                    echo "<h2>Ergebnisse eingeben</h2>";
-                    include_once("src/pages/ergebnis.php");
-                }           
-                if ($index == 7) {
-                    echo "<h2>Mein Konto</h2>";
-                    include_once("src/konto.php");
-                }                 
-                if ($index == 8) {
-                    echo "<h2>Datum eingeben</h2>";
-                    include_once("src/set_date.php");
-                    echo "<h2>Spiele terminieren</h2>";
-                    include_once("src/spiele_term.php");
-                } 
-                
-                if ($index == 9) {
-                    echo "<h2>Verwaltung</h2>";
-                    include_once("src/pages/user.php");
-                } 
-                
-                if ($index == 10) {
-                    echo "<h2>Gewinnverteilung</h2>";
-                    include_once("src/pages/gewinn.php");
-                }    
-                
-                if ($index == 11) {
-                    echo "<h2>FAQ</h2>";
-                    include_once("src/pages/faq.php");
-                } 
-                
-                if ($index == 15) {
-                    echo "<h2>Statistiken</h2>";
-                    include_once("src/stats3.php");
-                } 
-                ?>
+            ?>
+        </div>
+        
+                <!-- NICHT SICHTBAR; QUASI Rechter RAHMEN -->
+        <div class="col-lg-0 d-none d-lg-block d-lg-block text-center">
+            <hr class="d-sm-none">
         </div>
     </div>
 </div>
@@ -436,10 +468,12 @@ MENÜ
 
 
 <div class="jumbotron text-center grey" style="margin-bottom:0">
-    <p>&copy; couchtipper.de v4.0</p>
+    <p>&copy; couchtipper.de v4.2</p>
 </div>
 
 
 </body>
 </html>
+ 
+      
  

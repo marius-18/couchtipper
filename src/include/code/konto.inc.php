@@ -3,58 +3,62 @@ function sitzungen(){
     global $g_pdo;
     $user_id = get_usernr();
 
+    // Bestehende Sessions werden gelöscht
     if (isset($_GET['rem'])){
         $rem_id = $_GET['rem'];
-        $session_msg = rm_session($rem_id);
+        $session_msg = rm_session($rem_id);  // Funktion aus auth
     }
-
-    list ($erstellt, $ort, $geraet, $letzt, $identifier, $land, $ip) = ls_sessions();
-
     
+   
+    list($erstellt, $ort, $geraet, $letzt, $identifier, $land, $ip) = ls_sessions();  // Funktion aus auth
+
+    // Auflistung aller Sessions
     echo "<table class=\"table\" id=\"session\">";
     echo "<tr class=\"thead-dark\">
             <th>Browser</th><th>Standort</th><th>Aktivit&auml;t</th><th></th><th></th>
             </tr>
             ";
 
-   foreach ( $erstellt as $id => $anfang) {
-      if ($identifier[$id] == $_COOKIE['identifier']){
-         $farbe =  "class = \"table-success\"  ";
-         $akt = "Aktuelle Sitzung";
-         $close = "";
-      } else {
-         $farbe = ""; 
-         $akt = $letzt[$id];
-         $close = "<a href = \"?index=7&rem=$id#session\"><img src = \"images/remove.svg\" height = \"20\" width = \"20\"></a>";
-      }
+    foreach ($erstellt as $id => $anfang) {
+        // Das ist die aktuelle Session
+        if ($identifier[$id] == $_COOKIE['identifier']){
+            $farbe =  "class = \"table-success\"  ";
+            $akt = "Aktuelle Sitzung";
+            $close = "";
+        } else {
+            $farbe = ""; 
+            $akt = $letzt[$id];
+            $close = "<a href = \"?index=7&rem=$id#session\"><img src = \"images/remove.svg\" height = \"20\" width = \"20\"></a>";
+        }
  
-      if ($ort[$id] == ", "){
-         $standort = $land[$id];
-      } else {
-         $standort = $ort[$id]. " ".$land[$id]; 
-      }
+        if ($ort[$id] == ", "){
+            $standort = $land[$id];
+        } else {
+            $standort = $ort[$id]. " ".$land[$id]; 
+        }
 
-      echo "<tr $farbe>
-           <td>".$geraet[$id]."</td>
-           <td>".$standort."</td>
-           <td>".$akt."</td>
-           <td onclick = \"myFunction($id)\"><img src = \"images/info.gif\" height = \"20\" width = \"20\"></td>
-           <td>$close</td>
-           </tr>";
+        echo "<tr $farbe>
+                <td>".$geraet[$id]."</td>
+                <td>".$standort."</td>
+                <td>".$akt."</td>
+                <td onclick = \"myFunction($id)\"><img src = \"images/info.gif\" height = \"20\" width = \"20\"></td>
+                <td>$close</td>
+              </tr>";
 
-      echo "<tr><td colspan = \"5\" id = \"$id\" style = \"display: none\" bgcolor = \"lightgreen\">&nbsp;&nbsp;Angemeldet: ".$erstellt[$id]."<br>&nbsp;&nbsp;IP-Adresse: ".$ip[$id]."</td>
-            </tr>
-           ";
-   }
+        echo "<tr>
+                <td colspan = \"5\" id = \"$id\" style = \"display: none\" bgcolor = \"lightgreen\">&nbsp;&nbsp;Angemeldet: ".$erstellt[$id]."<br>&nbsp;&nbsp;IP-Adresse: ".$ip[$id]."</td>
+                </tr>
+                ";
+    }
 
-   echo "</table>";
+    echo "</table>";
    
-   if ($session_msg != ""){
+    if ($session_msg != ""){
         echo "<br><div class=\"alert alert-success\">$session_msg</div>";
-   }
+    }
 
-   echo "
-   <script>
+    echo "
+    <script>
       function myFunction(wert) {
          if ( document.getElementById(wert).style.display == \"\"){
             document.getElementById(wert).style.display = \"none\";

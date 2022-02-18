@@ -5,7 +5,7 @@
     <i class="fas fa-question-circle"></i> <b>Was kostet mich das Tippspiel und bis wann muss ich bezahlen?</b>
 </div>
 <div class="alert alert-success">
-    Das Tippspiel kostet <strong>20€</strong> pro Halbserie (jeweils für Hin- und Rückrunde). Bitte zahle im Laufe der ersten 10 Spieltage.
+    Das Tippspiel kostet <strong>20€</strong> pro Halbserie (jeweils für Hin- und Rückrunde). Bitte zahle im Laufe der ersten 5 Spieltage.
 </div>
 
 <div class="alert alert-secondary">

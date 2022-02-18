@@ -15,7 +15,7 @@
 
 function print_games($args, $modus, $change){
 
-    if (get_wettbewerb_code() == "Buli"){
+    if (get_wettbewerb_code(get_curr_wett()) == "Buli"){
         $endung = "gif";
     } else {
         $endung = "png";
@@ -99,7 +99,7 @@ function print_games($args, $modus, $change){
         echo "<td class=\"align-middle\" align=\"left\"  onclick=\"myFunction($i1)\"><b>$team_aus[$i]</b></td>";
 
         echo "</tr>";
-
+        
 
         if (($modus == "Spieltag") || ($modus == "Tipps")){
 
@@ -111,9 +111,17 @@ function print_games($args, $modus, $change){
 
             echo "<tr id=\"$i1\" style=\"display: none;\">";
 
-            echo "<td colspan = \"5\">
-                    <table class=\"table\" align = \"center\" width = \"75%\" padding-left = \"10em\">";
+            echo "<td class=\"center\" colspan = \"5\"  style=\"text-align:center\">";
+            
+            if ($modus == "Spieltag"){
+                
+                // GET_TORE
+                echo "<div class=\"container\"  style=\"margin-bottom:5px\">";
+                echo get_tore($real_spieltag, $real_sp_nr[$i],$modus);
+                echo "</div>";
+            }
 
+            echo "<table class=\"table\" align = \"center\" width = \"75%\" padding-left = \"10em\">";
 
             list ($user_nr, $user_name, $tipp, $vorname, $nachname, $punkte) = get_other_tipps($real_spieltag, $real_sp_nr[$i],$modus);
 
@@ -124,7 +132,11 @@ function print_games($args, $modus, $change){
                     $active = "";
                 }
                 
-                echo "<tr $active><td align=\"right\" width=\"33%\">".$user_name[$nr]." ". $nachname[$nr][-1] ."</td><td align=\"center\" width=\"33%\">".$tipp[$nr]."</td><td><span class=\"badge badge-pill badge-success\">".$punkte[$nr]."</span></td><td width=\"33%\"></td></tr>
+                echo "<tr $active>
+                <td align=\"right\" width=\"33%\">".$user_name[$nr]." ". $nachname[$nr][-1] ."</td>
+                <td align=\"center\" width=\"33%\">".$tipp[$nr]."</td>
+                <td width=\"33%\"><span class=\"badge badge-pill badge-success\">".$punkte[$nr]."</span></td>
+                </tr>
                         ";
             }
 

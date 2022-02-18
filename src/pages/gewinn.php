@@ -1,102 +1,67 @@
 <?php
-//include_once("src/functions/main.inc.php");
-
-function gewinn($E, $S, $G, $d, $praemie){
-
-// Das sollte irgendwo in ein template.. die funktion braucht man nochmal für die startseite!
-
-
-// E = Einsatz, S = Spieler, G = Gewinner, d = Dämpfung [1.5]
-   $sum = 0;
-   for ($i = 0; $i < $G; $i++){
-      $sum += pow($i,$d);  
-   }
-
-   $help = $E * ($S-$G)/$sum;
-   
-   
-   $abzug = 17 * $praemie;
-   
-   $max = $E * $S - $abzug;
-   
-   $help = ($max - $G*$E) / $sum;
-
-   for ($i = 1; $i <= $G; $i++){
-        $gewinn[$i] = round(pow(($G-$i),$d) * $help + $E -0.1, 0); //-0.1 damit 0.5 abgerundet wird. --> gewinn geht immer auf!
-        $prozent[$i] = round($gewinn[$i]/($max)*100,1);     
-      
-      //$prozent[$i] = (pow(($G-$i),$d) * $help_neu + 1/$S);
-      //$gewinn[$i] = round( $prozent[$i] * ($E*$S - $abzug) -0.1, 0);
-      //$prozent[$i] = round($prozent[$i], 1); 
-
-      //$gewinn[$i] = round(pow(($G-$i),$d) * $help + $E -0.1, 0); //-0.1 damit 0.5 abgerundet wird. --> gewinn geht immer auf!
-      //$prozent[$i] = round($gewinn[$i]/($E*$S)*100,1);
-   }
-
-  return array($gewinn,$prozent);
-}
+include_once("src/include/code/gewinn.inc.php");
 ?>
+
+
 
 <div class="container">
 <div class="alert alert-danger">
 <strong>Achtung:</strong> der Gewinn hängt davon ab, wie viele User mittippen. Damit kann sich die Verteilung noch ändern.</div>
 Der Gewinn für Platz x berechnet sich mittels: <br><br> 
-<img src="images/gewinn_neu.png" max-width = "200px"><br><br>
+<img src="images/gewinn_neu21.png" width = "300px"><br><br>
+
 
 
 <?php
 
-//$sql = "SELECT einsatz, anz_user,gewinner,daempfung FROM Saison WHERE jahr = '2017' AND runde = '1'";
 
-//foreach ($g_pdo->query($sql) as $row) {
+list($id,$id_part) = get_curr_wett();
 
-$sql = "SELECT einsatz, anteil_gewinner, daempfung, spieltagspraemie FROM Wettbewerbe WHERE id = $g_wett_id";
-foreach ($g_auth_pdo->query($sql) as $row) {
-    $E = $row['einsatz'];
-   //$S = $row['anz_user'];
-   $g = $row['anteil_gewinner'];
-   $d = $row['daempfung'];
-   $praemie = $row['spieltagspraemie'];
-}
+    if ((get_wettbewerb_code(get_curr_wett()) == "Buli") && ($id_part == 1)) {
+    // Wenn wir im Buli Modus und in der Rückrunde sind, müssen buttons für Hinrunde/Gesamt angezeigt werden.
+    
+    echo "
+        <button type=\"button\" class=\"btn btn-info\" onclick = \"gewinn_ausblenden(1)\" id=\"gewinn_button1\">Hinrunde</button>
 
-$S = anz_user();
-$G = round($S*$g); // Anzahl der Gewinner
+        <button type=\"button\" class=\"btn btn-info focus\" onclick = \"gewinn_ausblenden(2)\" id=\"gewinn_button2\">R&uuml;ckrunde</button>
 
+        <!--<button type=\"button\" class=\"btn btn-info\" onclick = \"gewinn_ausblenden(3)\" id=\"gewinn_button3\">Gesamt</button>-->
+        <br><br>";
+        
+        
+    echo "<div class=\"container\" id=\"gewinn1\" style=\"display: none;\">";     
+        print_gewinn(get_hinrunde(get_curr_wett()));
+   
+        echo "<br><br>Der Aktuelle Stand ist: ";
 
-list($gewinn,$prozent) =  gewinn($E,$S,$G,$d, $praemie);
+        print_gewinner(get_hinrunde(get_curr_wett()));
 
-$max = $E * $S  - 17 * $praemie;
-echo "
-wobei <br>
-E = Einsatz (=$E&#8364;)<br>
-G = Anzahl gewinnender Spieler (=$G)<br>
-S = Anzahl der Spieler (=$S)<br>
-max = Summe die ausgezahlt wird (E * S - 17 * $praemie&#8364; = $max&#8364;)
-";
+        print_gesamt_gewinner(get_hinrunde(get_curr_wett()));  
+    
+    echo "</div>";
 
-echo"
-<br><br>
-Damit ergibt sich bisher folgende Verteilung
+    echo "<div class=\"container\" id=\"gewinn2\" style=\"display: block;\">";     
+        print_gewinn(get_curr_wett());
+   
+        echo "<br><br>Der Aktuelle Stand ist: ";
 
-<table align = \"center\">
-<tr bgcolor=\"#B6B6B4\"><th>Platz</th><th>%</th><th> &euro; (gerundet) </th></tr>
+        print_gewinner(get_curr_wett());
 
-";
+        print_gesamt_gewinner(get_curr_wett());  
+    
+    echo "</div>";
+    } else {
+    
+        print_gewinn(get_curr_wett());
+   
+        echo "<br><br>Der Aktuelle Stand ist: ";
 
-for ($i = 1; $i <= $G; $i++){
-echo "
-<tr>
-<th> $i </th>
-<th>". $prozent[$i]."</th>
-<th>".$gewinn[$i]."</th>
-</tr>";
-}
+        print_gewinner(get_curr_wett());
 
-echo " </table>
-(Alle Angaben sind ohne Gew&auml;hr ;))";
+        print_gesamt_gewinner(get_curr_wett());
 
-
-
+    }
+    
 ?>
 </div>
 <br>
