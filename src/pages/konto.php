@@ -2,6 +2,14 @@
 <div class = "container">
 
 <?php
+if (!is_logged()){
+    echo "<div class=\"alert alert-danger\"><span class=\"badge badge-pill badge-danger\">Fehler!</span> Dieser Bereich steht nur für eingeloggte User zur Verfügung!</div>";
+    exit;
+}
+
+?>
+
+<?php
 require_once('src/include/code/konto.inc.php');
 
 

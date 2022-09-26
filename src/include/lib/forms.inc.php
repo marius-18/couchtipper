@@ -3,7 +3,7 @@
 
 function select_spieltag ($spieltag) { // ACHTUNG WM EDITION
 
-    if (get_wettbewerb_code(get_curr_wett()) == "Buli"){
+    if (get_wettbewerb_code(get_curr_wett()) == "BuLi"){
         $max_spieltage = 34;
     }
     else {

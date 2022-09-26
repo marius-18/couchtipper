@@ -1,9 +1,13 @@
 <?php
+echo "begin";
 
-
+### Für Spieltag und Tipps reminder
 require_once("../auth/include/bot.inc.php");
 require_once("src/include/code/get_games.inc.php");
 
+### Fürs Ergebnisse aus der DB holen (get_games wird auch benutzt)
+include_once("src/include/code/input_template.inc.php");
+include_once("src/include/code/refresh.php");
 
 ###########################################################
 ###########################################################
@@ -17,7 +21,6 @@ reminder_spieltag();
 
 ### Erinnert ans Tippen
 reminder_tipps();
-
 
 ### Schickt aktuelle Ergebnisse raus
 #notfiy_result();
@@ -34,7 +37,8 @@ reminder_tipps();
 ### Löscht Anfragen, die nach >2h nicht beantwortet wurden..
 delete_hello_id();
 
-### Ergebnisse aus der offenen DB holen? 
+### Ergebnisse aus der offenen DB holen 
+input_results();
 
 
 # define functions that will be called..
@@ -52,7 +56,7 @@ function reminder_spieltag(){
     
     ### Uhrzeit, wann über Spieltag informiert werden soll und wie groß das Fenster ist. 
     ### Uhrzeit kann natürlich auch aus Datenbank geholt werden...
-    $h   = 16;
+    $h   = 10;
     $min = 00;
     $fenster = 2 * 60;
     
@@ -134,7 +138,13 @@ function reminder_tipps(){
     
 }
 
-
+function input_results(){
+    ## aktuellen Spieltag herausfinden
+    #echo akt_spieltag();
+    if (spieltag_running()){
+        input_cronjob(akt_spieltag());
+    }
+}
 
 function notify_paid(){
     ### Schicke eine Nachricht, wenn der bezahlt Status geändert wird! :)

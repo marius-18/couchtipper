@@ -165,9 +165,48 @@ function input($spieltag, $modus, $admin, $admin_nr){
 
 }
 
+
+function input_cronjob($input_spt){
+    global $g_pdo;
+    $jahr = substr(get_wettbewerb_jahr(get_curr_wett()), 0, 4);
+    $modus = get_openliga_shortcut(get_curr_wett());
+    echo $jahr;
+    echo $modus;
+    
+    list($tore_heim, $tore_aus) = get_ergebnis($input_spt, $modus, $jahr);
+
+    foreach ($tore_heim as $input_nr => $value){
+        
+        $input_tore1 = $tore_heim[$input_nr];
+        $input_tore2 = $tore_aus[$input_nr];
+        if ((is_pos_int($input_tore1)) && (is_pos_int($input_tore2))){
+            // Prüfe ob Eingaben erlaubt sind (für tipps entweder berechtigung oder vorm spiel, für Ergebnisse berechtigung)
+            if ( !check_game_date($input_spt, $input_nr) ) {  
+                // Gibt nur Ergebnisse automatisch ein, wenn ich nichts eingegeben hatte (damit ich überschreiben kann)
+                $sql = "INSERT INTO Ergebnisse (spieltag, sp_nr, tore1, tore2, debug_user, debug_ip) 
+                        VALUES (:spieltag, :sp_nr, :tore1, :tore2, :user, :ip)
+                        ON DUPLICATE KEY UPDATE tore1 = IF (debug_user = 'Marius', tore1, :tore1), tore2 = IF (debug_user = 'Marius', tore2, :tore2), 
+                        debug_user = IF (debug_user = 'Marius', debug_user, :user), debug_ip = IF (debug_user = 'Marius', debug_ip, :ip), 
+                        debug_time = IF (debug_user = 'Marius', debug_time, :time)";
+
+                $statement = $g_pdo->prepare($sql);
+                $result = $statement->execute(array('spieltag' => $input_spt, 'sp_nr' => $input_nr, 'tore1' => $input_tore1, 
+                                                    'tore2' => $input_tore2, 'user' => 'BOT', 'ip' => '127.0.0.1', 'time' => date('Y-m-d H:i:s')));
+
+                if ($result == true) {
+                    $error_msg = "Die Ergebnisse wurden fehlerlos eingegeben.";
+                    update_tabelle($input_spt);
+                    //clear_rangliste();
+                    update_rangliste($input_spt);
+                }
+            }
  
-
-
+        } else {
+            $error = true;
+            $error_msg =  "Die Eingaben sind nicht korrekt. Bitte nur positive Zahlen <100 verwenden!";
+        }
+    }
+}
 
 
 ?>

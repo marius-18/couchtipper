@@ -9,7 +9,7 @@ require_once('src/include/code/rangliste.inc.php');
 
 list($id,$id_part) = get_curr_wett();
 
-if ((get_wettbewerb_code(get_curr_wett()) == "Buli") && ($id_part == 1)) {
+if ((get_wettbewerb_code(get_curr_wett()) == "BuLi") && ($id_part == 1)) {
     // Wenn wir im Buli Modus und in der Rückrunde sind, müssen buttons für Hinrunde/Gesamt angezeigt werden.
     
     echo "

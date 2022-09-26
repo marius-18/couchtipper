@@ -20,7 +20,7 @@
     <i class="fas fa-question-circle"></i> <b>Wie kann ich bezahlen?</b>
 </div>
 <div class="alert alert-success">
-    Entweder &uuml;ber Paypal (marius@ing-hagemann.de) oder direkt in Bar an mich <br>
+    Entweder &uuml;ber Paypal (<a href="https://PayPal.Me/couchtipper">PayPal.Me/couchtipper</a>) oder direkt in Bar an mich <br>
     (Bei Paypal &Uuml;berweisungen sollte nat&uuml;rlich erkennbar sein, f&uuml;r welchen Nutzer bezahlt wurde...) <i class="far fa-smile-wink"></i>
 </div>
 
@@ -29,7 +29,7 @@
 </div>
 <div class="alert alert-success">
     Der komplette Einsatz wird als Gewinn ausgeschüttet. Die Aufteilung, welcher Platz wie viel Gewinn bedeutet, findet ihr unter dem Punkt <a href="?index=10#main">"Gewinnverteilung"</a> im Menü.<br><br>
-    <span class="badge badge-danger badge-pill"> NEW!</span> <strong> Zusätzlich werden an jeden Spieltagssieger (derjenige, der am Wochenende die meisten Punkte erreicht hat) 5€ ausgezahlt!</strong>
+    <span class="badge badge-danger badge-pill"> NEW!</span> <strong> Zusätzlich werden an jeden Spieltagssieger (derjenige, der am Wochenende die meisten Punkte erreicht hat) 6€ ausgezahlt!</strong>
 </div>
 
 
@@ -39,7 +39,7 @@
 <div class="alert alert-success">
     Wenn mehrere Spieler am Ende die gleiche Anzahl an Punkten haben, werden die
     Gewinne der einzelnen Plätze addiert und durch die Anzahl an den punktgleichen Spielern geteilt.<br><br>
-    <span class="badge badge-danger badge-pill"> NEW!</span> <strong> Haben mehrere Spieler die meisten Punkte an einem Spieltag, werden die 5€ unter ihnen aufgeteilt.</strong>
+    <span class="badge badge-danger badge-pill"> NEW!</span> <strong> Haben mehrere Spieler die meisten Punkte an einem Spieltag, werden die 6€ unter ihnen aufgeteilt.</strong>
 </div>
 
 

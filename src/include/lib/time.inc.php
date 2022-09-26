@@ -152,6 +152,7 @@ function check_game_over($spieltag, $sp_nr) {
 }
 
 function akt_spieltag(){
+    #return 25;
     global $g_pdo;
     
     $sql = "Select max(spieltag) as spieltag FROM Datum where datum < (Select UNIX_TIMESTAMP(CURRENT_TIMESTAMP))";
@@ -243,7 +244,7 @@ function spt_select(){
         return akt_spieltag();
     }
     
-    //return 3;
+    #return 3;
     $ende = 1;
     $spt = 0;
 

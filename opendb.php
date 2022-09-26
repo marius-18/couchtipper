@@ -1,7 +1,7 @@
  
 <?php
 $matchCount = 34;
-$current = 1;
+$current = 2;
 $error = false;
 
 if (!empty($_GET["spieltag"])) {
@@ -13,7 +13,7 @@ if (!empty($_GET["spieltag"])) {
 }
 
 $ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, "https://www.openligadb.de/api/getmatchdata/bl1/2021/" . (string)$current);
+curl_setopt($ch, CURLOPT_URL, "https://www.openligadb.de/api/getmatchdata/bl1/2022/" . (string)$current);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
 $output = curl_exec($ch);

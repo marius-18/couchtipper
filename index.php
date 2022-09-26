@@ -4,9 +4,20 @@ session_start();
 require_once("../auth/include/security.inc.php");
 is_logged();
 
+
 ## if subdomain == ?? do..
-$g_modus = "Buli";
-$global_wett_id = "4";
+$g_modus = "BuLi";
+$global_wett_id = "5";
+
+
+if ($_GET["year"] != ""){
+    $_SESSION['year'] = $_GET["year"];
+}
+
+if ( ($_SESSION['year'] != "") && is_numeric($_SESSION['year']) ){
+    $g_modus = "BuLi";
+    $global_wett_id = $_SESSION['year'];
+}
 
 ### Bindet alle Wettbewerbs Sachen ein
 ### Muss zuerst stehen, da sonst nicht auf Datenbank o.Ä. zugegriffen werden kann. 
@@ -27,9 +38,10 @@ require_once("../auth/include/check_in.inc.php");
 
 $index = $_GET["index"];
 if ($index == "api"){
-    include_once("api.php");
+    include_once("src/include/api.php");
     exit;
 }
+
 
 
 // Wettbewerb check in
@@ -203,7 +215,34 @@ check_in_modal();
 
 }
 
+@media (min-width: 544px) {  
+  h1 {font-size:1.5rem;} /*1rem = 16px*/
+}
+ 
+/* Medium devices (tablets, 768px and up) The navbar toggle appears at this breakpoint */
+@media (min-width: 768px) {  
+  h1 {font-size:2rem;} /*1rem = 16px*/
+}
+ 
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) { 
+  h1 {font-size:2.5rem;} /*1rem = 16px*/
+}
+ 
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {  
+  h1 {font-size:3rem;} /*1rem = 16px*/    
+}
+
   </style>
+  
+<script>
+$(document).ready(function(){
+  $('[data-toggle="tooltip"]').tooltip();
+});
+</script>
+
+
 </head>
 
 
@@ -229,12 +268,31 @@ MENÜ
         </a>
         
 
+
         <!-- Menü Knopf (verschwindet)                  -->
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
             <span class="navbar-toggler-icon"></span>
         </button>
   
         <div class="collapse navbar-collapse" id="collapsibleNavbar">
+            <ul class="nav navbar-nav navbar-left">
+                <span class="navbar-text">
+                    <div class="dropdown">
+                        <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
+                            <?php echo get_wettbewerb_code(get_curr_wett()). " " .get_wettbewerb_jahr(get_curr_wett());?>
+                        </button>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">Aktuell</div>
+                            <a class="dropdown-item" href="?year=5" style="color:black">BuLi 2022/23</a>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-header">Vergangene</div>
+                            <a class="dropdown-item" href="?year=4" style="color:black">BuLi 2021/22</a>
+                            <a class="dropdown-item" href="?year=2" style="color:black">BuLi 2020/21</a>
+                        </div>
+                    </div>
+                </span>
+            </ul>
+            
             <ul class="nav navbar-nav navbar-left">
                 <li class="nav-item">
                     <a class="nav-link" href="?index=1#main">Bundesliga-Tabelle</a>
@@ -260,9 +318,20 @@ MENÜ
                 </li>";
                 }
                 ?>
-                <li class="nav-item">
-                    <a class="nav-link" href="?index=12#main">Tagessieger</a>
-                </li>
+                <?php if (is_logged()) { echo "
+                <li class=\"nav-item\">
+                    <a class=\"nav-link\" href=\"?index=12#main\">Tagessieger</a>
+                </li>";
+                }
+                ?>
+                
+                <?php if (is_logged()){ echo "
+                <li class=\"nav-item\">
+                    <a class=\"nav-link\" href=\"?index=10#main\">Gewinnverteilung</a>
+                </li>";
+                }
+                ?>   
+                
                 <?php if (is_logged()){ echo "
                 <li class=\"nav-item\">
                     <a class=\"nav-link\" href=\"?index=7#main\">Mein Konto</a>
@@ -287,22 +356,17 @@ MENÜ
                 </li>";
                 }
                 ?> 
-                 
-                <?php if (is_logged()){ echo "
-                <li class=\"nav-item\">
-                    <a class=\"nav-link\" href=\"?index=10#main\">Gewinnverteilung</a>
-                </li>";
-                }
-                ?>                              
+                                            
                 <li class="nav-item">
                     <a class="nav-link" href="?index=11#main">FAQ</a>
                 </li>
                 
             </ul>
-            <ul class="nav navbar-nav ml-auto"> 
+            
+            <ul class="nav navbar-nav ml-auto">              
+            
                 <?php
                     if (!is_logged()){
-                    //if (true){
                         echo "
                             <a class=\"btn btn-secondary\" href=\"auth/login.php\">Anmelden</a>";      
                     } else {
@@ -310,6 +374,7 @@ MENÜ
                             <a class=\"btn btn-secondary\" href=\"auth/logout.php\">Logout</a>";      
                     }
                 ?>
+                
             </ul>
         </div>  
     </nav>
@@ -340,7 +405,6 @@ MENÜ
 </div>
 </div>
 
-<!--<?php echo getcwd() . "\n";?>-->
 
 <!--
 ####################################################################################
@@ -364,7 +428,7 @@ MENÜ
                     include_once("src/pages/rangliste.php");
                 }
 
-                 if ($index == 5){
+                 if (($index == 5) || ($index == 2)){
                     echo "<h2>Bundesliga-Tabelle:</h2>";
                     include_once("src/pages/tabelle.php");
 
@@ -467,7 +531,10 @@ MENÜ
 
 
 
+
+
 <div class="jumbotron text-center grey" style="margin-bottom:0">
+    <br>
     <p>&copy; couchtipper.de v4.2</p>
 </div>
 

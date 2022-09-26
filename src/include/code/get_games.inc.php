@@ -17,7 +17,7 @@ function get_games ($spieltag, $modus, $change, $user_nr) {
     $real_spieltag = $spieltag;
     $add = "0";
 
-    if (($spieltag > 17) && (get_wettbewerb_code(get_curr_wett()) == "Buli")){
+    if (($spieltag > 17) && (get_wettbewerb_code(get_curr_wett()) == "BuLi")){
         $teil1 = "2";
         $teil2 = "1";
         $spieltag = $spieltag - 17;
@@ -154,12 +154,57 @@ function get_open_db_spieltag($modus, $jahr, $spieltag){
 }
 
 
+function get_ergebnis($spieltag,$modus, $jahr){
+    global $g_pdo;
+    // DB Abfrage je nach modus.. Hier bisher nur buli!
+    $matches = get_open_db_spieltag($modus, $jahr, $spieltag);
+
+    if ($spieltag <= 17) {
+        $heim = "Heim";
+        $aus = "Aus";
+    } else {
+        $heim = "Aus";
+        $aus = "Heim";
+        $spieltag = $spieltag - 17;
+    }
+    $sql = "SELECT team1, team2, TeamHeim.open_db_name as $heim, TeamAus.open_db_name as $aus, sp_nr
+            FROM `Spieltage`, Teams as TeamHeim, Teams as TeamAus 
+            WHERE (spieltag = $spieltag) and (team1 = TeamHeim.team_nr) and (team2 = TeamAus.team_nr)";
+    foreach ($g_pdo->query($sql) as $row) {
+        $team1 = $row['Heim'];
+        $team2 = $row['Aus'];
+        $sp_nr = $row['sp_nr'];
+        
+        foreach ($matches as $match) {
+        
+            if (!strnatcmp($match["Team1"]["TeamName"], $team1) and !strcmp($match["Team2"]["TeamName"], $team2)) {
+                // Das ist das aktuelle Spiel!
+                $tore_heim[$sp_nr] = $match["MatchResults"][0]["PointsTeam1"];
+                $tore_aus[$sp_nr]  = $match["MatchResults"][0]["PointsTeam2"];
+        
+                echo "Spiel $sp_nr ";
+                echo "$team1 ".$match["MatchResults"][0]["PointsTeam1"]." - ".$match["MatchResults"][0]["PointsTeam2"]." $team2";
+                
+                print_r($match["MatchResults"][0]["PointsTeam1"]);
+                print_r($match["MatchResults"][0]["PointsTeam2"]);
+                echo "<br>";
+
+            }
+        }
+        
+    }
+    
+    return array($tore_heim, $tore_aus);
+}
+
 
 function get_tore($spieltag, $sp_nr,$modus){
     global $g_pdo;
     #return 0;
     // DB Abfrage je nach modus.. Hier bisher nur buli!
-    $matches = get_open_db_spieltag("bl1", "2021", $spieltag);
+    $jahr = substr(get_wettbewerb_jahr(get_curr_wett()), 0, 4);
+    #echo "$jahr ";
+    $matches = get_open_db_spieltag("bl1", $jahr, $spieltag);
 
     if ($spieltag <= 17) {
         $heim = "Heim";
@@ -186,14 +231,16 @@ function get_tore($spieltag, $sp_nr,$modus){
             $t1 = 0;
             $t2 = 0;
             foreach ($match["Goals"] as $goal){
+                $zusatz = "";
                 if ($goal["ScoreTeam1"] >  $t1) {
                     $ret .= "<tr class=\"table-info\">";
                 }
-                if ($goal["ScoreTeam2"] >  $t2) {
+                else if ($goal["ScoreTeam2"] >  $t2) {
                     $ret .= "<tr class=\"table-primary\">";
-                }               
+                } else {
+                    $zusatz = "(VAR)";
+                }
                 
-                $zusatz = "";
                 if ($goal["IsPenalty"]){
                     $zusatz = "(11m)";
                 }

@@ -24,7 +24,7 @@ $teil1 = "1";
 $teil2 = "2";
 $real_spieltag = $spieltag;
 
-if (($spieltag > 17) && (get_wettbewerb_code(get_curr_wett()) == "Buli") ){
+if (($spieltag > 17) && (get_wettbewerb_code(get_curr_wett()) == "BuLi") ){
     $teil1 = "2";
     $teil2 = "1";
     $spieltag = $spieltag - 17;
@@ -278,7 +278,7 @@ function spiele_term($main_datum, $sp_nr, $time){
    if (get_wettbewerb_code(get_curr_wett()) == "EM"){
       em_spiele_term($main_datum, $sp_nr, $time);
    }
-   if (get_wettbewerb_code(get_curr_wett()) == "Buli"){
+   if (get_wettbewerb_code(get_curr_wett()) == "BuLi"){
       buli_spiele_term($main_datum, $sp_nr, $time);
    }
 }

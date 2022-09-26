@@ -2,9 +2,15 @@
 include_once("src/include/code/gewinn.inc.php");
 ?>
 
-
-
 <div class="container">
+
+<?php
+if (!is_logged()){
+    echo "<div class=\"alert alert-danger\"><span class=\"badge badge-pill badge-danger\">Fehler!</span> Dieser Bereich steht nur für eingeloggte User zur Verfügung!</div>";
+    exit;
+}
+?>
+
 <div class="alert alert-danger">
 <strong>Achtung:</strong> der Gewinn hängt davon ab, wie viele User mittippen. Damit kann sich die Verteilung noch ändern.</div>
 Der Gewinn für Platz x berechnet sich mittels: <br><br> 
@@ -17,7 +23,7 @@ Der Gewinn für Platz x berechnet sich mittels: <br><br>
 
 list($id,$id_part) = get_curr_wett();
 
-    if ((get_wettbewerb_code(get_curr_wett()) == "Buli") && ($id_part == 1)) {
+    if ((get_wettbewerb_code(get_curr_wett()) == "BuLi") && ($id_part == 1)) {
     // Wenn wir im Buli Modus und in der Rückrunde sind, müssen buttons für Hinrunde/Gesamt angezeigt werden.
     
     echo "

@@ -4,7 +4,6 @@
 function update_tabelle($spieltag) {
     global $g_pdo;
     global $g_modus;
-
     if (($g_modus == "WM") || ($g_modus == "EM")){
         $max_group_spt = 13;
         if ($spieltag > $max_group_spt) {

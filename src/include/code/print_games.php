@@ -15,7 +15,7 @@
 
 function print_games($args, $modus, $change){
 
-    if (get_wettbewerb_code(get_curr_wett()) == "Buli"){
+    if (get_wettbewerb_code(get_curr_wett()) == "BuLi"){
         $endung = "gif";
     } else {
         $endung = "png";

@@ -21,8 +21,6 @@ function rangliste ($begin, $ende, $gruppe){
         $tendenz[$user_nr] = $row['t'];
         $differenz[$user_nr] = $row['d'];
         $user[$user_nr] = $user_nr;
-        #$user_name[$user_nr] = $row['vorname']. " " .$row['nachname'];
-        //$user_name[$user_nr] = $row['user_nr']; // Hier etwas pfusch.. da wird nur die Nummer übergeben
         $akt_punkte[$user_nr] = 0;
         $letzte_punkte[$user_nr] = 0;
         $spieltagssieger[$user_nr] = 0;
@@ -54,6 +52,7 @@ function rangliste ($begin, $ende, $gruppe){
             $akt_punkte [$user_nr] = $row['punkte'];
         }
         
+        // Achtung! DAS nur bei BULI oder ?!
         if ($akt_spieltag != 18){ // Neu hinzugefügt!
             $sql = "SELECT punkte, user_nr FROM `Rangliste` WHERE spieltag = $letzter_spieltag"; 
 
@@ -110,7 +109,7 @@ function print_rangliste($begin, $ende, $modus){
     list($punkte1, $spiele1, $akt_punkte1, $schnitt1, $letzte_punkte1, $user1, $platz_alt, $spieltagssieger, $spieltagssieger_last) = rangliste($begin, $ende-1, $modus);
     list($punkte, $spiele, $akt_punkte, $schnitt, $letzte_punkte, $user, $platz, $spieltagssieger, $spieltagssieger_last) = rangliste($begin, $ende, $modus);
 
-    echo "
+    echo "<div class=\"container\">
     <div class=\"table-responsive\">
         <table class=\"table table-sm table-striped  table-hover text-center center text-nowrap\" align=\"center\">
         <tr class=\"thead-dark\"><th>Pl</th><th>Spieler</th><th>&#931</th><th class=\"d-none d-sm-table-cell\">Spt.</th><th>&#216;</th>";
@@ -158,7 +157,7 @@ function print_rangliste($begin, $ende, $modus){
             </tr>";
    }
    
-   echo "</table></div>";
+   echo "</table></div></div>";
 }
 
 
