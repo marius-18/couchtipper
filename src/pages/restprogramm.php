@@ -36,7 +36,7 @@ require_once('src/include/lib/forms.inc.php');
 
     $spieltag_select = spt_select();
 
-    list($spieltag, $team_nr1, $team_nr2, $team_name, $datum, $tore1, $tore2) = programm($team,1,34);
+    list($spieltag, $team_nr1, $team_nr2, $team_name, $datum, $zeitraum, $tore1, $tore2) = programm($team,1,34);
 
     if ($spieltag_select > 1){
         // Am ersten Spieltag gibt es keine vorherigen Spiele..
@@ -55,13 +55,13 @@ require_once('src/include/lib/forms.inc.php');
         echo "<tr class=\"table-active\" $notvisible> <td colspan = \"4\"><span style = \" font-size:150%\"><b><span id=\"modus\">$modus</span></b></span></td></tr>";
         
             // vorherige Spiele
-            print_programm ($spieltag, $team_nr1, $team_nr2, $team_name, $datum, $tore1, $tore2, 1, $spieltag_select-1,1025, False);
+            print_programm ($spieltag, $team_nr1, $team_nr2, $team_name, $datum, $zeitraum, $tore1, $tore2, 1, $spieltag_select-1,1025, False);
             
             // nächste Spiele
-            print_programm ($spieltag, $team_nr1, $team_nr2, $team_name, $datum, $tore1, $tore2, $spieltag_select, $spieltag_select+$vorschau, "aktuell", True);
+            print_programm ($spieltag, $team_nr1, $team_nr2, $team_name, $datum, $zeitraum, $tore1, $tore2, $spieltag_select, $spieltag_select+$vorschau, "aktuell", True);
 
             //Spiele danach
-            print_programm ($spieltag, $team_nr1, $team_nr2, $team_name, $datum, $tore1, $tore2, $spieltag_select + $vorschau + 1,  34, 1026, False); //34 = max spiele
+            print_programm ($spieltag, $team_nr1, $team_nr2, $team_name, $datum, $zeitraum, $tore1, $tore2, $spieltag_select + $vorschau + 1,  34, 1026, False); //34 = max spiele
         
         echo "</table></div>";
         

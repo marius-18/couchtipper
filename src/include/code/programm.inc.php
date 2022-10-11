@@ -67,14 +67,16 @@ function programm($team_nr, $start, $ende) {
         $tore1[$spieltag] = $row['tore1'];
         $tore2[$spieltag] = $row['tore2'];
     }
+    
+    $zeitraum = get_zeitraum_of_all_spt();
 
 
-    return array($spieltag, $team_nr1, $team_nr2, $team_name, $datum, $tore1, $tore2);
+    return array($spieltag, $team_nr1, $team_nr2, $team_name, $datum, $zeitraum, $tore1, $tore2);
 }
 
 
 
-function print_programm($spieltag, $team_nr1, $team_nr2, $team_name, $datum, $tore1, $tore2, $start, $ende, $id, $status){
+function print_programm($spieltag, $team_nr1, $team_nr2, $team_name, $datum, $zeitraum, $tore1, $tore2, $start, $ende, $id, $status){
 
     if (!$status){
         $visible = "style=\"display:none\"";
@@ -112,7 +114,8 @@ function print_programm($spieltag, $team_nr1, $team_nr2, $team_name, $datum, $to
         if ($datum[$spt] != 0) {
             $spielzeit = stamp_to_date_programm($datum[$spt]);
         } else { 
-            $spielzeit = "&nbsp;";
+            // Der Spieltag ist noch nicht genau Terminiert. Also wird hier das Wochenende (bzw. englische Woche angezeigt)
+            $spielzeit = "<i>".print_interval_not_scheduled("program",$zeitraum[$spt][0], $zeitraum[$spt][1])."</i>";
         }
         
         

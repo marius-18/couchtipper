@@ -22,6 +22,7 @@ function print_games($args, $modus, $change){
     }
     list ($datum, $team_heim, $team_aus, $tore_heim, $tore_aus, $team_heim_nr, 
             $team_aus_nr, $real_sp_nr, $real_spieltag, $anz_spiele) = $args;
+    $zeitraum = get_zeitraum_of_all_spt();
 
     $zufall = 100 + $anz_spiele -1 ;
   // das muss ausgelagert werden
@@ -38,9 +39,12 @@ function print_games($args, $modus, $change){
       }
     }
     </script>";
-
+    
+    
         if ($datum[0] == 0) {
-            $tipp_error_msg = "Dieser Spieltag ist noch <strong>nicht</strong> terminiert worden.";
+            $tipp_error_msg = "Dieser Spieltag ist noch <strong>nicht</strong> terminiert worden. <br>Er findet im folgenden Zeitraum statt:<br>";
+            $tipp_error_msg .= "<strong>".print_interval_not_scheduled("games",$zeitraum[$real_spieltag][0], $zeitraum[$real_spieltag][1])."</strong>";
+
             
             if ($modus == "Tipps") {
                 $tipp_error_msg .= "<br>Du kannst deshalb noch <strong>nicht</strong> tippen!</p>";

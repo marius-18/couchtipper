@@ -60,6 +60,64 @@ function stamp_to_date_programm($timestamp){
 
 }
 
+function get_zeitraum_of_all_spt(){
+    global $g_pdo;
+
+    // Falls noch nicht genau terminiert --> Zeitraum angeben
+    $sql = "SELECT datum, spieltag FROM `Datum`";
+
+    foreach ($g_pdo->query($sql) as $row) {
+        $spieltag = $row['spieltag'];
+        $from = $row['datum'];
+        
+        if (date("w", $from) == 5){
+            // Freitag -- dann gebe Freitag - Sonntag aus
+            $to = $from+2*24*60*60;
+        }
+        
+        if ((date("w", $from) == 6) || (date("w", $from) == 2)){
+            // Samstag -- dann gebe Samstag - Sonntag aus  --oder--
+            // Dienstag -- dann gebe Dienstag - Mittwoch aus
+            $to = $from+1*24*60*60;
+        }        
+        
+        $zeitraum[$spieltag] = array($from, $to);
+    }
+    return $zeitraum;
+}
+
+function print_interval_not_scheduled($mode, $timestamp_start, $timestamp_end){
+    
+    if (($timestamp_start == 0)||($timestamp_end == 0)) {
+        return "";
+    }
+    
+    if ($mode == "program"){
+        $tage = array("So","Mo","Di","Mi","Do","Fr","Sa");
+        $style = "d.m";
+        $split = " - ";
+    }
+    
+    if ($mode == "games"){
+        $tage = array("Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag");
+        $style = "d.m.y";
+        $split = " bis ";
+    }
+    
+    $datum1 = date($style, $timestamp_start);
+    $datum2 = date($style, $timestamp_end);
+    
+    $tag1 = date("w", $timestamp_start);
+    $tag2 = date("w", $timestamp_end);
+
+    $wochentag1 = $tage[$tag1];
+    $wochentag2 = $tage[$tag2];
+
+    return $wochentag1.", ".$datum1. $split .$wochentag2.", ".$datum2;
+
+}
+
+
 
 function stamp_to_date_gruppe($timestamp){
     
