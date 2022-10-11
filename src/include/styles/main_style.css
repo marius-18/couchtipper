@@ -1,0 +1,151 @@
+
+  .stockerl {
+    width: 30%;
+    display:inline-block;
+    text-align:center;
+    vertical-align:bottom;
+    #writing-mode:vertical-lr;
+    #text-orientation:upright;
+    #word-break: break-word;
+    #hyphens: auto;
+    -moz-hyphens: auto;
+    -o-hyphens: auto;
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+    hyphens: auto;
+    }
+    
+  .tablestockerl{
+    width: 33%;
+    height: 50px;
+  }
+    .platz1 {
+    background: #C98910;
+    font-size:calc(90% + 1vw + 1vh);
+    -moz-hyphens: auto;
+    -o-hyphens: auto;
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+    hyphens: auto;
+    }
+    
+     .platz2 {
+    background: #A8A8A8;
+    font-size:calc(50% + 1vw + 1vh);
+    -moz-hyphens: auto;
+    -o-hyphens: auto;
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+    hyphens: auto;
+    }  
+    
+    .platz3 {
+    background: #965A38;
+    font-size:calc(50% + 1vw + 1vh);
+    height: 200px;
+    -moz-hyphens: auto;
+    -o-hyphens: auto;
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+    hyphens: auto;
+    }    
+    
+  .pl1 {
+    background: #C98910;
+    height: 350px;
+    #font-size:calc(70% + 1vw + 1vh);
+    font-size:2vmin;
+    }
+    
+  .pl2 {
+    height: 300px;
+    #font-size:calc(50% + 1vw + 1vh);
+    background: #A8A8A8;
+    font-size:2vmin;
+
+    }
+    
+  .pl3 {
+    background: #965A38;
+    height: 250px;
+    #font-size:calc(50% + 1vw + 1vh);
+    font-size:2vmin;
+    }
+    
+  .yellow {
+    background: darkred;
+  }
+  .grey {
+    //background: #CCCCCc;
+    background: #ae4951;
+    background: #0081AF;
+  }
+  .dkgrey {
+    background: #999999;
+  }
+  
+  
+  .hintergrund{
+   background-color: #4d4b46;
+   scroll-margin-top: 108px;
+
+}
+
+.fenster{
+   background-color: lightgray;
+}
+
+.main{
+   padding-right: 0%;
+   padding-left: 0%;
+
+}
+
+.modal {
+  padding: 0 !important; // override inline padding-right added from js
+    vertical-align: middle;
+
+}
+.modal .modal-dialog {
+  width: 90%;
+  max-width: none;
+  height: 100%;
+  margin: auto;
+  vertical-align: middle;
+  align: middle;
+    display: flex;
+  align-items: center;
+}
+.modal .modal-content {
+  height: 90%;
+  border: 0;
+  border-radius: 0;
+    vertical-align: middle;
+
+}
+.modal .modal-body {
+  overflow-y: auto;
+    vertical-align: middle;
+
+}
+
+@media (min-width: 544px) {  
+  h1 {font-size:1.5rem;} /*1rem = 16px*/
+}
+ 
+/* Medium devices (tablets, 768px and up) The navbar toggle appears at this breakpoint */
+@media (min-width: 768px) {  
+  h1 {font-size:2rem;} /*1rem = 16px*/
+}
+ 
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) { 
+  h1 {font-size:2.5rem;} /*1rem = 16px*/
+}
+ 
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {  
+  h1 {font-size:3rem;} /*1rem = 16px*/    
+}
+
+  
