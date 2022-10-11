@@ -1,5 +1,5 @@
 <?php
-
+### Hier kann man noch etwas mehr einfügen... nochmal durch alles andere durchgehen und suchen
 function get_team_name($team){
     global $g_pdo;
     

@@ -189,7 +189,6 @@ if (get_fav_team() != ""){
     echo "<div class=\"alert alert-danger\"><strong>Achtung!</strong> Du hast noch kein Lieblingsteam ausgew&auml;hlt. Die Funktion steht dir deshalb noch nicht zur Verf&uuml;gung.
     Weiter oben kannst du ein Lieblingsteam ausw&auml;hlen!</div>";
 }
-    #set_fav_team(11);
 
 
 
