@@ -151,6 +151,18 @@ echo "<br><br>";
 
 echo "<hr>";
 
+echo "<div style=\"text-align:left\"><font size =\"+2\"><u>Lieblingsteam auswählen</u></font></div><br>";
+
+echo "<div class=\"alert alert-info\"> Hier kannst du ein Lieblingsteam auswählen. Das hat z.B. Auswirkungen darauf, welches Team unter <a href=\"?index=3\">\"Restprogramm\"</a> zuerst erscheint.
+<br>Weiter unten kannst du dir den Spielplan deines Lieblingsteams in deinen Kalender importieren</div>";
+
+  $my_team = select_team();
+  set_fav_team($my_team);
+  
+echo "<br><br>";
+
+echo "<hr>";
+
 echo "<div style=\"text-align:left\"><font size =\"+2\"><u>Verbundene Ger&auml;te</u></font></div><br>";
 include_once("src/newbot.php");
 
@@ -161,6 +173,24 @@ echo "<hr>";
 echo "<div style=\"text-align:left\"><font size =\"+2\"><u>Sitzungen</u></font></div><br>";
 
 sitzungen();
+
+echo "<hr>";
+
+echo "<div style=\"text-align:left\"><font size =\"+2\"><u>Kalender exportieren</u></font></div><br>";
+
+if (get_fav_team() != ""){
+    echo "<div class=\"alert alert-info\"> Wenn du keine Spiele deiner Lieblingsmannschaft <strong>".get_team_open_db_name(get_fav_team())."</strong> mehr verpassen willst,
+    kannst du dir durch einen Klick auf den Button, den Kalender mit allen Spielen auf dein Gerät exportieren!
+    </div>    
+    <button type=\"button\" class=\"btn btn-info\" onclick=\"window.location.href='webcal://couchtipper.de?index=cal&team=$my_team'\">Kalender exportieren!</button>
+    ";
+    
+} else {
+    echo "<div class=\"alert alert-danger\"><strong>Achtung!</strong> Du hast noch kein Lieblingsteam ausgew&auml;hlt. Die Funktion steht dir deshalb noch nicht zur Verf&uuml;gung.
+    Weiter oben kannst du ein Lieblingsteam ausw&auml;hlen!</div>";
+}
+    #set_fav_team(11);
+
 
 
 

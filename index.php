@@ -29,6 +29,12 @@ require_once("src/include/lib/datenbank.inc.php");
 ### Library für alle möglichen Zeit-Berechnungen
 require_once("src/include/lib/time.inc.php");
 
+### Library für alle möglichen Datenbankabfragen
+require_once("src/include/lib/queries.inc.php");
+
+### Library für alle möglichen Eingabeforms
+require_once("src/include/lib/forms.inc.php");
+
 ### Bindet die Befugnisse ein. Wer darf was ?
 require_once("../auth/include/permissions.inc.php");
 
@@ -36,13 +42,17 @@ require_once("../auth/include/permissions.inc.php");
 require_once("../auth/include/check_in.inc.php");
 
 
+
 $index = $_GET["index"];
 if ($index == "api"){
-    include_once("src/include/api.php");
+    include_once("src/api/crontab.php");
     exit;
 }
 
-
+if ($index == "cal"){
+    include_once("src/api/calendar.php");
+    exit;
+}
 
 // Wettbewerb check in
 check_in_modal();

@@ -60,6 +60,17 @@ function stamp_to_date_programm($timestamp){
 
 }
 
+function stamp_to_cal($timestamp){
+    
+    if ($timestamp == 0) {
+        return "";
+    }
+
+    $datum = date("Ymd\THi00", $timestamp);
+
+    return $datum;
+}
+
 function get_zeitraum_of_all_spt(){
     global $g_pdo;
 

@@ -117,11 +117,16 @@ function select_team(){
 
     $my_team = $_POST['team'];
     if ($my_team == ""){
-        $my_team = 12; #my_team(); // get_my favorite
+        $my_team = get_fav_team(); #my_team(); // get_my favorite
     }
     
-    echo"<form method=\"post\"><select name=\"team\" class=\"form-control\" onchange=\"this.form.submit()\">";
-
+    echo "<form method=\"post\"><select name=\"team\" class=\"form-control\" onchange=\"this.form.submit()\">";
+    
+    if ($my_team == ""){
+        // Falls noch kein Lieblingsteam gewählt wurde
+        echo "<option value=\"0\" $selected>W&auml;hle ein Team aus!</option>";
+    }
+    
     $sql = " SELECT team_nr, team_name FROM `Teams` WHERE 1 ORDER BY team_name ASC";
     foreach ($g_pdo->query($sql) as $row) {
         $team_nr    = $row['team_nr'];
