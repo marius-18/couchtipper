@@ -145,7 +145,7 @@ echo "<table border=\"1\" align=\"center\">
 
 
 for ($i=1; $i<count($spieltag_times)+1; $i++){
-    $date = date("d.m. H:i",$spieltag_times[$i]);
+    $date = date("d.m.y",$spieltag_times[$i]); ## H:i
     $wochentag=$wochentage[date("w",$spieltag_times[$i])];
 
     echo "

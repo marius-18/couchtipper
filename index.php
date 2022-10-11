@@ -332,10 +332,10 @@ MENÜ
                         include_once("src/pages/konto.php");
                         break;
                     case 8:
-                        echo "<h2>Datum eingeben</h2>";
-                        include_once("src/set_date.php");
                         echo "<h2>Spiele terminieren</h2>";
                         include_once("src/spiele_term.php");
+                        echo "<h2>Datum eingeben</h2>";
+                        include_once("src/set_date.php");
                         break;
                     case 9:
                         echo "<h2>Verwaltung</h2>";
