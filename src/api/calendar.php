@@ -31,7 +31,7 @@ function create_team_events($team){
         }
         
         $uid = $spt."".$datum[$spt]."@couchtipper_cal";
-        $notes = "Automatisch erstellt von couchtipper.de"; 
+        $notes = $spt .". Spieltag Bundesliga Saison 2022/23. Automatisch erstellt von couchtipper.de"; 
     
     
         $title = html_entity_decode($title, ENT_COMPAT, 'UTF-8');
