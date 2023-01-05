@@ -41,7 +41,11 @@ $sql = "SELECT sum(tore) as tore, sum(gegentore) as gegentore, sum(punkte) as pu
   }
 
 
-
+if (!is_array($punkte)){ 
+  ## Falls die Rückrunde noch nicht gestartet ist, sind die arrays nicht vorhanden..
+  ## Deshalb Abbruch, damit array_multisort nicht fehlschlägt
+  return;
+}
 
 array_multisort($punkte, SORT_DESC, $diff, SORT_DESC, $tore, SORT_DESC, $gegentore, SORT_ASC, $team_name, $niederlage, $sieg, $unentschieden);
 
@@ -146,6 +150,12 @@ function print_tabelle($args, $id, $show){
 list($punkte, $tore, $gegentore, $diff, $team_name, $sieg, $unentschieden, $niederlage, $modus) = $args;
 
 echo "<div class=\"container\" id=\"$id\" style=\"display: $show;\">";
+
+if (!isset($punkte)){
+  echo "<b>Die Tabelle ist noch nicht vorhanden</b></div>";
+  return;
+}
+
 if ($modus == "Heim") {
   echo "<b>Heimtabelle</b>";
 }

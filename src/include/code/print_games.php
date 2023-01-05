@@ -129,21 +129,24 @@ function print_games($args, $modus, $change){
 
             list ($user_nr, $user_name, $tipp, $vorname, $nachname, $punkte) = get_other_tipps($real_spieltag, $real_sp_nr[$i],$modus);
 
-            foreach ($user_nr as $nr){
-                if ($nr == get_usernr()){
-                    $active = "class = \"table-success\"";
-                } else{
-                    $active = "";
-                }
+            if (isset($user_nr)){
+                ## Wenn der Spieltag noch nicht begonnen hat, werden die Tipps noch nicht angezeigt (dann Fehler in foreach)
+                foreach ($user_nr as $nr){
+                    if ($nr == get_usernr()){
+                        $active = "class = \"table-success\"";
+                    } else{
+                        $active = "";
+                    }
                 
-                echo "<tr $active>
-                <td align=\"right\" width=\"33%\">".$user_name[$nr]." ". $nachname[$nr][-1] ."</td>
-                <td align=\"center\" width=\"33%\">".$tipp[$nr]."</td>
-                <td width=\"33%\"><span class=\"badge badge-pill badge-success\">".$punkte[$nr]."</span></td>
-                </tr>
-                        ";
+                    echo "<tr $active>
+                    <td align=\"right\" width=\"33%\">".$user_name[$nr]." ". $nachname[$nr][-1] ."</td>
+                    <td align=\"center\" width=\"33%\">".$tipp[$nr]."</td>
+                    <td width=\"33%\"><span class=\"badge badge-pill badge-success\">".$punkte[$nr]."</span></td>
+                    </tr>
+                            ";
+                }
             }
-
+            
             echo "</table></td>";
             echo "</tr>";
 

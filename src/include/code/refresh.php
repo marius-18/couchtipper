@@ -174,6 +174,11 @@ function update_rangliste($spieltag) {
         #echo $punkte[$user_nr];
         #echo "--<br>";
     }
+    
+    if (!isset($user_nr)){
+        ## Datenbank gibt nichts zurück. Es gibt also noch kein Ergebnis, es muss also nichts geupdatet werden.. Daher Abbruch
+        return;
+    }
 
     foreach ($user as $user_nr) {
 
@@ -182,8 +187,7 @@ function update_rangliste($spieltag) {
                 ON DUPLICATE KEY UPDATE richtig = :richtig, tendenz= :tendenz, differenz = :differenz, punkte = :punkte";
 
         $statement = $g_pdo->prepare($sql2);
-        $result = $statement->execute(array('user' => $user_nr, 'spieltag' => $spieltag, 'richtig' => $richtig[$user_nr], 'differenz' => $differenz[$user_nr], 
-                                            'tendenz' => $tendenz[$user_nr], 'punkte' => $punkte[$user_nr]));
+        $result = $statement->execute(array('user' => $user_nr, 'spieltag' => $spieltag, 'richtig' => $richtig[$user_nr], 'differenz' => $differenz[$user_nr], 'tendenz' => $tendenz[$user_nr], 'punkte' => $punkte[$user_nr]));
     }
     
     update_rangliste_position($spieltag);

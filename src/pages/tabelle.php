@@ -22,20 +22,21 @@ a = Math.floor(wert/100);
 <?php
 echo "
 <button type=\"button\" class=\"btn btn-info focus\" onclick = \"rank_ausblenden(500)\" id=\"510\">Gesamt</button>
-
 <button type=\"button\" class=\"btn btn-info \" onclick = \"rank_ausblenden(501)\" id=\"511\">Heim</button>
-
 <button type=\"button\" class=\"btn btn-info\" onclick = \"rank_ausblenden(502)\" id=\"512\">Ausw&auml;rts</button>
 <br><br>
 <button type=\"button\" class=\"btn btn-info\" onclick = \"rank_ausblenden(503)\" id=\"513\">Tendenz</button>
+";
 
+if ((get_wettbewerb_code(get_curr_wett()) == "BuLi") && ($id_part == 1)) {
+echo "
 <button type=\"button\" class=\"btn btn-info\" onclick = \"rank_ausblenden(504)\" id=\"514\">Hinrunde</button>
 
 <button type=\"button\" class=\"btn btn-info\" onclick = \"rank_ausblenden(505)\" id=\"515\">R&uuml;ckrunde</button>
-<br><br>
 ";
+}
 
-
+echo "<br><br>";
 
 ?>
       <?php print_tabelle(tabelle("", 0), 500,""); ?>

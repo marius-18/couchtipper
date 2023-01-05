@@ -234,21 +234,22 @@ function print_gesamt_gewinner($array){
     ### Zuerst die Gewinner über die Rangliste (und ihre Tagessiege)
     $max_geld = 0;
     foreach ($platz as $usr => $pl){
-        $gewinner = $gewinn[$pl] . "&euro;";
+        $gewinner = $gewinn[$pl];
         
         if ($geld[$usr] != ""){
             $tag = $geld[$usr] . "&euro;";
+            $gesamt = $gewinner + $geld[$usr];
         } else {
             $tag = "";
         }
-        
-        $gesamt = $gewinner + $tag . "&euro;";
+                
+        #$gesamt = $gewinner + $tag;
         echo "<tr>";
         echo "<td> $pl </td>";
         echo "<td>". get_username_from_nr($usr). "</td>";
-        echo "<td> $gewinner </td>";
-        echo "<td> $tag </td>";
-        echo "<td> $gesamt </td>";
+        echo "<td> $gewinner&euro;</td>";
+        echo "<td> $tag</td>";
+        echo "<td> $gesamt&euro;</td>";
         echo "</tr>";
         $max_geld += $geld[$usr];
         $max_geld += $gewinn[$pl];

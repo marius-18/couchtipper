@@ -324,15 +324,14 @@ function spt_select(){
         
         foreach ($g_pdo->query($sql) as $row) {
             $datum = $row['datum'];
+            
+            if (date("w", $datum) == 2){ // FALLS ENGLISCHE WOCHE!
+                $ende = $datum + (2*24*60*60);
+            } else {
+                $ende = $datum + (4*24*60*60);
+            }
         }
-
-        if (date("w", $datum) == 2){ // FALLS ENGLISCHE WOCHE!
-        //if (true){
-            $ende = $datum + (2*24*60*60);
-        } else {
-            $ende = $datum + (4*24*60*60);
-        }
-
+        
         if ($spt>34){
             return 34;
             exit;
