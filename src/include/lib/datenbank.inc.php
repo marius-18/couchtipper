@@ -19,7 +19,7 @@ $db_name=get_wettbewerb_db_name();
 
 
 
-$g_pdo = new PDO("mysql:host=$db_host;dbname=$db_name", $db_ben, $db_pass);
+$g_pdo = new PDO("mysql:host=$db_host;dbname=$db_name;charset=utf8", $db_ben, $db_pass);
 
 
 /*

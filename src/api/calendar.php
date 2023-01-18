@@ -1,6 +1,6 @@
 <?php
 //This is the most important coding.
-header("Content-Type: text/Calendar");
+header("Content-Type: text/Calendar; charset=utf-8");
 header("Content-Disposition: inline; filename=couchtipper-Saisonkalender.ics");
 
 require_once("src/include/code/programm.inc.php");
