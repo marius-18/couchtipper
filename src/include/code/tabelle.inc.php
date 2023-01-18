@@ -4,7 +4,8 @@
 function tabelle($modus, $beginn){
 global $g_pdo;
 
-
+$ort = "";
+$heim = "";
 if ($modus == "Heim"){
   $ort = "AND (heim = 1)";
 }
@@ -41,7 +42,7 @@ $sql = "SELECT sum(tore) as tore, sum(gegentore) as gegentore, sum(punkte) as pu
   }
 
 
-if (!is_array($punkte)){ 
+if (!isset($punkte)){ 
   ## Falls die Rückrunde noch nicht gestartet ist, sind die arrays nicht vorhanden..
   ## Deshalb Abbruch, damit array_multisort nicht fehlschlägt
   return;

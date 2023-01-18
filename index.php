@@ -12,11 +12,11 @@ $g_modus = "BuLi";
 $global_wett_id = "5";
 
 
-if ($_GET["year"] != ""){
+if (isset($_GET["year"])){
     $_SESSION['year'] = $_GET["year"];
 }
 
-if ( ($_SESSION['year'] != "") && is_numeric($_SESSION['year']) ){
+if ( isset($_SESSION['year']) && is_numeric($_SESSION['year']) ){
     $g_modus = "BuLi";
     $global_wett_id = $_SESSION['year'];
 }
@@ -44,8 +44,12 @@ require_once("../auth/include/permissions.inc.php");
 require_once("../auth/include/check_in.inc.php");
 
 
+if (isset($_GET["index"])){
+    $index = $_GET["index"];
+} else {
+    $index = "";
+}
 
-$index = $_GET["index"];
 if ($index == "api"){
     include_once("src/api/crontab.php");
     exit;
@@ -55,7 +59,6 @@ if ($index == "cal"){
     include_once("src/api/calendar.php");
     exit;
 }
-
 // Wettbewerb check in
 check_in_modal();
 

@@ -105,7 +105,7 @@ function print_programm($spieltag, $team_nr1, $team_nr2, $team_name, $datum, $ze
             echo "<tr class=\"table-active\"> <td colspan = \"4\"><span style = \" font-size:150%\"><b>R&uuml;ckrunde</b></span></td></tr>";
         }
         
-        if ($tore1[$spt] == "") {
+        if (!isset($tore1[$spt]) || ($tore1[$spt] == "")) {
             $ergebnis =  "- : -";
         } else {
             $ergebnis = $tore1[$spt]." : ".$tore2[$spt];

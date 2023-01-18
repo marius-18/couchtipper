@@ -33,9 +33,12 @@ require_once('src/include/lib/forms.inc.php');
     $vorschau = 4;
 
     $team = select_team();
-
+    
     $spieltag_select = spt_select();
 
+if ($team != ""){
+    ### Nur anzeigen, wenn ein Team ausgewählt wurde
+    
     list($spieltag, $team_nr1, $team_nr2, $team_name, $datum, $zeitraum, $tore1, $tore2) = programm($team,1,34);
 
     if ($spieltag_select > 1){
@@ -52,7 +55,7 @@ require_once('src/include/lib/forms.inc.php');
             $modus = "R&uuml;ckrunde";
         } 
         
-        echo "<tr class=\"table-active\" $notvisible> <td colspan = \"4\"><span style = \" font-size:150%\"><b><span id=\"modus\">$modus</span></b></span></td></tr>";
+        echo "<tr class=\"table-active\"> <td colspan = \"4\"><span style = \" font-size:150%\"><b><span id=\"modus\">$modus</span></b></span></td></tr>";
         
             // vorherige Spiele
             print_programm ($spieltag, $team_nr1, $team_nr2, $team_name, $datum, $zeitraum, $tore1, $tore2, 1, $spieltag_select-1,1025, False);
@@ -70,6 +73,7 @@ require_once('src/include/lib/forms.inc.php');
             echo "<br><button type=\"button\" class=\"btn btn-info\" onclick=\"programm_ausblenden(1026)\"><b>n&auml;chste Spiele <span id=\"label1026\">einblenden</span></b></button><br><br>";
         }
         
+}
         
 ?>
 

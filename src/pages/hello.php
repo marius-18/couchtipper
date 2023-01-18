@@ -91,9 +91,12 @@ function gewinner(){
             <br>Hier seht ihr die Verteilung der Gewinner 
             <br>(erstmal ohne Gew&auml;hr, weil sich das Couchtipper-Team nicht sicher ist, ob das so klappt.. <i class=\"far fa-laugh-squint\"></i>)
         </div>";
-        
+    
+    if (get_curr_wett()[0] > 2){
     print_gesamt_gewinner(get_curr_wett());
-
+    } else {
+        print_gewinner(get_curr_wett());
+    }
 
 }
 
@@ -104,8 +107,10 @@ if (!spieltag_running(34) && akt_spieltag() == 34){
 }   
 
 
-leader();
-
+if (get_curr_wett()[0] > 2){
+    ## für die anderen alten saisons muss das noch geändert werden
+    leader();
+}
                     
 ?>
 

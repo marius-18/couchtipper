@@ -25,13 +25,14 @@ if (!allow_erg()){
 $error = false;
 $error_msg = "";
 
-$spieltag = $_POST['spieltag'];
+$spieltag = spt_select();
 
-if ($spieltag == ""){ 
-   $spieltag = spt_select();
+if (isset($_POST['spieltag'])) {
+    $spieltag = $_POST['spieltag'];
 }
 
-if ($_POST['change'] == "1") {
+
+if (isset($_POST['change']) && ($_POST['change'] == "1")) {
   $change = true;
 } else {
   $change = false;

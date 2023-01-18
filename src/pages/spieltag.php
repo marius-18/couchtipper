@@ -17,10 +17,11 @@ require_once('src/include/lib/forms.inc.php');
 $error = false;
 $error_msg = "";
 
-$spieltag = $_POST['spieltag'];
 
-if ($spieltag == ""){ 
-   $spieltag = spt_select();
+$spieltag = spt_select();
+
+if (isset($_POST['spieltag'])){
+   $spieltag = $_POST['spieltag'];
 }
 
 // SelectFormular zur Eingabe des Spieltages

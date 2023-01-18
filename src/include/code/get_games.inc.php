@@ -131,8 +131,8 @@ function get_games ($spieltag, $modus, $change, $user_nr) {
 
     array_multisort($datum, SORT_ASC, $team_heim, $team_aus, $tore_heim, $tore_aus, $team_heim_nr, $team_aus_nr, $real_sp_nr);
 
-    return array($datum, $team_heim, $team_aus, $tore_heim, $tore_aus, $team_heim_nr, $team_aus_nr, $real_sp_nr, $real_spieltag, $anz_spiele, $gruppe);
-
+    return array($datum, $team_heim, $team_aus, $tore_heim, $tore_aus, $team_heim_nr, $team_aus_nr, $real_sp_nr, $real_spieltag, $anz_spiele);
+### letzter parameter: $gruppe.. wofür? vllt für WM/EM?
 // warum nicht gleich ausgeben ?
 // Wegen mobil/desktop/ipad?
 
@@ -200,8 +200,11 @@ function get_ergebnis($spieltag,$modus, $jahr){
 
 function get_tore($spieltag, $sp_nr,$modus){
     global $g_pdo;
-    #return 0;
     // DB Abfrage je nach modus.. Hier bisher nur buli!
+    if (get_curr_wett()[0] <= 2){
+        ## Für die alten muss noch die datenbank namen und vereinsnamen rein
+        return;
+    }
     $jahr = substr(get_wettbewerb_jahr(get_curr_wett()), 0, 4);
     #echo "$jahr ";
     $matches = get_open_db_spieltag("bl1", $jahr, $spieltag);
@@ -222,7 +225,8 @@ function get_tore($spieltag, $sp_nr,$modus){
         $team2 = $row['Aus'];
         
     }
-
+    
+    $ret = "";
     foreach ($matches as $match) {
         
         if (!strnatcmp($match["Team1"]["TeamName"], $team1) and !strcmp($match["Team2"]["TeamName"], $team2)) {
@@ -295,10 +299,12 @@ function get_other_tipps($spieltag, $sp_nr, $modus) {
         $tipp1 = $row['tore1'];
         $tipp2 = $row['tore2'];
         
-        if ((($modus == "Tipps")) || ( $modus == "Spieltag")){
+        if (((($modus == "Tipps")) || ( $modus == "Spieltag")) && isset($tore1) && isset($tore2)){
             $tipp[$i] = $tipp1." : ". $tipp2;
             $user_nr[$i] = $i;
-            $user_name[$i] = get_username_from_nr($i);   
+            $user_name[$i] = get_username_from_nr($i);  
+            $vorname[$i] = "";
+            $nachname[$i] = "";
             //$vorname[$i] = $row['vorname'];
             //$nachname[$i] = $row['nachname'];
             

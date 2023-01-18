@@ -283,16 +283,17 @@ function ko_sieger($spieltag, $spiel){
         $team2 = $row['team2'];
     }
 
-
+        if (!isset($tore1) ||  !isset($tore2) || ($tore1 == "") || ($tore2 == "")){ ##Zu oder geändert.. fehler?
+            return null; 
+        }
+        
         if ($tore1 > $tore2) {
             return $team1;
         } elseif ($tore2 > $tore1){
             return $team2;
         }
       
-        if (($tore1 == "") && ($tore2 == "")){
-            return null; 
-        }
+
    
 }
 

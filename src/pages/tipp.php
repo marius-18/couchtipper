@@ -23,17 +23,16 @@ echo "<div class=\"container\">";
 $error = false;
 $error_msg = "";
 
-$spieltag = $_POST['spieltag'];
-
-if ($spieltag == ""){ 
-    $spieltag = spt_select();
+$spieltag = spt_select();
+if (isset($_POST['spieltag'])){
+    $spieltag = $_POST['spieltag'];
 }
 
 
-if ($_POST['change'] == "1") {
+$change = false;
+
+if (isset($_POST['change']) && ($_POST['change'] == "1")) {
     $change = true;
-} else {
-    $change = false;
 }
 
 // EINGABE IN DIE DATENBANK

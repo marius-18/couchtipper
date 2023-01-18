@@ -115,9 +115,9 @@ function select_spieltag ($spieltag) { // ACHTUNG WM EDITION
 function select_team(){
     global $g_pdo;
 
-    $my_team = $_POST['team'];
-    if ($my_team == ""){
-        $my_team = get_fav_team(); #my_team(); // get_my favorite
+    $my_team = get_fav_team(); #my_team(); // get_my favorite
+    if (isset($_POST['team'])){
+        $my_team = $_POST['team'];
     }
     
     echo "<form method=\"post\"><select name=\"team\" class=\"form-control\" onchange=\"this.form.submit()\">";

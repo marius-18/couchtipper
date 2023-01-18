@@ -405,7 +405,7 @@ function check_gameday_bot_time($h, $min, $fenster){
         $spieltag = $row['spieltag'];
     }
     
-    if ($spieltag == ""){
+    if (isset($spieltag)){
         return 0;
     }
     

@@ -139,7 +139,7 @@ function print_games($args, $modus, $change){
                     }
                 
                     echo "<tr $active>
-                    <td align=\"right\" width=\"33%\">".$user_name[$nr]." ". $nachname[$nr][-1] ."</td>
+                    <td align=\"right\" width=\"33%\">".$user_name[$nr]." ". $nachname[$nr] ."</td>
                     <td align=\"center\" width=\"33%\">".$tipp[$nr]."</td>
                     <td width=\"33%\"><span class=\"badge badge-pill badge-success\">".$punkte[$nr]."</span></td>
                     </tr>

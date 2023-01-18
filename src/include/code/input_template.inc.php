@@ -49,33 +49,70 @@ function input($spieltag, $modus, $admin, $admin_nr){
     global $g_pdo;
 
     $error = false;
+    $error_msg = "";
+    $e = array();
     
-    $e[1] = $_POST['erg11'];
-    $e[2] = $_POST['erg12'];
-    $e[3] = $_POST['erg21'];
-    $e[4] = $_POST['erg22'];
-    $e[5] = $_POST['erg31'];
-    $e[6] = $_POST['erg32'];
-    $e[7] = $_POST['erg41'];
-    $e[8] = $_POST['erg42'];
-    $e[9] = $_POST['erg51'];
-    $e[10] = $_POST['erg52'];
-    $e[11] = $_POST['erg61'];
-    $e[12] = $_POST['erg62'];
-    $e[13] = $_POST['erg71'];
-    $e[14] = $_POST['erg72'];
-    $e[15] = $_POST['erg81'];
-    $e[16] = $_POST['erg82'];
-    $e[17] = $_POST['erg91'];
-    $e[18] = $_POST['erg92'];
-
+    if (isset($_POST['erg11'])){
+        $e[1] = $_POST['erg11'];
+    }
+    if (isset($_POST['erg12'])){
+        $e[2] = $_POST['erg12'];
+    }
+    if (isset($_POST['erg21'])){
+        $e[3] = $_POST['erg21'];
+    }
+    if (isset($_POST['erg22'])){
+        $e[4] = $_POST['erg22'];
+    }
+    if (isset($_POST['erg31'])){
+        $e[5] = $_POST['erg31'];
+    }
+    if (isset($_POST['erg32'])){
+        $e[6] = $_POST['erg32'];
+    }
+    if (isset($_POST['erg41'])){
+        $e[7] = $_POST['erg41'];
+    }
+    if (isset($_POST['erg42'])){
+        $e[8] = $_POST['erg42'];
+    }
+    if (isset($_POST['erg51'])){
+        $e[9] = $_POST['erg51'];
+    }
+    if (isset($_POST['erg52'])){
+        $e[10] = $_POST['erg52'];
+    }
+    if (isset($_POST['erg61'])){
+        $e[11] = $_POST['erg61'];
+    }
+    if (isset($_POST['erg62'])){
+        $e[12] = $_POST['erg62'];
+    }
+    if (isset($_POST['erg71'])){
+        $e[13] = $_POST['erg71'];
+    }
+    if (isset($_POST['erg72'])){
+        $e[14] = $_POST['erg72'];
+    }
+    if (isset($_POST['erg81'])){
+        $e[15] = $_POST['erg81'];
+    }
+    if (isset($_POST['erg82'])){
+        $e[16] = $_POST['erg82'];
+    }
+    if (isset($_POST['erg91'])){
+        $e[17] = $_POST['erg91'];
+    }
+    if (isset($_POST['erg92'])){
+        $e[18] = $_POST['erg92'];
+    }
 
     if (!array_empty($e)){ //es wurde was übergeben
 
         for ($heim = 1; $heim <= 18; $heim = $heim + 2){
             $aus = $heim + 1;
 
-            if (($e[$heim] != "") && ($e[$aus] != "") ) {
+            if (isset($e[$heim]) && isset($e[$aus]) && ($e[$heim] != "") && ($e[$aus] != "") ) {
                 $input_nr = get_sp_nr($heim); //Spielnummer
                 $input_spt = $spieltag;       //Spieltag
 

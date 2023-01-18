@@ -12,10 +12,9 @@ exit;
 
 }
 
-
-$spieltag = $_POST['spieltag'];
-if ($spieltag == ""){
-    $spieltag = spt_select();
+$spieltag = spt_select();
+if (isset($_POST['spieltag'])){
+   $spieltag = $_POST['spieltag'];
 }
 
 select_spieltag($spieltag);
@@ -41,22 +40,40 @@ echo "<div class = \"content\"><br>";
 
 $show_formular = true;
 $error_count = 0;
+$spiel = array();
 
-$spiel[1] = $_POST['spiel1'];
-$spiel[2] = $_POST['spiel2'];
-$spiel[3] = $_POST['spiel3'];
-$spiel[4] = $_POST['spiel4'];
-$spiel[5] = $_POST['spiel5'];
-$spiel[6] = $_POST['spiel6'];
-$spiel[7] = $_POST['spiel7'];
-$spiel[8] = $_POST['spiel8'];
-$spiel[9] = $_POST['spiel9'];
-
+if (isset($_POST['spiel1'])){
+   $spiel[1] = $_POST['spiel1'];
+}
+if (isset($_POST['spiel2'])){
+   $spiel[2] = $_POST['spiel2'];
+}
+if (isset($_POST['spiel3'])){
+   $spiel[3] = $_POST['spiel3'];
+}
+if (isset($_POST['spiel4'])){
+   $spiel[4] = $_POST['spiel4'];
+}
+if (isset($_POST['spiel5'])){
+   $spiel[5] = $_POST['spiel5'];
+}
+if (isset($_POST['spiel6'])){
+   $spiel[6] = $_POST['spiel6'];
+}
+if (isset($_POST['spiel7'])){
+   $spiel[7] = $_POST['spiel7'];
+}
+if (isset($_POST['spiel8'])){
+   $spiel[8] = $_POST['spiel8'];
+}
+if (isset($_POST['spiel9'])){
+   $spiel[9] = $_POST['spiel9'];
+}
 
 
 
 for ($sp_nr = 1; $sp_nr <10; $sp_nr++) {
-    if ($spiel[$sp_nr] != "") {
+    if (isset($spiel[$sp_nr])) {
 
         $eingabe = $spiel[$sp_nr];
         $sql = "UPDATE Spieltage SET datum$teil1 = $eingabe WHERE sp_nr = $sp_nr AND spieltag = $spieltag";
@@ -93,7 +110,8 @@ foreach ($g_pdo->query($sql) as $row) {
 
 
 
-
+$error = false;
+$error_msg = "";
 if ($main_datum == "") {
     $show_formular = false;
     $error = true;
@@ -286,41 +304,50 @@ function spiele_term($main_datum, $sp_nr, $time){
 
 function wm_spiele_term($main_datum, $sp_nr, $time){
 
-  $anstoss1 = $main_datum + 12*60*60;  // 12 Uhr
-  $anstoss2 = $main_datum + 14*60*60;  // 14 Uhr
-  $anstoss3 = $main_datum + 15*60*60;  // 15 Uhr
-  $anstoss4 = $main_datum + 16*60*60;  // 16 Uhr
-  $anstoss5 = $main_datum + 17*60*60;  // 17 Uhr
-  $anstoss6 = $main_datum + 18*60*60;  // 18 Uhr
-  $anstoss7 = $main_datum + 20*60*60;  // 20 Uhr
-  $anstoss8 = $main_datum + 21*60*60;  // 21 Uhr
+   $anstoss1 = $main_datum + 12*60*60;  // 12 Uhr
+   $anstoss2 = $main_datum + 14*60*60;  // 14 Uhr
+   $anstoss3 = $main_datum + 15*60*60;  // 15 Uhr
+   $anstoss4 = $main_datum + 16*60*60;  // 16 Uhr
+   $anstoss5 = $main_datum + 17*60*60;  // 17 Uhr
+   $anstoss6 = $main_datum + 18*60*60;  // 18 Uhr
+   $anstoss7 = $main_datum + 20*60*60;  // 20 Uhr
+   $anstoss8 = $main_datum + 21*60*60;  // 21 Uhr
 
-  if ($time == $anstoss1) {
-     $checked1 = "checked";
-  }
-  if ($time == $anstoss2) {
-     $checked2 = "checked";
-  }
-  if ($time == $anstoss3) {
-     $checked3 = "checked";
-  }
-  if ($time == $anstoss4) {
-     $checked4 = "checked";
-  }
-  if ($time == $anstoss5) {
-     $checked5 = "checked";
-  }
-  if ($time == $anstoss6) {
-     $checked6 = "checked";
-  }
-  if ($time == $anstoss7) {
-     $checked7 = "checked";
-  }
-  if ($time == $anstoss8) {
-     $checked8 = "checked";
-  }
+   $checked1 = "";
+   $checked2 = "";
+   $checked3 = "";
+   $checked4 = "";
+   $checked5 = "";
+   $checked6 = "";
+   $checked7 = "";
+   $checked8 = "";
 
-      echo "
+   if ($time == $anstoss1) {
+      $checked1 = "checked";
+   }
+   if ($time == $anstoss2) {
+      $checked2 = "checked";
+   }
+   if ($time == $anstoss3) {
+      $checked3 = "checked";
+   }
+   if ($time == $anstoss4) {
+      $checked4 = "checked";
+   }
+   if ($time == $anstoss5) {
+      $checked5 = "checked";
+   }
+   if ($time == $anstoss6) {
+      $checked6 = "checked";
+   }
+   if ($time == $anstoss7) {
+      $checked7 = "checked";
+   }
+   if ($time == $anstoss8) {
+      $checked8 = "checked";
+   }
+
+   echo "
       <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$anstoss1\" $checked1></td>
       <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$anstoss2\" $checked2></td>
       <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$anstoss3\" $checked3></td>
@@ -329,60 +356,66 @@ function wm_spiele_term($main_datum, $sp_nr, $time){
       <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$anstoss6\" $checked6></td>
       <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$anstoss7\" $checked7></td>
       <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$anstoss8\" $checked8></td>
-      ";
+   ";
 }
 
 function em_spiele_term($main_datum, $sp_nr, $time){
 
-  $anstoss1 = $main_datum + 15*60*60;  // 15 Uhr
-  $anstoss2 = $main_datum + 18*60*60;  // 18 Uhr
-  $anstoss3 = $main_datum + 21*60*60;  // 21 Uhr
+   $anstoss1 = $main_datum + 15*60*60;  // 15 Uhr
+   $anstoss2 = $main_datum + 18*60*60;  // 18 Uhr
+   $anstoss3 = $main_datum + 21*60*60;  // 21 Uhr
 
+   $checked1 = "";
+   $checked2 = "";
+   $checked3 = "";
+   
+   if ($time == $anstoss1) {
+      $checked1 = "checked";
+   }
+   if ($time == $anstoss2) {
+      $checked2 = "checked";
+   }
+   if ($time == $anstoss3) {
+      $checked3 = "checked";
+   }
 
-  if ($time == $anstoss1) {
-     $checked1 = "checked";
-  }
-  if ($time == $anstoss2) {
-     $checked2 = "checked";
-  }
-  if ($time == $anstoss3) {
-     $checked3 = "checked";
-  }
-
-      echo "
+   echo "
       <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$anstoss1\" $checked1></td>
       <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$anstoss2\" $checked2></td>
       <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$anstoss3\" $checked3></td>
-      ";
+   ";
 }
+
+
 function buli_spiele_term($main_datum, $sp_nr, $time) {
-
-
    $tag = date("N",$main_datum);
    
+   if (($tag == 5) || ($tag == 6)) { // FReitag oder Samstag
 
-
-
-    if (($tag == 5) || ($tag == 6)) { // FReitag oder Samstag
-
-        if ($tag == 5){ //Samstag Beginn
-            $sp1  = strtotime(date("d.m.Y 20:30:59", $main_datum));
-            $sp2 = strtotime(date("d.m.Y 15:30:59", $main_datum + 60*60*24));
-            $sp3 = strtotime(date("d.m.Y 18:30:59", $main_datum + 60*60*24));
-            $sp4 = strtotime(date("d.m.Y 15:30:59", $main_datum + 60*60*24*2));
-            $sp5 = strtotime(date("d.m.Y 17:30:59", $main_datum + 60*60*24*2));
-            $sp6 = strtotime(date("d.m.Y 19:30:59", $main_datum + 60*60*24*2));
-        } else{
-            $sp1 = strtotime(date("d.m.Y 15:30:59", $main_datum));
-            $sp2 = strtotime(date("d.m.Y 18:30:59", $main_datum));
-            $sp3 = strtotime(date("d.m.Y 20:30:59", $main_datum));
-            $sp4 = strtotime(date("d.m.Y 15:30:59", $main_datum + 60*60*24));
-            $sp5 = strtotime(date("d.m.Y 17:30:59", $main_datum + 60*60*24));
-            $sp6 = strtotime(date("d.m.Y 19:30:59", $main_datum + 60*60*24));
-        }
+      if ($tag == 5){ //Samstag Beginn
+         $sp1  = strtotime(date("d.m.Y 20:30:59", $main_datum));
+         $sp2 = strtotime(date("d.m.Y 15:30:59", $main_datum + 60*60*24));
+         $sp3 = strtotime(date("d.m.Y 18:30:59", $main_datum + 60*60*24));
+         $sp4 = strtotime(date("d.m.Y 15:30:59", $main_datum + 60*60*24*2));
+         $sp5 = strtotime(date("d.m.Y 17:30:59", $main_datum + 60*60*24*2));
+         $sp6 = strtotime(date("d.m.Y 19:30:59", $main_datum + 60*60*24*2));
+      } else{
+         $sp1 = strtotime(date("d.m.Y 15:30:59", $main_datum));
+         $sp2 = strtotime(date("d.m.Y 18:30:59", $main_datum));
+         $sp3 = strtotime(date("d.m.Y 20:30:59", $main_datum));
+         $sp4 = strtotime(date("d.m.Y 15:30:59", $main_datum + 60*60*24));
+         $sp5 = strtotime(date("d.m.Y 17:30:59", $main_datum + 60*60*24));
+         $sp6 = strtotime(date("d.m.Y 19:30:59", $main_datum + 60*60*24));
+      }
       
-
-    if ($time == $sp1) {
+      $checked1 = "";
+      $checked2 = "";
+      $checked3 = "";
+      $checked4 = "";
+      $checked5 = "";
+      $checked6 = "";
+   
+      if ($time == $sp1) {
          $checked1 = "checked";
       }
       if ($time == $sp2) {
@@ -410,16 +443,23 @@ function buli_spiele_term($main_datum, $sp_nr, $time) {
       <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$sp5\" $checked5></td>
       <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$sp6\" $checked6></td>
       ";
+
    }
 
 
    if ($tag == 2) {
 
-        $sp1 = strtotime(date("d.m.Y 18:30:59", $main_datum));
-        $sp2 = strtotime(date("d.m.Y 20:30:59", $main_datum));
-        $sp3 = strtotime(date("d.m.Y 18:30:59", $main_datum + 60*60*24));
-        $sp4 = strtotime(date("d.m.Y 20:30:59", $main_datum + 60*60*24));
+      $sp1 = strtotime(date("d.m.Y 18:30:59", $main_datum));
+      $sp2 = strtotime(date("d.m.Y 20:30:59", $main_datum));
+      $sp3 = strtotime(date("d.m.Y 18:30:59", $main_datum + 60*60*24));
+      $sp4 = strtotime(date("d.m.Y 20:30:59", $main_datum + 60*60*24));
 
+      $checked1 = "";
+      $checked2 = "";
+      $checked3 = "";
+      $checked4 = "";
+   
+      
       if ($time == $sp1) {
          $checked1 = "checked";
       }

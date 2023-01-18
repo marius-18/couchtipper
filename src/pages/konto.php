@@ -13,109 +13,122 @@ if (!is_logged()){
 require_once('src/include/code/konto.inc.php');
 
 
-if ($_GET['mode'] == "user") {
+if (isset($_GET['mode']) && ($_GET['mode'] == "user")) {
     $user = 1;
 } else {
     $user = 0;
 }
 
-if ($_GET['mode'] == "email") {
+if (isset($_GET['mode']) && ($_GET['mode'] == "email")) {
     $email = 1;
 } else {
     $email = 0;
 }
 
-if ($_GET['mode'] == "pw") {
+if (isset($_GET['mode']) && ($_GET['mode'] == "pw")) {
     $pw = 1;
 } else {
     $pw = 0;
 }
 
 
+$user_error = false;
+$user_error_msg = "";
 
-
-if ($_POST['name']){
+if (isset($_POST['name']) && ($_POST['name'])) {
     $name = $_POST['name'];
     $name = str_replace(' ','',$name); 
     
     list($user_error, $user_error_msg) = change_name($name);
-
-
 }
 
-if ($_POST['mail']){
+
+$mail_error = false;
+$mail_error_msg = "";
+
+if (isset($_POST['mail']) && ($_POST['mail'])) {
     $mail = $_POST['mail'];
 
     list($mail_error, $mail_error_msg) = change_mail($mail);
 
 }
 
-if ($_POST['password'] && $_POST['password1'] && $_POST['password_old']){
+
+$pw_error = false;
+$pw_error_msg = "";
+
+if (isset($_POST['password']) && isset($_POST['password1']) && isset($_POST['password_old']) && $_POST['password'] && $_POST['password1'] && $_POST['password_old']){
     $password_old = $_POST['password_old'];
     $password = $_POST['password'];
     $password1 = $_POST['password1'];
-     list($pw_error, $pw_error_msg) = change_pw($password, $password1, $password_old);
-
-}
-
-if ($_POST['team']) {
-    $team = $_POST['team'];
-
-    $insert = $g_pdo->prepare("UPDATE `User` SET `team`=:team WHERE user_nr = ".get_usernr());
-    $params = array('team' => $team);
-    $insert->execute($params);
+    list($pw_error, $pw_error_msg) = change_pw($password, $password1, $password_old);
 
 }
 
 
 
-
+###########################################################
+###########################################################
+### P E R S Ö N L I C H E    D A T E N                                               
+###########################################################
+###########################################################
 
 echo "<div style=\"text-align:left\"><font size =\"+2\"><u>Pers&ouml;nliche Daten</u></font></div><br>";
 
 echo "<font size=\"+1\">Benutzername: <br> <b>".name($user)."</b></font>";
 
-if ($_GET['mode'] != "user"){
-    echo "&nbsp;<a href = \"index.php?index=7&mode=user#7\"><img src =\"/images/edit.png\" width=\"15\" height = \"15\"></a></font><br>";
+if (!isset($_GET['mode']) || ($_GET['mode'] != "user")){
+    echo "&nbsp;<a href = \"index.php?index=7&mode=user#7\"><i class=\"far fa-edit fa-1x\"></i></a><br>";
 }
 
 if ($user_error){
     echo "<br><div class=\"alert alert-danger\"><strong>Fehler:</strong> $user_error_msg </div><br>";
 }
-
 echo "<br>";
+
+
 
 echo "<font size=\"+1\">E-Mail Adresse:<br> <u>".email($email)."</u></font>"; 
 
-if ($_GET['mode'] != "email"){
-echo "&nbsp;<a href = \"index.php?index=7&mode=email#7\"><img src =\"/images/edit.png\" width=\"15\" height = \"15\"></a></font><br>";
+if (!isset($_GET['mode']) || ($_GET['mode'] != "email")) {
+    ### Bearbeiten Knopf anzeigen
+    echo "&nbsp;<a href = \"index.php?index=7&mode=email#7\"><i class=\"far fa-edit fa-1x\"></i></a><br>";
 }
 
 if ($mail_error){
     echo "<br><div class=\"alert alert-danger\"><strong>Fehler:</strong> $mail_error_msg </div><br>";
 }
-
 echo "<br>";
+
+
+
 echo "<font size=\"+1\">Passwort ändern:<br>".password($pw)."</font>"; 
 
-if ($_GET['mode'] != "pw"){
-echo "&nbsp;<a href = \"index.php?index=7&mode=pw#7\"><img src =\"/images/edit.png\" width=\"15\" height = \"15\"></a></font><br>";
+if (!isset($_GET['mode']) || ($_GET['mode'] != "pw")){
+    ### Bearbeiten Knopf anzeigen
+    echo "&nbsp;<a href = \"index.php?index=7&mode=pw#7\"><i class=\"far fa-edit fa-1x\"></i></a><br>";
 }
 
 
 if ($pw_error){
+    ## Fehler ausgeben
     echo "<br><div class=\"alert alert-danger\"><strong>Fehler:</strong> $pw_error_msg </div><br>";
 }
 
 if ((!$pw_error) && ($pw_error_msg != "")) {
+    ## Erfolg ausgeben
     echo "<br><div class=\"alert alert-success\"> $pw_error_msg </div><br>";
 }
 
 
-echo "<font color = \"red\"><b>$password_error</b></font>";
-
 echo "<br><br>";
-//echo "<font size=\"+1\">Lieblingsteam:<br>".team()."</font>"; 
+
+###########################################################
+###########################################################
+### T I P P G R U P P E N                                               
+###########################################################
+###########################################################
+
 
 echo "<hr>";
 echo "<div style=\"text-align:left\"><font size =\"+2\"><u>Tippgruppen</u></font></div><br>";

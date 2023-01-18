@@ -4,6 +4,7 @@ function sitzungen(){
     $user_id = get_usernr();
 
     // Bestehende Sessions werden gelöscht
+    $session_msg = "";
     if (isset($_GET['rem'])){
         $rem_id = $_GET['rem'];
         $session_msg = rm_session($rem_id);  // Funktion aus auth

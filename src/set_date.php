@@ -20,33 +20,38 @@ if (!allow_date()){
 
 <?php
 
-if ($_GET['spt'] != ""){
+if (isset($_GET['spt']) && ($_GET['spt'] != "")){
     echo "<b>&Auml;nderung</b><br>";
     $spieltag = $_GET['spt'];
 } else {
-    $spieltag = $_POST['Spieltag'];
+    if (isset($_POST['Spieltag'])){
+        $spieltag = $_POST['Spieltag'];
+    }
 }
 
-$tag = $_POST['Tag'];
-$monat = $_POST['Monat'];
-$jahr = $_POST['Jahr'];
-
+if (isset($_POST['Tag'])){
+    $tag = $_POST['Tag'];
+}
+if (isset($_POST['Monat'])){
+    $monat = $_POST['Monat'];
+}
+if (isset($_POST['Jahr'])){
+    $jahr = $_POST['Jahr'];
+}
 
 $wochentage = array("Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag");
 
-$tag_ein = strtotime("$jahr-$monat-$tag");
 
 
-$datum = strtotime("$jahr-$monat-$tag, 00:00:59"); 
-$datum_string = date("d.m.Y - H:i",$datum);
-
-
-if (($spieltag != "") && ($tag != "") && ($monat != "")){
-    $sql = "INSERT INTO `Datum`(`spieltag`, `datum`) VALUES ('$spieltag','$datum')";
+if (isset($spieltag) && isset($tag) && isset($monat)){
+    $datum = strtotime("$jahr-$monat-$tag, 00:00:59"); 
+    $datum_string = date("d.m.Y - H:i",$datum);
+    
+    $sql = "INSERT INTO `Datum`(`spieltag`, `datum`) VALUES ('$spieltag','$datum') ON DUPLICATE KEY UPDATE `datum` = '$datum'";
     $g_pdo->query($sql);
 
-    $sql = "UPDATE `Datum` SET `datum` = '$datum' WHERE `spieltag` = '$spieltag'";
-    $g_pdo->query($sql);
+    #$sql = "UPDATE `Datum` SET `datum` = '$datum' WHERE `spieltag` = '$spieltag'";
+    #$g_pdo->query($sql);
 
 
 }
@@ -62,7 +67,7 @@ foreach ($g_pdo->query($sql) as $row) {
 
 
 
-if ($_GET['spt'] != ""){
+if (isset($_GET['spt']) && ($_GET['spt'] != "")){
     $akt_spieltag = $_GET['spt'];
 } else{
     $akt_spieltag = count($spieltag_times)+1;
@@ -115,13 +120,13 @@ $this_year = date("Y");
 $next_year = date("Y")+1;
 
 
-
-if ($this_year == $jahr){
+$sel1 = "";
+$sel2 = "";
+if (isset($jahr) && ($this_year == $jahr)){
     $sel1 = " selected";
 }
 
-
-if ($next_year == $jahr){
+if (isset($jahr) && ($next_year == $jahr)){
     $sel2 = " selected";
 }
 

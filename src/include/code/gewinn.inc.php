@@ -98,7 +98,9 @@ function gewinn_zuordnung($array){
         // Alles aufsummieren
         $geld = 0;
         for ($x = 0; $x < $count; $x++){
-            $geld += $gewinn[$i + $x];
+            if ($i + $x <= $G){
+                $geld += $gewinn[$i + $x];
+            }
         }
         // Und durch Anzahl der Spieler teilen
         $geld /= $count;
@@ -120,6 +122,10 @@ function tagessieger_geld($array){
     global $g_pdo;
     ## Eingabe als Array der Form: array($wett_id, $part)
     list($id, $id_part) = $array;
+
+    if(get_wettbewerb_praemie($array) == 0){
+        return 0;
+    }
     
     if (wettbewerb_has_parts($id)){
         if ($id_part == 0){
@@ -133,7 +139,7 @@ function tagessieger_geld($array){
             $ende  = 34;
         }
         if ($id_part == 2){
-            // Rückrunde
+            // Alles?
             $begin = 1;
             $ende  = 34;
         }
@@ -220,7 +226,12 @@ function print_gewinner($array){
 
 
 function print_gesamt_gewinner($array){
-    ### Gibt eine Liste mit Gewinnern und Tagessiegern aus
+    ### Gibt eine Liste mit Gewinnern und Tagessiegern aus   
+    
+    if(get_wettbewerb_praemie($array) == 0){
+        echo "</table></div>";
+        return 0;
+    }
     
     list($user, $anzahl, $anteil, $geld) = tagessieger_geld($array);
     list($platz, $gewinn) = gewinn_zuordnung($array);
@@ -236,10 +247,12 @@ function print_gesamt_gewinner($array){
     foreach ($platz as $usr => $pl){
         $gewinner = $gewinn[$pl];
         
-        if ($geld[$usr] != ""){
+        #$gesamt = "";
+        if (isset($geld[$usr]) && $geld[$usr] != ""){
             $tag = $geld[$usr] . "&euro;";
             $gesamt = $gewinner + $geld[$usr];
         } else {
+            $gesamt = $gewinner;
             $tag = "";
         }
                 
@@ -251,12 +264,14 @@ function print_gesamt_gewinner($array){
         echo "<td> $tag</td>";
         echo "<td> $gesamt&euro;</td>";
         echo "</tr>";
-        $max_geld += $geld[$usr];
+        if (isset($geld[$usr])){
+            $max_geld += $geld[$usr];
+        }
         $max_geld += $gewinn[$pl];
         unset($user[$usr]);
     }
     
-    
+
     ### Jetzt noch die restlichen Tagessieger
     
     if (!empty($user)) {
@@ -276,7 +291,9 @@ function print_gesamt_gewinner($array){
 
 
 function print_tagessieger_geld($array){
-
+    if (get_wettbewerb_praemie($array) == 0){
+        return 0;
+    }
     list($user, $anzahl, $anteil, $geld) = tagessieger_geld($array);
     
 

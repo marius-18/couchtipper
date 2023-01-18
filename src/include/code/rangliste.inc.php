@@ -82,10 +82,9 @@ function rangliste ($begin, $ende, $gruppe){
 
 
     $platz = 1;
-    
     foreach ($user as $i => $nr){
 
-        if ($punkte[$i] == $punkte[$i-1]){
+        if (($i != 0) && ($punkte[$i] == $punkte[$i-1])){
             $platz_r[$nr] = $platz_halten;
             $platz_halten = $platz_r[$nr];
 
