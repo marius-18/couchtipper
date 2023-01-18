@@ -1,16 +1,27 @@
 <?php
 ini_set('session.cookie_domain', '.couchtipper.de' );
 session_start();
-ini_set('display_errors', 1);
-ini_set('error_reporting', E_ALL ^  E_NOTICE); #E_NOTICE
+header('Content-Type: text/html; charset=UTF-8');
 require_once("../auth/include/security.inc.php");
 is_logged();
 
+$wartung = 1;
+if ($wartung){
+    ini_set('display_errors', 1);
+    ini_set('error_reporting', E_ALL ^  E_NOTICE); #E_NOTICE
+}
+
 
 ## if subdomain == ?? do..
+$aktuelle_wett_id = "5";
 $g_modus = "BuLi";
 $global_wett_id = "5";
+$subdomain = explode(".",$_SERVER['SERVER_NAME'])[0];
 
+if ($wartung && ($subdomain != "code")){
+    include_once("Wartung.php");
+    exit;
+}
 
 if (isset($_GET["year"])){
     $_SESSION['year'] = $_GET["year"];
@@ -20,7 +31,6 @@ if ( isset($_SESSION['year']) && is_numeric($_SESSION['year']) ){
     $g_modus = "BuLi";
     $global_wett_id = $_SESSION['year'];
 }
-
 ### Bindet alle Wettbewerbs Sachen ein
 ### Muss zuerst stehen, da sonst nicht auf Datenbank o.Ä. zugegriffen werden kann. 
 require_once("../auth/include/wettbewerbe.inc.php");
@@ -191,7 +201,7 @@ MENÜ
                 }
                 ?>   
                 
-                <?php if (is_logged()){ echo "
+                <?php if (is_logged() && ($aktuelle_wett_id == get_curr_wett()[0])){ echo "
                 <li class=\"nav-item\">
                     <a class=\"nav-link\" href=\"?index=7#main\">Mein Konto</a>
                 </li>";

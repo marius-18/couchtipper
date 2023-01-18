@@ -28,7 +28,7 @@ echo "
 <button type=\"button\" class=\"btn btn-info\" onclick = \"rank_ausblenden(503)\" id=\"513\">Tendenz</button>
 ";
 
-if ((get_wettbewerb_code(get_curr_wett()) == "BuLi") && ($id_part == 1)) {
+if ((get_wettbewerb_code(get_curr_wett()) == "BuLi") && (get_curr_wett()[1] == 1)) {
 echo "
 <button type=\"button\" class=\"btn btn-info\" onclick = \"rank_ausblenden(504)\" id=\"514\">Hinrunde</button>
 
