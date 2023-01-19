@@ -24,7 +24,7 @@ function update_tabelle($spieltag) {
             FROM `Ergebnisse`, Spieltage 
             WHERE (Spieltage.spieltag = Ergebnisse.spieltag - $hilfe) 
             AND (Ergebnisse.sp_nr = Spieltage.sp_nr) AND (Ergebnisse.spieltag = $spieltag)";
-
+    $error = 0;
     foreach ($g_pdo->query($sql) as $row) {  
         $tore1 = $row['tore1'];
         $tore2 = $row['tore2'];
@@ -140,7 +140,19 @@ function update_rangliste($spieltag) {
         #echo $tipp1.":";
         #echo $tipp2;
         #echo "><br>";
-
+        if (!isset($richtig[$user_nr])){
+            $richtig[$user_nr] = 0;
+        }
+        if (!isset($differenz[$user_nr])){
+            $differenz[$user_nr] = 0;
+        }
+        if (!isset($tendenz[$user_nr])){
+            $tendenz[$user_nr] = 0;
+        }
+        if (!isset($punkte[$user_nr])){
+            $punkte[$user_nr] = 0;
+        }
+        
         if (($tore1 == $tipp1) && ($tore2 == $tipp2)){
             $richtig[$user_nr] += 1;
             $differenz[$user_nr] += 0;
@@ -215,7 +227,7 @@ function update_rangliste_position($spieltag) {
             ORDER BY p DESC";
 
     $platz = 1;
-
+    $last_punkte = -1; ### sonst last_punkte undefiniert am Anfang
     foreach ($g_pdo->query($sql) as $row) {
         $user_nr = $row['user_nr'];
         $punkte[$user_nr] = $row['p'];

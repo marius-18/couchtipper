@@ -184,9 +184,6 @@ function get_ergebnis($spieltag,$modus, $jahr){
         
                 echo "Spiel $sp_nr ";
                 echo "$team1 ".$match["MatchResults"][0]["PointsTeam1"]." - ".$match["MatchResults"][0]["PointsTeam2"]." $team2";
-                
-                print_r($match["MatchResults"][0]["PointsTeam1"]);
-                print_r($match["MatchResults"][0]["PointsTeam2"]);
                 echo "<br>";
 
             }

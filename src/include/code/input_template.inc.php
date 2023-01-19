@@ -207,8 +207,6 @@ function input_cronjob($input_spt){
     global $g_pdo;
     $jahr = substr(get_wettbewerb_jahr(get_curr_wett()), 0, 4);
     $modus = get_openliga_shortcut(get_curr_wett());
-    echo $jahr;
-    echo $modus;
     
     list($tore_heim, $tore_aus) = get_ergebnis($input_spt, $modus, $jahr);
 
@@ -230,7 +228,7 @@ function input_cronjob($input_spt){
                 $result = $statement->execute(array('spieltag' => $input_spt, 'sp_nr' => $input_nr, 'tore1' => $input_tore1, 
                                                     'tore2' => $input_tore2, 'user' => 'BOT', 'ip' => '127.0.0.1', 'time' => date('Y-m-d H:i:s')));
 
-                if ($result == true) {
+                if ($result) {
                     $error_msg = "Die Ergebnisse wurden fehlerlos eingegeben.";
                     update_tabelle($input_spt);
                     //clear_rangliste();

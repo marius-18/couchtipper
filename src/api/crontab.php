@@ -1,5 +1,5 @@
 <?php
-echo "begin";
+echo "begin<br>";
 
 ### Für Spieltag und Tipps reminder
 require_once("../auth/include/bot.inc.php");
