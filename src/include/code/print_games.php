@@ -70,9 +70,9 @@ function print_games($args, $modus, $change){
 
     //echo "</td></tr>";
 
-  
     $help = "";//$datum[0];// Wozu ?!
-
+    $alle_tore = get_tore($real_spieltag, $modus);
+    list ($user_nr, $user_name, $tipp, $vorname, $nachname, $punkte) = get_other_tipps($real_spieltag,$modus);
 
     for ($i = 0; $i < $anz_spiele; $i++){
 
@@ -121,17 +121,15 @@ function print_games($args, $modus, $change){
                 
                 // GET_TORE
                 echo "<div class=\"container\"  style=\"margin-bottom:5px\">";
-                echo get_tore($real_spieltag, $real_sp_nr[$i],$modus);
+                echo $alle_tore[$real_sp_nr[$i]];
                 echo "</div>";
             }
 
             echo "<table class=\"table\" align = \"center\" width = \"75%\" padding-left = \"10em\">";
 
-            list ($user_nr, $user_name, $tipp, $vorname, $nachname, $punkte) = get_other_tipps($real_spieltag, $real_sp_nr[$i],$modus);
-
-            if (isset($user_nr)){
+            if (isset($user_nr[$real_sp_nr[$i]])){
                 ## Wenn der Spieltag noch nicht begonnen hat, werden die Tipps noch nicht angezeigt (dann Fehler in foreach)
-                foreach ($user_nr as $nr){
+                foreach ($user_nr[$real_sp_nr[$i]] as $nr){
                     if ($nr == get_usernr()){
                         $active = "class = \"table-success\"";
                     } else{
@@ -139,15 +137,16 @@ function print_games($args, $modus, $change){
                     }
                 
                     echo "<tr $active>
-                    <td align=\"right\" width=\"33%\">".$user_name[$nr]." ". $nachname[$nr] ."</td>
-                    <td align=\"center\" width=\"33%\">".$tipp[$nr]."</td>
-                    <td width=\"33%\"><span class=\"badge badge-pill badge-success\">".$punkte[$nr]."</span></td>
+                    <td align=\"right\" width=\"33%\">".$user_name[$real_sp_nr[$i]][$nr]." ". $nachname[$real_sp_nr[$i]][$nr] ."</td>
+                    <td align=\"center\" width=\"33%\">".$tipp[$real_sp_nr[$i]][$nr]."</td>
+                    <td width=\"33%\"><span class=\"badge badge-pill badge-success\">".$punkte[$real_sp_nr[$i]][$nr]."</span></td>
                     </tr>
                             ";
                 }
             }
             
             echo "</table></td>";
+            echo "</td>";
             echo "</tr>";
 
         }

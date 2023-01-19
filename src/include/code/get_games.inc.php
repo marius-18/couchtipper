@@ -198,8 +198,9 @@ function get_ergebnis($spieltag,$modus, $jahr){
 }
 
 
-function get_tore($spieltag, $sp_nr,$modus){
+function get_tore($spieltag, $modus){
     global $g_pdo;
+    #return 0;
     // DB Abfrage je nach modus.. Hier bisher nur buli!
     if (get_curr_wett()[0] <= 2){
         ## Für die alten muss noch die datenbank namen und vereinsnamen rein
@@ -217,30 +218,35 @@ function get_tore($spieltag, $sp_nr,$modus){
         $aus = "Heim";
         $spieltag = $spieltag - 17;
     }
-    $sql = "SELECT team1, team2, TeamHeim.open_db_name as $heim, TeamAus.open_db_name as $aus
+    $sql = "SELECT team1, team2, TeamHeim.open_db_name as $heim, TeamAus.open_db_name as $aus, sp_nr
             FROM `Spieltage`, Teams as TeamHeim, Teams as TeamAus 
-            WHERE (spieltag = $spieltag && sp_nr = $sp_nr) and (team1 = TeamHeim.team_nr) and (team2 = TeamAus.team_nr)";
+            WHERE (spieltag = $spieltag) and (team1 = TeamHeim.team_nr) and (team2 = TeamAus.team_nr)";
     foreach ($g_pdo->query($sql) as $row) {
-        $team1 = $row['Heim'];
-        $team2 = $row['Aus'];
+        $sp_nr = $row['sp_nr'];
+        $team1[$sp_nr] = $row['Heim'];
+        $team2[$sp_nr] = $row['Aus'];
+        $spiel[$row['Heim']] = $sp_nr;
+        $spiel[$row['Aus']] = $sp_nr;
         
     }
     
-    $ret = "";
+    $ret = array();
     foreach ($matches as $match) {
+        $sp_nr = $spiel[$match["Team1"]["TeamName"]];
+        $ret[$sp_nr] = "";
         
-        if (!strnatcmp($match["Team1"]["TeamName"], $team1) and !strcmp($match["Team2"]["TeamName"], $team2)) {
+        if ($spiel[$match["Team1"]["TeamName"]] == $spiel[$match["Team2"]["TeamName"]]) {
             // Das ist das aktuelle Spiel!
-            $ret = "<table align=\"center\">";
+            $ret[$sp_nr] = "<table align=\"center\">";
             $t1 = 0;
             $t2 = 0;
             foreach ($match["Goals"] as $goal){
                 $zusatz = "";
                 if ($goal["ScoreTeam1"] >  $t1) {
-                    $ret .= "<tr class=\"table-info\">";
+                    $ret[$sp_nr] .= "<tr class=\"table-info\">";
                 }
                 else if ($goal["ScoreTeam2"] >  $t2) {
-                    $ret .= "<tr class=\"table-primary\">";
+                    $ret[$sp_nr] .= "<tr class=\"table-primary\">";
                 } else {
                     $zusatz = "(VAR)";
                 }
@@ -251,17 +257,17 @@ function get_tore($spieltag, $sp_nr,$modus){
                 if ($goal["IsOwnGoal"]){
                     $zusatz = "(ET)";
                 }
-                $ret .= "<td>'".$goal["MatchMinute"]."</td>";
-                $ret .= "<td>".$goal["ScoreTeam1"]." : ".$goal["ScoreTeam2"]."</td>";
-                $ret .= "<td>".$goal["GoalGetterName"]."</td>";
-                $ret .= "<td>$zusatz</td>";
-                $ret .= "</tr>";
+                $ret[$sp_nr] .= "<td>'".$goal["MatchMinute"]."</td>";
+                $ret[$sp_nr] .= "<td>".$goal["ScoreTeam1"]." : ".$goal["ScoreTeam2"]."</td>";
+                $ret[$sp_nr] .= "<td>".$goal["GoalGetterName"]."</td>";
+                $ret[$sp_nr] .= "<td>$zusatz</td>";
+                $ret[$sp_nr] .= "</tr>";
                 
                 $t1 = $goal["ScoreTeam1"];
                 $t2 = $goal["ScoreTeam2"];
 
             }
-            $ret .= "</table>";
+            $ret[$sp_nr] .= "</table>";
 
         }
     }
@@ -269,58 +275,72 @@ function get_tore($spieltag, $sp_nr,$modus){
     return $ret;
 }
 
-function get_other_tipps($spieltag, $sp_nr, $modus) {
+function get_other_tipps($spieltag, $modus) {
     global $g_pdo;
     
     
-    $sql = "SELECT tore1, tore2 
+    $sql = "SELECT tore1, tore2, sp_nr
             FROM `Ergebnisse` 
-            WHERE (spieltag = $spieltag && sp_nr = $sp_nr)";
+            WHERE (spieltag = $spieltag)";
 
     foreach ($g_pdo->query($sql) as $row) {
-        $tore1 = $row['tore1'];
-        $tore2 = $row['tore2'];
+        $sp_nr = $row['sp_nr'];
+        $tore1[$sp_nr] = $row['tore1'];
+        $tore2[$sp_nr] = $row['tore2'];
         
-        if ($tore1 == ""){
-            $tore1 = NULL;
+        if ($tore1[$sp_nr] == ""){
+            $tore1[$sp_nr] = NULL;
         }
         
-        if ($tore2 == ""){
-            $tore2 = NULL;
+        if ($tore2[$sp_nr] == ""){
+            $tore2[$sp_nr] = NULL;
         }
     }
     
-    $sql = "SELECT Tipps.user_nr AS user_nr, tore1, tore2 
+    $sql = "SELECT Tipps.user_nr AS user_nr, tore1, tore2, sp_nr
             FROM `Tipps` 
-            WHERE (spieltag = $spieltag && sp_nr = $sp_nr)";
+            WHERE (spieltag = $spieltag)";
+    $user_nr = NULL;
+    $user_name = NULL;
+    $tipp = NULL;
+    $vorname = NULL;
+    $nachname = NULL;
+    $punkte = NULL;
 
     foreach ($g_pdo->query($sql) as $row) {
         $i = $row['user_nr'];
-        $tipp1 = $row['tore1'];
-        $tipp2 = $row['tore2'];
+        $sp_nr = $row['sp_nr'];
+
+        if (check_game_date($spieltag,$sp_nr)){
+            continue;
+        }
         
-        if (((($modus == "Tipps")) || ( $modus == "Spieltag")) && isset($tore1) && isset($tore2)){
-            $tipp[$i] = $tipp1." : ". $tipp2;
-            $user_nr[$i] = $i;
-            $user_name[$i] = get_username_from_nr($i);  
-            $vorname[$i] = "";
-            $nachname[$i] = "";
-            //$vorname[$i] = $row['vorname'];
-            //$nachname[$i] = $row['nachname'];
+        
+        $tipp1[$sp_nr] = $row['tore1'];
+        $tipp2[$sp_nr] = $row['tore2'];  
+        
+        if (((($modus == "Tipps")) || ( $modus == "Spieltag")) && isset($tore1[$sp_nr]) && isset($tore2[$sp_nr])){
+            $tipp[$sp_nr][$i] = $tipp1[$sp_nr]." : ". $tipp2[$sp_nr];
+            $user_nr[$sp_nr][$i] = $i;
+            $user_name[$sp_nr][$i] = get_username_from_nr($i);  
+            $vorname[$sp_nr][$i] = "";
+            $nachname[$sp_nr][$i] = "";
+            //$vorname[$sp_nr][$i] = $row['vorname'];
+            //$nachname[$sp_nr][$i] = $row['nachname'];
             
-            if (($tore1 != NULL) && ($tore2 != NULL)){
+            if (($tore1[$sp_nr] != NULL) && ($tore2[$sp_nr] != NULL)){
             
-                if (($tore1 == $tipp1) && ($tore2 == $tipp2)){
-                    $punkte[$i] = "+3";
+                if (($tore1[$sp_nr] == $tipp1[$sp_nr]) && ($tore2[$sp_nr] == $tipp2[$sp_nr])){
+                    $punkte[$sp_nr][$i] = "+3";
                 }
-                elseif ($tore1 - $tore2 == $tipp1 - $tipp2){  
-                    $punkte[$i] = "+2";
+                elseif ($tore1[$sp_nr] - $tore2[$sp_nr] == $tipp1[$sp_nr] - $tipp2[$sp_nr]){  
+                    $punkte[$sp_nr][$i] = "+2";
                 }
-                elseif ((($tore1 - $tore2 > 0) && ($tipp1 - $tipp2 > 0)) || (($tore1 - $tore2 < 0) && ($tipp1 - $tipp2 < 0)) ){
-                    $punkte[$i] = "+1";
+                elseif ((($tore1[$sp_nr] - $tore2[$sp_nr] > 0) && ($tipp1[$sp_nr] - $tipp2[$sp_nr] > 0)) || (($tore1[$sp_nr] - $tore2[$sp_nr] < 0) && ($tipp1[$sp_nr] - $tipp2[$sp_nr] < 0)) ){
+                    $punkte[$sp_nr][$i] = "+1";
                 }
                 else {
-                    $punkte[$i] = "";
+                    $punkte[$sp_nr][$i] = "";
                 }
             }
         
@@ -328,10 +348,10 @@ function get_other_tipps($spieltag, $sp_nr, $modus) {
     
     }
     
-    if (!check_game_date($spieltag,$sp_nr)){
+    #if (!check_game_date($spieltag,$sp_nr)){
         #return 0;
         return array($user_nr, $user_name, $tipp, $vorname, $nachname, $punkte);
-    }
+    #}
 }
 
 
