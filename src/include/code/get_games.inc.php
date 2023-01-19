@@ -201,7 +201,7 @@ function get_tore($spieltag, $modus){
     // DB Abfrage je nach modus.. Hier bisher nur buli!
     if (get_curr_wett()[0] <= 2){
         ## Für die alten muss noch die datenbank namen und vereinsnamen rein
-        return;
+        return array("","","","","","","","","");
     }
     $jahr = substr(get_wettbewerb_jahr(get_curr_wett()), 0, 4);
     #echo "$jahr ";
