@@ -5,21 +5,19 @@ header('Content-Type: text/html; charset=UTF-8');
 require_once("../auth/include/security.inc.php");
 is_logged();
 
-$wartung = 1;
-if ($wartung){
-    ini_set('display_errors', 1);
-    ini_set('error_reporting', E_ALL ^  E_NOTICE); #E_NOTICE
-}
-
-
-## if subdomain == ?? do..
+$wartung = 0;
 $aktuelle_wett_id = "5";
 $g_modus = "BuLi";
 $global_wett_id = "5";
 $subdomain = explode(".",$_SERVER['SERVER_NAME'])[0];
 
+if (($wartung) && ($subdomain == "code")){
+    ini_set('display_errors', 1);
+    ini_set('error_reporting', E_ALL ^  E_NOTICE); #E_NOTICE
+}
+
 if ($wartung && ($subdomain != "code")){
-    include_once("Wartung.php");
+    include_once("wartung.php");
     exit;
 }
 
@@ -116,6 +114,13 @@ check_in_modal();
 
 
 <body>
+
+<?php
+    if (($wartung) && ($subdomain == "code")){
+        echo "<div class=\"jumbotron text-center jumbotron-fluid bg-danger\">
+        <h1>ACHTUNG - DU BIST IM WARTUNGSMODUS</h1></div>";
+    }
+?>
 
 <!-- 
 ###########################################################
