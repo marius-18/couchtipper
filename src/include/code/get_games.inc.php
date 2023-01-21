@@ -199,7 +199,7 @@ function get_tore($spieltag, $modus){
     global $g_pdo;
     #return 0;
     // DB Abfrage je nach modus.. Hier bisher nur buli!
-    if (get_curr_wett()[0] <= 2){
+    if (get_curr_wett()[0] <= 1){
         ## Für die alten muss noch die datenbank namen und vereinsnamen rein
         return array("","","","","","","","","");
     }
