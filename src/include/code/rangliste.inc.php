@@ -3,6 +3,9 @@
 function rangliste ($begin, $ende, $gruppe){
     global $g_pdo;
     $akt_spieltag = akt_spieltag();
+    if ($ende < $akt_spieltag){
+        $akt_spieltag = $ende; ## vielleicht hier ende und akt_spieltag tauschen!!! (alles über ende regeln)
+    }
 
     $sql = "SELECT sum(richtig) as r, sum(tendenz) as t, sum(differenz) as d, sum(punkte) as p, Rangliste.user_nr, User.user_name,  vorname, nachname  
             FROM `Rangliste`, `User` 
@@ -64,20 +67,25 @@ function rangliste ($begin, $ende, $gruppe){
     }
     
     
-    $sql = "SELECT user_nr FROM `Rangliste` WHERE punkte = (SELECT max(punkte) FROM `Rangliste` WHERE spieltag = $akt_spieltag) and spieltag = $akt_spieltag";
+    ## Aktuelle Spieltagssieger
+    $sql = "SELECT user_nr FROM `Rangliste` WHERE punkte = (SELECT max(punkte) FROM `Rangliste` WHERE spieltag = $akt_spieltag) and punkte != 0 and spieltag = $akt_spieltag";
 
     foreach ($g_pdo->query($sql) as $row){
         $user_nr = $row['user_nr'];
         $spieltagssieger[$user_nr] = 1;
     }
 
+    ## Vorheriger Spieltagssieger
     $sql = "SELECT user_nr FROM `Rangliste` WHERE punkte = (SELECT max(punkte) FROM `Rangliste` WHERE spieltag = $letzter_spieltag) and spieltag = $letzter_spieltag";
 
     foreach ($g_pdo->query($sql) as $row){
         $user_nr = $row['user_nr'];
         $spieltagssieger_last[$user_nr] = 1;
+        if ($akt_spieltag == 18){
+            $spieltagssieger_last[$user_nr] = 0;
+        }
     }
-    
+
     array_multisort($punkte, SORT_DESC, $spiele, SORT_ASC, $akt_punkte,SORT_DESC, $schnitt, $letzte_punkte, $user, $spieltagssieger, $spieltagssieger_last); //SORTIERUNG HIER MIT GLEICHEN PLÄTZEN
 
 
@@ -105,9 +113,18 @@ function rangliste ($begin, $ende, $gruppe){
 
 function print_rangliste($begin, $ende, $modus){
 
-    list($punkte1, $spiele1, $akt_punkte1, $schnitt1, $letzte_punkte1, $user1, $platz_alt, $spieltagssieger, $spieltagssieger_last) = rangliste($begin, $ende-1, $modus);
+ 
     list($punkte, $spiele, $akt_punkte, $schnitt, $letzte_punkte, $user, $platz, $spieltagssieger, $spieltagssieger_last) = rangliste($begin, $ende, $modus);
 
+    if ($begin != 18){
+        ## Das brauchen wir nur, um den Platz am vorherigen Spieltag zu bestimmen
+        list($punkte1, $spiele1, $akt_punkte1, $schnitt1, $letzte_punkte1, $user1, $platz_alt, $spieltagssieger1, $spieltagssieger_last1) = rangliste($begin, $ende-1, $modus);
+    } else {
+        ## An Spieltag 18 fangen wir neu an! Da sollen die letzten Punkte nix zählen
+        foreach ($user as $i => $nr){
+            $platz_alt[$nr] = 1;
+        }
+    }
     echo "<div class=\"container\">
     <div class=\"table-responsive\">
         <table class=\"table table-sm table-striped  table-hover text-center center text-nowrap\" align=\"center\">

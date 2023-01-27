@@ -84,18 +84,18 @@ function leader(){
                     
 
                     
-function gewinner(){
-    
+function gewinner($array){
+    list($id, $id_part) = $array;
     echo "<div class=\"alert alert-success\">
-            <span class=\"badge badge-pill badge-danger\">Die R&uuml;ckrunde ist abgeschlossen! </span> 
+            <span class=\"badge badge-pill badge-danger\">Die ".get_wettbewerb_name($array)." ist abgeschlossen! </span> 
             <br>Hier seht ihr die Verteilung der Gewinner 
             <br>(erstmal ohne Gew&auml;hr, weil sich das Couchtipper-Team nicht sicher ist, ob das so klappt.. <i class=\"far fa-laugh-squint\"></i>)
         </div>";
     
-    if (get_curr_wett()[0] > 2){
-    print_gesamt_gewinner(get_curr_wett());
+    if ($id > 2){
+    print_gesamt_gewinner($array);
     } else {
-        print_gewinner(get_curr_wett());
+        print_gewinner($array);
     }
 
 }
@@ -103,15 +103,22 @@ function gewinner(){
 
 
 if (!spieltag_running(34) && akt_spieltag() == 34){
-           gewinner();
+           gewinner(get_curr_wett());
 }   
 
+if ((!spieltag_running(17) && akt_spieltag() == 17) || (akt_spieltag() == 18)){
+    ## Am 18. Spieltag (in der Rückrunde) wollen wir auch noch die Übersicht über die Hinrunden Gewinner
+    list($id, $id_part) = get_curr_wett();
+    gewinner(array($id,0));
+}   
+
+if ((akt_spieltag() != 1) && (akt_spieltag() != 18)){
 
 if (get_curr_wett()[0] > 2){
     ## für die anderen alten saisons muss das noch geändert werden
     leader();
 }
-                    
+}
 ?>
 
 <br>
