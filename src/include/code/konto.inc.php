@@ -75,7 +75,7 @@ function sitzungen(){
         } else {
             $farbe = ""; 
             $akt = $letzt[$id];
-            $close = "<a href = \"?index=7&rem=$id#session\"><img src = \"images/remove.svg\" height = \"20\" width = \"20\"></a>";
+            $close = "<a href = \"?index=7&rem=$id#session\"><i class=\"fas fa-trash-alt text-dark\"></i></a>";
         }
  
         if ($ort[$id] == ", "){
@@ -88,7 +88,7 @@ function sitzungen(){
                 <td>".$geraet[$id]."</td>
                 <td>".$standort."</td>
                 <td>".$akt."</td>
-                <td onclick = \"myFunction($id)\"><img src = \"images/info.gif\" height = \"20\" width = \"20\"></td>
+                <td onclick = \"myFunction($id)\"><i class=\"fas fa-info-circle\"></i></td>
                 <td>$close</td>
               </tr>";
 

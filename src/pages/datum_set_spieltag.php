@@ -159,7 +159,7 @@ for ($i=1; $i<count($spieltag_times)+1; $i++){
             <td>$spieltag_times[$i]</td>
             <td>$date</td>
             <td>$wochentag[0]$wochentag[1]</td>
-            <td><a href=\"index.php?index=8&spt=$i\"><img src=\"images/edit.png\" width=\"20\" height=\"20\"></a></td>
+            <td><a href=\"index.php?index=8&spt=$i\"><i class=\"far fa-edit text-dark\"></i></a></td>
         </tr>
         ";
 
