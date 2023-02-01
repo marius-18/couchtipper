@@ -127,7 +127,7 @@ function select_team(){
         echo "<option value=\"0\" $selected>W&auml;hle ein Team aus!</option>";
     }
     
-    $sql = " SELECT team_nr, team_name FROM `Teams` WHERE 1 ORDER BY team_name ASC";
+    $sql = "SELECT DISTINCT team_nr, team_name FROM `Teams`, Spieltage WHERE team_nr = team1 ORDER BY `Teams`.`team_name` ASC";
     foreach ($g_pdo->query($sql) as $row) {
         $team_nr    = $row['team_nr'];
         $team_name  = $row['team_name'];
