@@ -133,63 +133,110 @@ echo "<br><br>";
 echo "<hr>";
 echo "<div style=\"text-align:left\"><font size =\"+2\"><u>Tippgruppen</u></font></div><br>";
 
-echo "<font size=\"+1\">".get_wettbewerb_name(get_hinrunde(get_curr_wett()))." ".get_wettbewerb_jahr(get_curr_wett()).":<br><br>";
+## Hier vielleicht noch einfügen, dass alle (aktiven) Wettbewerbe gelistet werden
 
 
-$hin = check_cash(get_hinrunde(get_curr_wett()));
-if ($hin){
-echo "Du hast schon bezahlt&nbsp; <img src = \"images/check.png\" width=\"20\" height=\"20\"><br>";
-} else {
-echo "Du hast noch <b>nicht</b> bezahlt&nbsp; <img src = \"images/remove.svg\" width=\"20\" height=\"20\"><br>";
+if (user_is_in_wettbewerb(get_hinrunde(get_curr_wett()))){
+    ## Hinrunde (bzw. bei anderen Wettbewerben der Hauptteil
+    $hin = check_cash(get_hinrunde(get_curr_wett()));
+    if ($hin){
+        $color = "success";
+    } else {
+        $color = "danger";
+    }
+    echo "<div class=\"alert alert-$color\">";
+        echo "<font size=\"+1\">".get_wettbewerb_name(get_hinrunde(get_curr_wett()))." ".get_wettbewerb_jahr(get_curr_wett()).":<br><br>";
+        if ($hin){
+            echo "<strong>Du hast schon bezahlt&nbsp; <i class=\"fas fa-check warning text-success\"></i></strong>";
+        } else {
+            echo "<strong>Du hast noch <b>nicht</b> bezahlt&nbsp; <i class=\"fas fa-times\"></i></strong>";
+        }
+    
+    echo "</font></div>";
+
 }
+    
 
-########## DAS HIER NUR; WENN WIR AUCH IM BULI MODUS SIND....
 if (user_is_in_wettbewerb(get_rueckrunde(get_curr_wett()))){
-echo "<br><br>";
-echo "<font size=\"+1\">".get_wettbewerb_name(get_rueckrunde(get_curr_wett()))." ".get_wettbewerb_jahr(get_curr_wett()).":<br><br>";
+    ## Wenn es noch eine Rückrunde gibt:
+    $rueck = check_cash(get_rueckrunde(get_curr_wett()));
+    if ($rueck){
+        $color = "success";
+    } else {
+        $color = "danger";
+    }
+    echo "<br>";
+    
+    echo "<div class=\"alert alert-$color\">";
+        echo "<font size=\"+1\">".get_wettbewerb_name(get_rueckrunde(get_curr_wett()))." ".get_wettbewerb_jahr(get_curr_wett()).":<br><br>";
 
-$hin = check_cash(get_rueckrunde(get_curr_wett()));
-if ($hin){
-echo "Du hast schon bezahlt&nbsp; <img src = \"images/check.png\" width=\"20\" height=\"20\"><br>";
-} else {
-echo "Du hast noch <b>nicht</b> bezahlt&nbsp; <img src = \"images/remove.svg\" width=\"20\" height=\"20\"><br>";
+        if ($rueck){
+            echo "<strong>Du hast schon bezahlt&nbsp; <i class=\"fas fa-check warning text-success\"></i></strong>";
+        } else {
+            echo "<strong>Du hast noch <b>nicht</b> bezahlt&nbsp; <i class=\"fas fa-times\"></i></strong>";
+        }
+
+    echo "</font></div>";
 }
 
-}
-
-
-echo "</font>";
 
 echo "<br><br>";
+
+
+###########################################################
+###########################################################
+### L I E B L I N G S T E A M                                               
+###########################################################
+###########################################################
 
 echo "<hr>";
-
 echo "<div style=\"text-align:left\"><font size =\"+2\"><u>Lieblingsteam auswählen</u></font></div><br>";
 
-echo "<div class=\"alert alert-info\"> Hier kannst du ein Lieblingsteam auswählen. Das hat z.B. Auswirkungen darauf, welches Team unter <a href=\"?index=3\">\"Restprogramm\"</a> zuerst erscheint.
+echo "<font size =\"+1\"><div class=\"alert alert-info\"> Hier kannst du ein Lieblingsteam auswählen. Das hat z.B. Auswirkungen darauf, welches Team unter <a href=\"?index=3\">\"Restprogramm\"</a> zuerst erscheint.
 <br>Weiter unten kannst du dir den Spielplan deines Lieblingsteams in deinen Kalender importieren</div>";
 
-  $my_team = select_team();
-  set_fav_team($my_team);
-  
-echo "<br><br>";
+
+$my_team = select_team();
+set_fav_team($my_team);
+
+
+echo "</font><br><br>";
+
+
+###########################################################
+###########################################################
+### B O T  -  G E R Ä T E                                             
+###########################################################
+###########################################################
 
 echo "<hr>";
+echo "<font size =\"+1\"><div style=\"text-align:left\"><font size =\"+2\"><u>Verbundene Ger&auml;te</u></font></div><br>";
+include_once("src/include/code/konto_bot.inc.php");
 
-echo "<div style=\"text-align:left\"><font size =\"+2\"><u>Verbundene Ger&auml;te</u></font></div><br>";
-include_once("src/newbot.php");
+echo "</font><br><br>";
 
-echo "<br><br>";
+###########################################################
+###########################################################
+### S I T Z U N G E N                                               
+###########################################################
+###########################################################
 
 echo "<hr>";
-
-echo "<div style=\"text-align:left\"><font size =\"+2\"><u>Sitzungen</u></font></div><br>";
+echo "<font size =\"+1\"><div style=\"text-align:left\"><font size =\"+2\"><u>Angemeldete Sitzungen</u></font></div><br>";
 
 sitzungen();
 
-echo "<hr>";
+echo "</font><br><br>";
 
+###########################################################
+###########################################################
+###  K A L E N D E R                                              
+###########################################################
+###########################################################
+
+echo "<hr>";
 echo "<div style=\"text-align:left\"><font size =\"+2\"><u>Kalender exportieren</u></font></div><br>";
+echo "<font size =\"+1\">";
 
 if (get_fav_team() != ""){
     echo "<div class=\"alert alert-info\"> Wenn du keine Spiele deiner Lieblingsmannschaft <strong>".get_team_open_db_name(get_fav_team())."</strong> mehr verpassen willst,
@@ -203,6 +250,7 @@ if (get_fav_team() != ""){
     Weiter oben kannst du ein Lieblingsteam ausw&auml;hlen!</div>";
 }
 
+echo "</font>";
 
 
 

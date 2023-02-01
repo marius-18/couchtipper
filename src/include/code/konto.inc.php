@@ -1,4 +1,51 @@
 <?php
+
+function name($mode){
+   if ($mode == 0) {
+      return get_username();
+   } else {
+   $str = "<form action=\"?index=7#7\" method=\"post\">
+        <input type=\"text\" style=\"font-size:medium;\" name=\"name\" value =\"".get_username()."\"><br>
+        <input type=\"Submit\" value=\"Enter\"><br>";
+   return $str;
+   }
+
+}
+
+
+function email($mode){
+   global $g_pdo;
+   $user_nr = get_usernr();
+
+   $mail = get_mail();
+
+   if ($mode == 0){
+      return $mail;
+   } else {
+      $str = "<form action=\"?index=7#7\" method=\"post\">
+        <input type=\"text\" style=\"font-size:medium;\" size = \"25\" name=\"mail\" value =\"$mail\"><br>
+        <input type=\"Submit\" value=\"Enter\"><br>";
+      return $str;
+   }
+
+}
+
+
+function password($mode){
+   if ($mode == 0) {
+      return "*******";
+   } else {
+   $str = "<form action=\"?index=7#7\" method=\"post\"> <table align = \"center\">
+        <tr><td>Altes Passwort:</td><td><input type=\"password\" style=\"font-size:medium;\" name=\"password_old\" value =\"\"></td></tr>
+        <tr><td>Neues Passwort:</td><td> <input type=\"password\" style=\"font-size:medium;\" name=\"password\" value =\"\"></td></tr>
+        <tr><td>Wiederholen:</td><td> <input type=\"password\" style=\"font-size:medium;\" name=\"password1\" value =\"\"></td></tr></table>
+        <input type=\"Submit\" value=\"Enter\"><br>";
+   return $str;
+   }
+
+}
+
+
 function sitzungen(){
     global $g_pdo;
     $user_id = get_usernr();
@@ -10,7 +57,6 @@ function sitzungen(){
         $session_msg = rm_session($rem_id);  // Funktion aus auth
     }
     
-   
     list($erstellt, $ort, $geraet, $letzt, $identifier, $land, $ip) = ls_sessions();  // Funktion aus auth
 
     // Auflistung aller Sessions
@@ -70,81 +116,6 @@ function sitzungen(){
    </script>";
 
 }
-
-function name($mode){
-   if ($mode == 0) {
-      return get_username();
-   } else {
-   $str = "<form action=\"?index=7#7\" method=\"post\">
-        <input type=\"text\" style=\"font-size:medium;\" name=\"name\" value =\"".get_username()."\"><br>
-        <input type=\"Submit\" value=\"Enter\"><br>";
-   return $str;
-   }
-
-}
-
-
-
-function email($mode){
-   global $g_pdo;
-   $user_nr = get_usernr();
-
-   $mail = get_mail();
-
-   if ($mode == 0){
-      return $mail;
-   } else {
-      $str = "<form action=\"?index=7#7\" method=\"post\">
-        <input type=\"text\" style=\"font-size:medium;\" size = \"25\" name=\"mail\" value =\"$mail\"><br>
-        <input type=\"Submit\" value=\"Enter\"><br>";
-      return $str;
-   }
-
-}
-
-
-function password($mode){
-   if ($mode == 0) {
-      return "*******";
-   } else {
-   $str = "<form action=\"?index=7#7\" method=\"post\"> <table align = \"center\">
-        <tr><td>Altes Passwort:</td><td><input type=\"password\" style=\"font-size:medium;\" name=\"password_old\" value =\"\"></td></tr>
-        <tr><td>Neues Passwort:</td><td> <input type=\"password\" style=\"font-size:medium;\" name=\"password\" value =\"\"></td></tr>
-        <tr><td>Wiederholen:</td><td> <input type=\"password\" style=\"font-size:medium;\" name=\"password1\" value =\"\"></td></tr></table>
-        <input type=\"Submit\" value=\"Enter\"><br>";
-   return $str;
-   }
-
-}
-
-function team(){
-   global $g_pdo;
-   $str = "<form action=\?index=7#7\" method=\"post\"><select name=\"team\">";
-   $select = "";
-   $sql = "SELECT team_name,team_nr FROM Teams WHERE team_nr<33 ORDER BY team_nr ASC";
-
-   foreach ($g_pdo->query($sql) as $row) {
-
-      if ($row['team_nr'] == my_team()){
-         $select = " selected";
-      }
-
-      $team = $row['team_name'];
-      $team_nr = $row['team_nr'];
-      $str .= "<option value=\"$team_nr\" $select>$team</option>";
-      $select = "";
-   }
-
-   $str .= "</select><br>";
-
-   $str .= "<input type=\"Submit\" value=\"Enter\"></form>";
-
-   return $str;
-
-}
-
-
-
 
 
 

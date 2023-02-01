@@ -1,16 +1,14 @@
 <div class="container-fluid">
 <?php
 
-//require_once('src/functions/main.inc.php');
-//require_once('src/functions/template.inc.php');
 require_once('src/include/lib/forms.inc.php');
 
 if (!allow_date()){
-echo "Dieser Bereich ist nur f&uuml;r Administratoren!<br>
-Frage beim Administrator nach, um Rechte zum &Auml;ndern von Ergebnissen zu bekommen.";
-exit;
-
+   echo "Dieser Bereich ist nur f&uuml;r Administratoren!<br>
+   Frage beim Administrator nach, um Rechte zum &Auml;ndern von Ergebnissen zu bekommen.";
+   exit;
 }
+
 
 $spieltag = spt_select();
 if (isset($_POST['spieltag'])){
@@ -30,7 +28,6 @@ if (($spieltag > 17) && (get_wettbewerb_code(get_curr_wett()) == "BuLi") ){
 }
 
 echo "<div class = \"content\"><br>";
-
 
 ?>
 
@@ -285,8 +282,6 @@ if ($error) {
 
 <?php
 
-
-
 function spiele_term($main_datum, $sp_nr, $time){
    global $g_modus;
 
@@ -482,7 +477,6 @@ function buli_spiele_term($main_datum, $sp_nr, $time) {
    }
 
 }
-
 
 ?>
 </div>

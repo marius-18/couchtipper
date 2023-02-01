@@ -107,6 +107,8 @@ check_in_modal();
     
     <script src="src/include/scripts/ausblenden.js?v=1"></script> <!-- Zum Ein- und ausblenden verschiedener Elemente -->
 
+    <script src="src/include/scripts/update.js?v=1"></script> <!-- Um neue Einstellungen zu updaten -->
+
     <script src="src/include/scripts/bootstrap.js?v=1"></script> <!-- Für Bootstrap steuerungen -->
 
 
@@ -363,9 +365,9 @@ MENÜ
                         break;
                     case 8:
                         echo "<h2>Spiele terminieren</h2>";
-                        include_once("src/spiele_term.php");
+                        include_once("src/pages/datum_spiele_term.php");
                         echo "<h2>Datum eingeben</h2>";
-                        include_once("src/set_date.php");
+                        include_once("src/pages/datum_set_spieltag.php");
                         break;
                     case 9:
                         echo "<h2>Verwaltung</h2>";

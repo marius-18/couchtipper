@@ -18,7 +18,7 @@ $message_id = $json_out['message']['message_id'];
 // Generell immer prüfen ob man schon registriert ist!!!
 
 //speichert die letzte Nachricht in die DB..
-save_message($chat_id, $message);
+#save_message($chat_id, $message);
 
 if(stripos($message, '/start') === 0 && $type == 'private')
 {
@@ -34,6 +34,7 @@ if(stripos($message, '/start') === 0 && $type == 'private')
         // Wir sind schon registriert..
         $sent = true;
         sendMessage($bot_id,$chat_id,false,"Gude ".$first_name."! Du bist schon im System registriert! \nSende /help um alle Befehle angezeigt zu bekommen!");
+        
     } else {
         if(bot_check_hello_id($code)){
             // ID stimmt überein, ==> Checke ein, damit die CHat_id im System ist
