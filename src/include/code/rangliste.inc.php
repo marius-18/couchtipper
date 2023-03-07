@@ -116,7 +116,7 @@ function print_rangliste($begin, $ende, $modus){
  
     list($punkte, $spiele, $akt_punkte, $schnitt, $letzte_punkte, $user, $platz, $spieltagssieger, $spieltagssieger_last) = rangliste($begin, $ende, $modus);
 
-    if ($begin != 18){
+    if (!(($begin == 18) && ($ende == 18))){
         ## Das brauchen wir nur, um den Platz am vorherigen Spieltag zu bestimmen
         list($punkte1, $spiele1, $akt_punkte1, $schnitt1, $letzte_punkte1, $user1, $platz_alt, $spieltagssieger1, $spieltagssieger_last1) = rangliste($begin, $ende-1, $modus);
     } else {
