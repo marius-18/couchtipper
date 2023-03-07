@@ -140,7 +140,10 @@ function get_games ($spieltag, $modus, $change, $user_nr) {
 }
 
 function get_open_db_spieltag($modus, $jahr, $spieltag){
-    $url = "https://www.openligadb.de/api/getmatchdata/$modus/$jahr/$spieltag";
+    
+    #$url = "https://www.openligadb.de/api/getmatchdata/$modus/$jahr/$spieltag";
+    $url = "https://api.openligadb.de/getmatchdata/$modus/$jahr/$spieltag";
+    
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -174,16 +177,15 @@ function get_ergebnis($spieltag,$modus, $jahr){
         $team1 = $row['Heim'];
         $team2 = $row['Aus'];
         $sp_nr = $row['sp_nr'];
-        
+
         foreach ($matches as $match) {
-        
-            if (!strnatcmp($match["Team1"]["TeamName"], $team1) and !strcmp($match["Team2"]["TeamName"], $team2)) {
+            if (!strnatcmp($match["team1"]["teamName"], $team1) and !strcmp($match["team2"]["teamName"], $team2)) {
                 // Das ist das aktuelle Spiel!
-                $tore_heim[$sp_nr] = $match["MatchResults"][0]["PointsTeam1"];
-                $tore_aus[$sp_nr]  = $match["MatchResults"][0]["PointsTeam2"];
+                $tore_heim[$sp_nr] = $match["matchResults"][0]["pointsTeam1"];
+                $tore_aus[$sp_nr]  = $match["matchResults"][0]["pointsTeam2"];
         
                 echo "Spiel $sp_nr ";
-                echo "$team1 ".$match["MatchResults"][0]["PointsTeam1"]." - ".$match["MatchResults"][0]["PointsTeam2"]." $team2";
+                echo "$team1 ".$tore_heim[$sp_nr]." - ".$tore_aus[$sp_nr]." $team2";
                 echo "<br>";
 
             }
@@ -229,39 +231,39 @@ function get_tore($spieltag, $modus){
     
     $ret = array();
     foreach ($matches as $match) {
-        $sp_nr = $spiel[$match["Team1"]["TeamName"]];
+        $sp_nr = $spiel[$match["team1"]["teamName"]];
         $ret[$sp_nr] = "";
         
-        if ($spiel[$match["Team1"]["TeamName"]] == $spiel[$match["Team2"]["TeamName"]]) {
+        if ($spiel[$match["team1"]["teamName"]] == $spiel[$match["team2"]["teamName"]]) {
             // Das ist das aktuelle Spiel!
             $ret[$sp_nr] = "<table align=\"center\">";
             $t1 = 0;
             $t2 = 0;
-            foreach ($match["Goals"] as $goal){
+            foreach ($match["goals"] as $goal){
                 $zusatz = "";
-                if ($goal["ScoreTeam1"] >  $t1) {
+                if ($goal["scoreTeam1"] >  $t1) {
                     $ret[$sp_nr] .= "<tr class=\"table-info\">";
                 }
-                else if ($goal["ScoreTeam2"] >  $t2) {
+                else if ($goal["scoreTeam2"] >  $t2) {
                     $ret[$sp_nr] .= "<tr class=\"table-primary\">";
                 } else {
                     $zusatz = "(VAR)";
                 }
                 
-                if ($goal["IsPenalty"]){
+                if ($goal["isPenalty"]){
                     $zusatz = "(11m)";
                 }
-                if ($goal["IsOwnGoal"]){
+                if ($goal["isOwnGoal"]){
                     $zusatz = "(ET)";
                 }
-                $ret[$sp_nr] .= "<td>'".$goal["MatchMinute"]."</td>";
-                $ret[$sp_nr] .= "<td>".$goal["ScoreTeam1"]." : ".$goal["ScoreTeam2"]."</td>";
-                $ret[$sp_nr] .= "<td>".$goal["GoalGetterName"]."</td>";
+                $ret[$sp_nr] .= "<td>'".$goal["matchMinute"]."</td>";
+                $ret[$sp_nr] .= "<td>".$goal["scoreTeam1"]." : ".$goal["scoreTeam2"]."</td>";
+                $ret[$sp_nr] .= "<td>".$goal["goalGetterName"]."</td>";
                 $ret[$sp_nr] .= "<td>$zusatz</td>";
                 $ret[$sp_nr] .= "</tr>";
                 
-                $t1 = $goal["ScoreTeam1"];
-                $t2 = $goal["ScoreTeam2"];
+                $t1 = $goal["scoreTeam1"];
+                $t2 = $goal["scoreTeam2"];
 
             }
             $ret[$sp_nr] .= "</table>";
@@ -303,6 +305,7 @@ function get_other_tipps($spieltag, $modus) {
     $vorname = NULL;
     $nachname = NULL;
     $punkte = NULL;
+    $user_dict = get_all_username();
 
     foreach ($g_pdo->query($sql) as $row) {
         $i = $row['user_nr'];
@@ -319,7 +322,7 @@ function get_other_tipps($spieltag, $modus) {
         if (((($modus == "Tipps")) || ( $modus == "Spieltag")) && isset($tore1[$sp_nr]) && isset($tore2[$sp_nr])){
             $tipp[$sp_nr][$i] = $tipp1[$sp_nr]." : ". $tipp2[$sp_nr];
             $user_nr[$sp_nr][$i] = $i;
-            $user_name[$sp_nr][$i] = get_username_from_nr($i);  
+            $user_name[$sp_nr][$i] = $user_dict[$i];#get_username_from_nr($i);  
             $vorname[$sp_nr][$i] = "";
             $nachname[$sp_nr][$i] = "";
             //$vorname[$sp_nr][$i] = $row['vorname'];
