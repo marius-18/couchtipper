@@ -28,6 +28,7 @@ function rangliste ($begin, $ende, $gruppe){
         $letzte_punkte[$user_nr] = 0;
         $spieltagssieger[$user_nr] = 0;
         $spieltagssieger_last[$user_nr] = 0;
+        $spiele[$user_nr] = 0;
   
         $sql1 = "SELECT count(distinct(spieltag)) as spiele FROM `Tipps` WHERE (user_nr = $user_nr AND spieltag <= $akt_spieltag AND spieltag >= $begin AND spieltag <= $ende)";
 
@@ -116,7 +117,7 @@ function print_rangliste($begin, $ende, $modus){
  
     list($punkte, $spiele, $akt_punkte, $schnitt, $letzte_punkte, $user, $platz, $spieltagssieger, $spieltagssieger_last) = rangliste($begin, $ende, $modus);
 
-    if (!(($begin == 18) && ($ende == 18))){
+    if (!(($begin == 18) && ($ende == 18)) && !(($begin == 1) && ($ende == 1))  ){
         ## Das brauchen wir nur, um den Platz am vorherigen Spieltag zu bestimmen
         list($punkte1, $spiele1, $akt_punkte1, $schnitt1, $letzte_punkte1, $user1, $platz_alt, $spieltagssieger1, $spieltagssieger_last1) = rangliste($begin, $ende-1, $modus);
     } else {

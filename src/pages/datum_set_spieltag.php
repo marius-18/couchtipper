@@ -70,7 +70,11 @@ foreach ($g_pdo->query($sql) as $row) {
 if (isset($_GET['spt']) && ($_GET['spt'] != "")){
     $akt_spieltag = $_GET['spt'];
 } else{
-    $akt_spieltag = count($spieltag_times)+1;
+    if (isset($spieltag_times)){
+        $akt_spieltag = count($spieltag_times)+1;
+    } else {
+        $akt_spieltag = 1;
+    }
 }
 
 
