@@ -23,7 +23,7 @@ function gewinn($array){
     $praemie = get_wettbewerb_praemie($array);
 
     $S = anz_user_wett($array);
-    $G = round($S*$g); // Anzahl der Gewinner
+    $G = max(round($S*$g), 1); // Anzahl der Gewinner
     
     
     // Summe im Nenner berechnen
@@ -31,6 +31,7 @@ function gewinn($array){
     for ($i = 0; $i < $G; $i++){
         $sum += pow($i,$d);  
     }
+    $sum = max($sum, 1);
 
     // Das wird für die Spieltagsprämie benötigt.
     $abzug = 17 * $praemie;
