@@ -6,9 +6,9 @@ require_once("../auth/include/security.inc.php");
 is_logged();
 
 $wartung = 0;
-$aktuelle_wett_id = "5";
+$aktuelle_wett_id = "6";
 $g_modus = "BuLi";
-$global_wett_id = "5";
+$global_wett_id = "6";
 $subdomain = explode(".",$_SERVER['SERVER_NAME'])[0];
 
 if (($wartung) && ($subdomain == "code")){
@@ -111,7 +111,12 @@ check_in_modal();
 
     <script src="src/include/scripts/bootstrap.js?v=1"></script> <!-- Für Bootstrap steuerungen -->
 
-
+<link href='https://fonts.googleapis.com/css?family=Noto Sans' rel='stylesheet'>
+<style>
+body {
+    font-family: 'Noto Sans';
+}
+</style>
 </head>
 
 
@@ -159,9 +164,10 @@ MENÜ
                         </button>
                         <div class="dropdown-menu">
                             <div class="dropdown-header">Aktuell</div>
-                            <a class="dropdown-item" href="?year=5" style="color:black">BuLi 2022/23</a>
+                            <a class="dropdown-item" href="?year=6" style="color:black">BuLi 2023/24</a>
                             <div class="dropdown-divider"></div>
                             <div class="dropdown-header">Vergangene</div>
+                            <a class="dropdown-item" href="?year=5" style="color:black">BuLi 2022/23</a>
                             <a class="dropdown-item" href="?year=4" style="color:black">BuLi 2021/22</a>
                             <a class="dropdown-item" href="?year=2" style="color:black">BuLi 2020/21</a>
                         </div>
