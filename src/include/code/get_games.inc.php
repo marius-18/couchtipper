@@ -208,7 +208,6 @@ function get_tore($spieltag, $modus){
     $jahr = substr(get_wettbewerb_jahr(get_curr_wett()), 0, 4);
     #echo "$jahr ";
     $matches = get_open_db_spieltag("bl1", $jahr, $spieltag);
-
     if ($spieltag <= 17) {
         $heim = "Heim";
         $aus = "Aus";
@@ -235,7 +234,22 @@ function get_tore($spieltag, $modus){
         $ret[$sp_nr] = "";
         
         if ($spiel[$match["team1"]["teamName"]] == $spiel[$match["team2"]["teamName"]]) {
-            // Das ist das aktuelle Spiel!
+
+
+usort($match["goals"], function($a, $b) {
+    if ($a['goalID'] > $b['goalID']) {
+        return 1;
+    } elseif ($a['goalID'] < $b['goalID']) {
+        return -1;
+    }
+    return 0;
+});
+
+
+
+//echo "<br><br><br>";
+            //print_r($match["goals"]);
+// Das ist das aktuelle Spiel!
             $ret[$sp_nr] = "<table align=\"center\">";
             $t1 = 0;
             $t2 = 0;
