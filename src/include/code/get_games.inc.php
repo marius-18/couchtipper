@@ -181,8 +181,8 @@ function get_ergebnis($spieltag,$modus, $jahr){
         foreach ($matches as $match) {
             if (!strnatcmp($match["team1"]["teamName"], $team1) and !strcmp($match["team2"]["teamName"], $team2)) {
                 // Das ist das aktuelle Spiel!
-                $tore_heim[$sp_nr] = $match["matchResults"][0]["pointsTeam1"];
-                $tore_aus[$sp_nr]  = $match["matchResults"][0]["pointsTeam2"];
+                $tore_heim[$sp_nr] = $match["matchResults"][1]["pointsTeam1"];
+                $tore_aus[$sp_nr]  = $match["matchResults"][1]["pointsTeam2"];
         
                 echo "Spiel $sp_nr ";
                 echo "$team1 ".$tore_heim[$sp_nr]." - ".$tore_aus[$sp_nr]." $team2";
