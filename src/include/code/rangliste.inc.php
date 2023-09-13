@@ -6,6 +6,27 @@ function rangliste ($begin, $ende, $gruppe){
     if ($ende < $akt_spieltag){
         $akt_spieltag = $ende; ## vielleicht hier ende und akt_spieltag tauschen!!! (alles über ende regeln)
     }
+    list($id, $id_part) = get_curr_wett();
+    
+    if (wettbewerb_has_parts($id)){
+        // Decider: Hinrunde oder Rückrunde ?!
+        if ($begin <= 17 && $ende <= 17 ) {
+            $array1 = [$id, 0];
+            $array2 = [$id, 0];        
+        } elseif ($begin >= 18 && $ende >= 18 ) {
+            $array1 = [$id, 1];
+            $array2 = [$id, 1];   
+        } else {
+            $array1 = [$id, 0];
+            $array2 = [$id, 1];
+        }
+        
+    } else {
+        $array1 = [$id, 0];
+        $array2 = [$id, 0];
+    }
+    
+
 
     $sql = "SELECT sum(richtig) as r, sum(tendenz) as t, sum(differenz) as d, sum(punkte) as p, Rangliste.user_nr, User.user_name,  vorname, nachname  
             FROM `Rangliste`, `User` 
@@ -19,6 +40,9 @@ function rangliste ($begin, $ende, $gruppe){
 
     foreach ($g_pdo->query($sql) as $row) {
         $user_nr = $row['user_nr'];
+        if (!user_is_in_wettbewerb($array1, $user_nr) && !user_is_in_wettbewerb($array2, $user_nr)){
+            continue;
+        }
         $punkte[$user_nr] = $row['p'];
         $richtig[$user_nr] = $row['r'];
         $tendenz[$user_nr] = $row['t'];
@@ -53,6 +77,9 @@ function rangliste ($begin, $ende, $gruppe){
 
         foreach ($g_pdo->query($sql) as $row){
             $user_nr = $row['user_nr'];
+            if (!user_is_in_wettbewerb($array1, $user_nr) && !user_is_in_wettbewerb($array2, $user_nr)){
+                continue;
+            }  
             $akt_punkte [$user_nr] = $row['punkte'];
         }
         
@@ -62,6 +89,9 @@ function rangliste ($begin, $ende, $gruppe){
 
             foreach ($g_pdo->query($sql) as $row){
                 $user_nr = $row['user_nr'];
+                if (!user_is_in_wettbewerb($array1, $user_nr) && !user_is_in_wettbewerb($array2, $user_nr)){
+                    continue;
+                }
                 $letzte_punkte [$user_nr] = $row['punkte'];
             }
         }
@@ -73,6 +103,9 @@ function rangliste ($begin, $ende, $gruppe){
 
     foreach ($g_pdo->query($sql) as $row){
         $user_nr = $row['user_nr'];
+        if (!user_is_in_wettbewerb($array1, $user_nr) && !user_is_in_wettbewerb($array2, $user_nr)){
+            continue;
+        }
         $spieltagssieger[$user_nr] = 1;
     }
 
@@ -81,6 +114,9 @@ function rangliste ($begin, $ende, $gruppe){
 
     foreach ($g_pdo->query($sql) as $row){
         $user_nr = $row['user_nr'];
+        if (!user_is_in_wettbewerb($array1, $user_nr) && !user_is_in_wettbewerb($array2, $user_nr)){
+            continue;
+        }
         $spieltagssieger_last[$user_nr] = 1;
         if ($akt_spieltag == 18){
             $spieltagssieger_last[$user_nr] = 0;
