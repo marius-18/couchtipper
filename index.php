@@ -70,6 +70,9 @@ if ($index == "cal"){
 // Wettbewerb check in
 check_in_modal();
 
+#$player = [34];
+#check_in_manually($player, 6);
+
 ####### DU HAST NOCH NICHT BEZAHLT
 ### BITTE BITTE SCHÖNER MACHEN!!
 
