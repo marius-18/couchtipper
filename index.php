@@ -5,7 +5,7 @@ header('Content-Type: text/html; charset=UTF-8');
 require_once("../auth/include/security.inc.php");
 is_logged();
 
-$wartung = 0;
+$wartung = 1;
 $aktuelle_wett_id = "6";
 $g_modus = "BuLi";
 $global_wett_id = "6";
@@ -173,15 +173,37 @@ MENÜ
                             <a class="dropdown-item" href="?year=5" style="color:black">BuLi 2022/23</a>
                             <a class="dropdown-item" href="?year=4" style="color:black">BuLi 2021/22</a>
                             <a class="dropdown-item" href="?year=2" style="color:black">BuLi 2020/21</a>
+                            <?php
+                            if (allow_verwaltung()){
+                                echo "<div class=\"dropdown-divider\"></div>
+                            <div class=\"dropdown-header\">Turniere</div>
+                            <a class=\"dropdown-item\" href=\"?year=3\" style=\"color:black\">EM 2021</a>";
+                            }
+                            ?>
                         </div>
                     </div>
                 </span>
             </ul>
             
             <ul class="nav navbar-nav navbar-left">
-                <li class="nav-item">
-                    <a class="nav-link" href="?index=1#main">Bundesliga-Tabelle</a>
-                </li>
+                <?php 
+                    if (get_wettbewerb_code(get_curr_wett()) == "BuLi"){
+                        echo "
+                            <li class=\"nav-item\">
+                                <a class=\"nav-link\" href=\"?index=1#main\">Bundesliga-Tabelle</a>
+                            </li>";
+                    } 
+                    if (is_big_tournament(get_curr_wett())) {
+                        echo "
+                            <li class=\"nav-item\">
+                                <a class=\"nav-link\" href=\"?index=1.1#main\">Gruppenphase</a>
+                            </li>";                   
+                        echo "
+                            <li class=\"nav-item\">
+                                <a class=\"nav-link\" href=\"?index=1.2#main\">KO-Runde</a>
+                            </li>";   
+                    }
+                ?>
                 <li class="nav-item">
                     <a class="nav-link" href="?index=2#main">Spieltage</a>
                 </li>
@@ -314,17 +336,15 @@ MENÜ
                 }
 
                  if (($index == 5) || ($index == 2)){
-                    echo "<h2>Bundesliga-Tabelle:</h2>";
-                    include_once("src/pages/tabelle.php");
-
+                    if (get_wettbewerb_code(get_curr_wett()) == "BuLi"){
+                        echo "<h2>Bundesliga-Tabelle:</h2>";
+                        include_once("src/pages/tabelle.php");
+                    }
+                    if (is_big_tournament(get_curr_wett())){
+                        echo "<h2>Gruppen-Tabellen:</h2>";
+                        include_once("src/pages/nur_tabelle.php");
+                    }
                 }
-                /*
-                if ($index == 2){
-                    echo "<h2>Gruppen-Tabellen:</h2>";
-                    include_once("src/pages/nur_tabelle.php");
-
-                }
-                */
                 
             ?>
 
@@ -347,6 +367,14 @@ MENÜ
                     case 1:
                         echo "<h2> Bundesliga-Tabelle</h2>";
                         include_once("src/pages/tabelle.php");
+                        break;
+                    case 1.1:
+                        echo "<h2> Gruppenphase</h2>";
+                        include_once("src/pages/wm_tabelle.php");
+                        break;
+                    case 1.2:
+                        echo "<h2> KO-Runde</h2>";
+                        include_once("src/pages/ko.php");
                         break;
                     case 2: 
                         echo "<h2>Spieltage</h2>";
