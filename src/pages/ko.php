@@ -4,6 +4,8 @@ $(document).ready(function(){
   $('[data-toggle="popover"]').popover();
 });
 </script>
+
+<div class="container-fluid">
 <?php
 require_once('src/include/code/refresh.php');
 
@@ -149,12 +151,20 @@ function zelle1($zeile, $spalte){
     $counter = pow(2,$spalte-1) * 3;
     // oben 
     if ((($zeile  - $start_oben) % $counter ) == 0) {
-        echo team_label($zeile,$spalte, "top")."";
+        if (get_wettbewerb_code(get_curr_wett()) == "WM" && get_wettbewerb_jahr(get_curr_wett()) == "2018"){
+            echo team_label_2018($zeile,$spalte, "top")."";            
+        } else {
+            echo team_label($zeile,$spalte, "top")."";
+        }
         return;
     }
     if ((($zeile - $start_unten) % $counter ) == 0) {
         // das ist ein Spiel von unten
-        echo team_label($zeile,$spalte, "down")."";
+        if (get_wettbewerb_code(get_curr_wett()) == "WM" && get_wettbewerb_jahr(get_curr_wett()) == "2018"){
+            echo team_label_2018($zeile,$spalte, "down")."";            
+        } else {
+            echo team_label($zeile,$spalte, "down")."";
+        }
         return;
     }
     if ((($zeile  - $start_title) % $counter ) == 0) {
@@ -280,5 +290,119 @@ function team_label($zeile, $spalte, $mode){
     }
 }
 
+function team_label_2018($zeile, $spalte, $mode){
+    if ($spalte == 1){
+        switch ($zeile) {
+            case 2:
+                return teams(16,2,"2. Gruppe D",1, $mode);
+                break;
+            case 3:
+                return teams(16,2,"2. Gruppe E",2, $mode);
+                break;        
+            case 5:
+                return teams(16,1,"1. Gruppe F",1, $mode);
+                break;
+            case 6:
+                return teams(16,1,"3. Gruppe A/B/C ",2, $mode);
+                break;         
+            case 8:
+                return teams(18,1,"1. Gruppe A",1, $mode);
+                break;
+            case 9:
+                return teams(18,1,"2. Gruppe C",2, $mode);
+                break;        
+            case 11:
+                return teams(18,2,"1. Gruppe B",1, $mode);
+                break;
+            case 12:
+                return teams(18,2,"3. Gruppe A/D/E/F",2, $mode);
+                break;
+            case 14:
+                return teams(17,1,"2. Gruppe A",1, $mode);
+                break;
+            case 15:
+                return teams(17,1,"2. Gruppe B",2, $mode);
+                break;        
+            case 17:
+                return teams(17,2,"1. Gruppe C",1, $mode);
+                break;
+            case 18:
+                return teams(17,2,"3. Gruppe D/E/F",2, $mode);
+                break;         
+            case 20:
+                return teams(19,1,"1. Gruppe D",1, $mode);
+                break;
+            case 21:
+                return teams(19,1,"2. Gruppe F",2, $mode);
+                break;        
+            case 23:
+                return teams(19,2,"1. Gruppe E",1, $mode);
+                break;
+            case 24:
+                return teams(19,2,"3. Gruppe A/B/C/D",2, $mode);
+                break; 
+        }
+
+        return "<td class=\"erg_$mode\">1</td><td class=\"spiel_$mode \"> "."Sieger Gruppe X";
+    }
+    if ($spalte == 2){
+        switch (ceil($zeile/3)) {
+            case 1:
+                return teams(20,1,"Sieger AF 5",1, $mode);
+                break;
+            case 2:
+                return teams(20,1,"Sieger AF 6",2, $mode);
+                break;        
+            case 3:
+                return teams(20,2,"Sieger AF 2",1, $mode);
+                break;
+            case 4:
+                return teams(20,2,"Sieger AF 4",2, $mode);
+                break;         
+            case 5:
+                return teams(21,2,"Sieger AF 1",1, $mode);
+                break;
+            case 6:
+                return teams(21,2,"Sieger AF 3",2, $mode);
+                break;        
+            case 7:
+                return teams(21,1,"Sieger AF 7",1, $mode);
+                break;
+            case 8:
+                return teams(21,1,"Sieger AF 8",2, $mode);
+                break;         
+        }
+        
+    }
+    if ($spalte == 3){
+        switch (ceil($zeile/6)) {
+            case 1:
+                return teams(22,1,"Sieger VF 1",1, $mode);
+                break;
+            case 2:
+                return teams(22,1,"Sieger VF 2",2, $mode);
+                break;        
+            case 3:
+                return teams(23,1,"Sieger VF 3",1, $mode);
+                break;
+            case 4:
+                return teams(23,1,"Sieger VF 4",2, $mode);
+                break;              
+        }        
+    }
+    if ($spalte == 4){
+        switch (ceil($zeile/12)) {
+            case 1:
+                return teams(25,1,"Sieger HF 1",1, $mode);
+                break;
+            case 2:
+                return teams(25,1,"Sieger HF 2",2, $mode);
+                break;                     
+        }         
+    }
+}
 
 ?> 
+
+
+</div>

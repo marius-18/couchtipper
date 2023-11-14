@@ -42,24 +42,53 @@ function gewinn_ausblenden(wert) {
 function changeGroupTable(id){
     // Für Gruppen-Tabelle in EM/WM Modus
     // Blendet Tabellen ein und aus
-    document.getElementById("groupA").style.display = 'none';
-    document.getElementById("groupB").style.display = 'none';
-    document.getElementById("groupC").style.display = 'none';
-    document.getElementById("groupD").style.display = 'none';
-    document.getElementById("groupE").style.display = 'none';
-    document.getElementById("groupF").style.display = 'none';
-    
-    document.getElementById("LgroupA").classList.remove('active');
-    document.getElementById("LgroupB").classList.remove('active');
-    document.getElementById("LgroupC").classList.remove('active');
-    document.getElementById("LgroupD").classList.remove('active');
-    document.getElementById("LgroupE").classList.remove('active');
-    document.getElementById("LgroupF").classList.remove('active');
+  
+    var grps = document.getElementsByClassName("big_tournament_group");
+    for (let i = 0; i < grps.length; i++) {
+      grps[i].style.display = 'none';
+    }
 
+    
+    var grps_menu = document.getElementsByClassName(" big_tournament_group_menu");
+    for (let i = 0; i < grps.length; i++) {
+      grps_menu[i].classList.remove('active');
+    }
 
     var label = "L" + id;
     document.getElementById(label).classList.add('active');
     
     document.getElementById(id).style.display = 'block';
 
+}
+
+function changeGroupTableNext(max){
+    var id = document.getElementById("curr_group").value;
+    var min = 65;
+    
+    var new_id = id.charCodeAt(0) + 1;
+    
+    if (new_id > max){
+        new_id = min;
+    }
+    
+    new_id = String.fromCharCode(new_id);
+    
+    document.getElementById("curr_group").value = new_id;
+    changeGroupTable("group" + new_id);
+}
+
+function changeGroupTablePrev(max){
+    var id = document.getElementById("curr_group").value;
+    var min = 65;
+    
+    var new_id = id.charCodeAt(0) - 1;
+    
+    if (new_id < min){
+        new_id = max;
+    }
+    
+    new_id = String.fromCharCode(new_id);
+    
+    document.getElementById("curr_group").value = new_id;
+    changeGroupTable("group" + new_id);
 }

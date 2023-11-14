@@ -6,33 +6,42 @@ require_once('src/include/code/get_games.inc.php');
 
 
 <div class="container-fluid text-center" >
-<ul class="pagination justify-content-center">
-  <li id="LgroupA" class="page-item active"><a class="page-link" onclick="changeGroupTable('groupA')">A</a></li>
-  <li id="LgroupB" class="page-item"><a class="page-link" onclick="changeGroupTable('groupB')">B</a></li>
-  <li id="LgroupC" class="page-item"><a class="page-link" onclick="changeGroupTable('groupC')">C</a></li>
-  <li id="LgroupD" class="page-item"><a class="page-link" onclick="changeGroupTable('groupD')">D</a></li>
-  <li id="LgroupE" class="page-item"><a class="page-link" onclick="changeGroupTable('groupE')">E</a></li>
-  <li id="LgroupF" class="page-item"><a class="page-link" onclick="changeGroupTable('groupF')">F</a></li>
-</ul>
 
-    <div style='display: block;' id="groupA">
+    <?php
+      select_gruppe();
+    ?>
+    
+    <div style='display: block;' id="groupA" class="big_tournament_group">
       <?php print_wm_tabelle(wm_tabelle("A")); print_gruppe("A");  ?>
     </div>
-    <div style='display: none' id="groupB">
+    <div style='display: none' id="groupB" class="big_tournament_group">
       <?php print_wm_tabelle(wm_tabelle("B")); print_gruppe("B");?>
     </div>
-    <div style='display: none' id="groupC">
+    <div style='display: none' id="groupC" class="big_tournament_group">
       <?php print_wm_tabelle(wm_tabelle("C")); print_gruppe("C"); ?>
     </div>
-    <div style='display: none' id="groupD">
+    <div style='display: none' id="groupD" class="big_tournament_group">
       <?php  print_wm_tabelle(wm_tabelle("D")); print_gruppe("D"); ?>
     </div>
-    <div style='display: none' id="groupE">
+    <div style='display: none' id="groupE" class="big_tournament_group">
       <?php print_wm_tabelle(wm_tabelle("E")); print_gruppe("E"); ?>
     </div>
-    <div style='display: none' id="groupF">
+    <div style='display: none' id="groupF" class="big_tournament_group">
       <?php print_wm_tabelle(wm_tabelle("F")); print_gruppe("F"); ?>
     </div>
+    
+    <?php
+    if (get_wettbewerb_code(get_curr_wett())  == "WM"){
+      echo "<div style='display: none' id=\"groupG\" class=\"big_tournament_group\">";
+        print_wm_tabelle(wm_tabelle("G")); 
+        print_gruppe("G");
+      echo "</div>";
+      echo "<div style='display: none' id=\"groupH\" class=\"big_tournament_group\">";
+        print_wm_tabelle(wm_tabelle("H")); 
+        print_gruppe("H");
+      echo "</div>";
+    }
+    ?>
 </div>
 
 <!--<script src='src/swipe.js'></script>

@@ -52,7 +52,6 @@ function print_games($args, $modus, $change){
             
             echo "<div class=\"alert alert-danger\"> $tipp_error_msg </div>";
         }
-        
 
     // Starte mit dem Formular
     echo "<div class=\"form-group\"> 
@@ -74,6 +73,13 @@ function print_games($args, $modus, $change){
     $alle_tore = get_tore($real_spieltag, $modus);
     list ($user_nr, $user_name, $tipp, $vorname, $nachname, $punkte) = get_other_tipps($real_spieltag,$modus);
 
+    if (!is_big_tournament(get_curr_wett())) {
+        $img_folder = "Vereine"; 
+    } elseif (get_wettbewerb_code(get_curr_wett()) == "EM")  {
+        $img_folder = "Nations/EM";   
+    } else {
+        $img_folder = "Nations/WM";           
+    }
     for ($i = 0; $i < $anz_spiele; $i++){
 
         $i1 = $i + 100 ;
@@ -91,13 +97,13 @@ function print_games($args, $modus, $change){
         echo "<td class=\"align-middle\" align=\"right\"  onclick=\"myFunction($i1)\"><b>$team_heim[$i]</b></td>";
     
         if (($modus == "Spieltag") && ($team_heim_nr[$i] <= 32) ) {
-            echo "<td align=\"right\"  onclick=\"myFunction($i1)\"><img src=\"images/Vereine/$team_heim_nr[$i].$endung\" width=\"30\"></td>";
+            echo "<td align=\"right\"  onclick=\"myFunction($i1)\"><img src=\"images/$img_folder/$team_heim_nr[$i].$endung\" width=\"30\"></td>";
         }
     
         echo "<td align=\"center\" class=\"text-nowrap\"><b>$tore_heim[$i] : $tore_aus[$i]</b></td>";
     
         if (($modus == "Spieltag") && ($team_aus_nr[$i] <= 32)) {
-            echo "<td align=\"left\"  onclick=\"myFunction($i1)\"><img src=\"images/Vereine/$team_aus_nr[$i].$endung\" width=\"30\"></td>";
+            echo "<td align=\"left\"  onclick=\"myFunction($i1)\"><img src=\"images/$img_folder/$team_aus_nr[$i].$endung\" width=\"30\"></td>";
         }
 
         echo "<td class=\"align-middle\" align=\"left\"  onclick=\"myFunction($i1)\"><b>$team_aus[$i]</b></td>";

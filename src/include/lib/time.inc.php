@@ -80,6 +80,7 @@ function get_zeitraum_of_all_spt(){
     foreach ($g_pdo->query($sql) as $row) {
         $spieltag = $row['spieltag'];
         $from = $row['datum'];
+        $to = 0;
         
         if (date("w", $from) == 5){
             // Freitag -- dann gebe Freitag - Sonntag aus
@@ -157,7 +158,7 @@ function check_game_date($spieltag, $sp_nr) {
 
     $teil1 = "1";
 
-    if (($g_modus != "WM") && ($g_modus != "EM") ){
+    if (!is_big_tournament(get_curr_wett())){
 
         if ($spieltag > 17){
             $teil1 = "2";
@@ -284,7 +285,7 @@ function spieltag_running($spt=""){
     }
     //Hin/rückrunde
     
-    if ($spt>17){
+    if (($spt>17) && !is_big_tournament(get_curr_wett())){
         $state = "datum2";
         $spt -= 17;
     } else {
@@ -332,8 +333,13 @@ function spt_select(){
             }
         }
         
-        if ($spt>34){
-            return 34;
+        $sql = "SELECT max(`spieltag`) AS max FROM Datum WHERE 1";
+        foreach ($g_pdo->query($sql) as $row) {
+            $max = $row['max'];
+        }
+        
+        if ($spt>$max){
+            return $max;
             exit;
         }
     }

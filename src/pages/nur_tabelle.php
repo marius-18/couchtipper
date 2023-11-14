@@ -3,6 +3,7 @@ include('src/include/code/tabelle.inc.php');
 ?>
 
 
+<div class="container-fluid">
 <?php
 print_wm_tabelle(wm_tabelle("A"));
 print_wm_tabelle(wm_tabelle("B"));
@@ -13,3 +14,4 @@ print_wm_tabelle(wm_tabelle("F"));
 
 
 ?>
+</div>
