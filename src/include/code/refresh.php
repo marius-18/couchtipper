@@ -311,6 +311,9 @@ function ko_sieger($spieltag, $spiel){
 
 function update_ko($spieltag, $spiel, $teamteil, $team_nr){
     global $g_pdo;
+    
+    return 0;
+    ### ACHTUNG, ANPASSEN!
 
     $sql2 = "UPDATE `Spieltage` SET `team$teamteil`=:team_nr WHERE spieltag = :spieltag AND sp_nr = :spiel";
 
@@ -371,6 +374,8 @@ function check_finals() {
     # erstmal sql insert
     global $g_pdo;
 
+    return 0;
+    ### Das muss dann nochmal aktiviert werden...
     
     $sql = "
         UPDATE `Spieltage` SET `team1`=".ko_gruppe(C,1).",`team2`=".ko_gruppe(D,2)." WHERE spieltag = '16' AND sp_nr = '1';
