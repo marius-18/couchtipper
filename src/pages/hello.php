@@ -92,7 +92,7 @@ function gewinner($array){
             <br>(erstmal ohne Gew&auml;hr, weil sich das Couchtipper-Team nicht sicher ist, ob das so klappt.. <i class=\"far fa-laugh-squint\"></i>)
         </div>";
     
-    if ($id > 2){
+    if ($id > 3){
     print_gesamt_gewinner($array);
     } else {
         print_gewinner($array);
@@ -101,7 +101,7 @@ function gewinner($array){
 }
 
 
-
+if (!is_big_tournament(get_curr_wett())){
 if (!spieltag_running(34) && akt_spieltag() == 34){
            gewinner(get_curr_wett());
 }   
@@ -119,6 +119,20 @@ if (get_curr_wett()[0] > 2){
     leader();
 }
 }
+} else {
+    
+    if (!spieltag_running(22) && akt_spieltag() == 22){
+           gewinner(get_curr_wett());
+} 
+  if ((akt_spieltag() != 1) ){
+
+if (get_curr_wett()[0] > 2){
+    ## für die anderen alten saisons muss das noch geändert werden
+    leader();
+}
+}  
+}
+
 ?>
 
 <br>
