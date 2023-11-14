@@ -1,3 +1,9 @@
+<?php
+include_once("src/include/code/gewinn.inc.php");
+$einsatz = get_wettbewerb_einsatz(get_curr_wett());
+$praemie = get_wettbewerb_praemie(get_curr_wett());
+?>
+
 <div class = "container">
 
 
@@ -5,7 +11,7 @@
     <i class="fas fa-question-circle"></i> <b>Was kostet mich das Tippspiel und bis wann muss ich bezahlen?</b>
 </div>
 <div class="alert alert-success">
-    Das Tippspiel kostet <strong>20€</strong> pro Halbserie (jeweils für Hin- und Rückrunde). Bitte zahle im Laufe der ersten 5 Spieltage.
+    Das Tippspiel kostet <strong><?php echo $einsatz;?>€</strong> pro Halbserie (jeweils für Hin- und Rückrunde). Bitte zahle im Laufe der ersten 5 Spieltage.
 </div>
 
 <div class="alert alert-secondary">
@@ -28,8 +34,13 @@
     <i class="fas fa-question-circle"></i> <b>Was kann man gewinnen?</b>
 </div>
 <div class="alert alert-success">
-    Der komplette Einsatz wird als Gewinn ausgeschüttet. Die Aufteilung, welcher Platz wie viel Gewinn bedeutet, findet ihr unter dem Punkt <a href="?index=10#main">"Gewinnverteilung"</a> im Menü.<br><br>
-    <span class="badge badge-danger badge-pill"> NEW!</span> <strong> Zusätzlich werden an jeden Spieltagssieger (derjenige, der am Wochenende die meisten Punkte erreicht hat) 6€ ausgezahlt!</strong>
+    Der komplette Einsatz wird als Gewinn ausgeschüttet. Die Aufteilung, welcher Platz wie viel Gewinn bedeutet, findet ihr unter dem Punkt <a href="?index=10#main">"Gewinnverteilung"</a> im Menü.
+    <?php
+    if ($praemie != 0){
+        echo "<br><br>";
+        echo "<span class=\"badge badge-danger badge-pill\"> NEW!</span> <strong> Zusätzlich werden an jeden Spieltagssieger (derjenige, der am Wochenende die meisten Punkte erreicht hat) 6€ ausgezahlt!</strong>";
+    }
+    ?>
 </div>
 
 
@@ -38,8 +49,13 @@
 </div>
 <div class="alert alert-success">
     Wenn mehrere Spieler am Ende die gleiche Anzahl an Punkten haben, werden die
-    Gewinne der einzelnen Plätze addiert und durch die Anzahl an den punktgleichen Spielern geteilt.<br><br>
-    <span class="badge badge-danger badge-pill"> NEW!</span> <strong> Haben mehrere Spieler die meisten Punkte an einem Spieltag, werden die 6€ unter ihnen aufgeteilt.</strong>
+    Gewinne der einzelnen Plätze addiert und durch die Anzahl an den punktgleichen Spielern geteilt.
+     <?php
+    if ($praemie != 0){
+        echo "<br><br>";
+        echo "<span class=\"badge badge-danger badge-pill\"> NEW!</span> <strong> Haben mehrere Spieler die meisten Punkte an einem Spieltag, werden die 6€ unter ihnen aufgeteilt.</strong>";
+    }
+    ?>
 </div>
 
 

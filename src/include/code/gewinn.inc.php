@@ -67,9 +67,16 @@ function gewinn_zuordnung($array){
             $begin = 18;
             $ende  = 34;
         }
+    } else {
+        $begin = 1;
+        if (get_wettbewerb_code(get_curr_wett()) == "EM"){
+            $ende = 22;
+        }
+        if (get_wettbewerb_code(get_curr_wett()) == "WM"){
+            $ende = 25;            
+        }
     }
-    
-    
+        
     $gewinner = round(anz_user_wett($array) * get_wettbewerb_gewinner($array));
         
     list($punkte, $spiele, $akt_punkte, $schnitt, $letzte_punkte, $user, $platz, $spieltagssieger, $spieltagssieger_last) = rangliste($begin, $ende, 1);
@@ -169,12 +176,18 @@ function print_gewinn($array){
 
     $max = $E * $S  - 17 * $praemie;
 
+    if ($praemie != 0){
+        $tagessieger_abzug = "- 17 * $praemie&#8364;";
+    } else {
+        $tagessieger_abzug = "";   
+    }
+    
     echo "
         wobei <br>
         E = Einsatz (=$E&#8364;)<br>
         G = Anzahl gewinnender Spieler (=$G)<br>
         S = Anzahl der Spieler (=$S)<br>
-        max = Summe die ausgezahlt wird (E * S - 17 * $praemie&#8364; = $max&#8364;)
+        max = Summe die ausgezahlt wird (E * S $tagessieger_abzug = $max&#8364;)
         ";
 
     echo "
