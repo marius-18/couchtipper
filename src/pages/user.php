@@ -39,13 +39,20 @@ echo "<form action=\"?index=9#main\" method=\"post\">";
 echo "<center><table class=\"table table-striped table-hover text-center\">";
 
 ## Kopfzeile
-echo "<tr class=\"thead-dark\">
-      <th>Username</th>
-      <th>Hinrunde</th>
-      <th>R&uumlckrunde</th>
-      <tr>
+if (!is_big_tournament(get_curr_wett())){
+    echo "<tr class=\"thead-dark\">
+            <th>Username</th>
+            <th>Hinrunde</th>
+            <th>R&uumlckrunde</th>
+            </tr>
       ";
-
+} else {
+    echo "<tr class=\"thead-dark\">
+            <th>Username</th>
+            <th>bezahlt</th>
+            </tr>
+      ";
+}
 ## Inhalt ausgeben 
 foreach ($out_einsatz as $output){
     echo $output;
