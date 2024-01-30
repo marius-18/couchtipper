@@ -2,6 +2,10 @@
 
 function rangliste ($begin, $ende, $gruppe, $rang_wett_id = ""){
     global $g_pdo;
+    if ($ende < $begin){
+        return 0;
+    }
+
     $akt_spieltag = akt_spieltag();
     if ($ende < $akt_spieltag){
         $akt_spieltag = $ende; ## vielleicht hier ende und akt_spieltag tauschen!!! (alles über ende regeln)
@@ -88,7 +92,7 @@ function rangliste ($begin, $ende, $gruppe, $rang_wett_id = ""){
         }
         
         // Achtung! DAS nur bei BULI oder ?!
-        if ($akt_spieltag != 18){ // Neu hinzugefügt!
+        if (($akt_spieltag != 18) && ($ende != $begin)){ // Neu hinzugefügt!
             $sql = "SELECT punkte, user_nr FROM `Rangliste` WHERE spieltag = $letzter_spieltag"; 
 
             foreach ($g_pdo->query($sql) as $row){
@@ -113,6 +117,7 @@ function rangliste ($begin, $ende, $gruppe, $rang_wett_id = ""){
         $spieltagssieger[$user_nr] = 1;
     }
 
+    if ($begin != $ende){
     ## Vorheriger Spieltagssieger
     $sql = "SELECT user_nr FROM `Rangliste` WHERE punkte = (SELECT max(punkte) FROM `Rangliste` WHERE spieltag = $letzter_spieltag) and spieltag = $letzter_spieltag";
 
@@ -126,8 +131,10 @@ function rangliste ($begin, $ende, $gruppe, $rang_wett_id = ""){
             $spieltagssieger_last[$user_nr] = 0;
         }
     }
+    }
 
-    array_multisort($punkte, SORT_DESC, $spiele, SORT_ASC, $akt_punkte,SORT_DESC, $schnitt, $letzte_punkte, $user, $spieltagssieger, $spieltagssieger_last); //SORTIERUNG HIER MIT GLEICHEN PLÄTZEN
+    array_multisort($punkte, SORT_DESC, $spiele, SORT_ASC, $akt_punkte,SORT_DESC,
+                     $schnitt, $letzte_punkte, $user, $spieltagssieger, $spieltagssieger_last); //SORTIERUNG HIER MIT GLEICHEN PLÄTZEN
 
 
     $platz = 1;
@@ -156,8 +163,9 @@ function print_rangliste($begin, $ende, $modus, $rang_wett_id = ""){
 
  
     list($punkte, $spiele, $akt_punkte, $schnitt, $letzte_punkte, $user, $platz, $spieltagssieger, $spieltagssieger_last) = rangliste($begin, $ende, $modus, $rang_wett_id);
+    
 
-    if (!(($begin == 18) && ($ende == 18)) && !(($begin == 1) && ($ende == 1))  ){
+    if ($ende != $begin) {
         ## Das brauchen wir nur, um den Platz am vorherigen Spieltag zu bestimmen
         list($punkte1, $spiele1, $akt_punkte1, $schnitt1, $letzte_punkte1, $user1, $platz_alt, $spieltagssieger1, $spieltagssieger_last1) = rangliste($begin, $ende-1, $modus, $rang_wett_id);
     } else {
@@ -166,7 +174,7 @@ function print_rangliste($begin, $ende, $modus, $rang_wett_id = ""){
             $platz_alt[$nr] = 1;
         }
     }
-    echo "<div class=\"container\">
+    echo "<div class=\"container-fluid\">
     <div class=\"table-responsive\">
         <table class=\"table table-sm table-striped  table-hover text-center center text-nowrap\" align=\"center\">
         <tr class=\"thead-dark\"><th>Pl</th><th>Spieler</th><th>&#931</th><th class=\"d-none d-sm-table-cell\">Spt.</th><th>&#216;</th>";
