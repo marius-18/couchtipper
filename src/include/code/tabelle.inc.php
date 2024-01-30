@@ -211,7 +211,7 @@ foreach ($team_name AS $i => $team){
    echo " 
 <tr $color> 
 <th>$a</th> 
-<th>$team</th>
+<th nowrap>$team</th>
 <th>$spiele</th> 
 <th>$sieg[$i]</th> 
 <th>$unentschieden[$i]</th> 
