@@ -128,8 +128,7 @@ function get_games ($spieltag, $modus, $change, $user_nr) {
 
     }
 
-
-    array_multisort($datum, SORT_ASC, $team_heim, $team_aus, $tore_heim, $tore_aus, $team_heim_nr, $team_aus_nr, $real_sp_nr);
+   array_multisort($datum, SORT_ASC, $team_heim, $team_aus, $tore_heim, $tore_aus, $team_heim_nr, $team_aus_nr, $real_sp_nr);
 
     return array($datum, $team_heim, $team_aus, $tore_heim, $tore_aus, $team_heim_nr, $team_aus_nr, $real_sp_nr, $real_spieltag, $anz_spiele);
 ### letzter parameter: $gruppe.. wofür? vllt für WM/EM?
@@ -201,21 +200,106 @@ function get_tore($spieltag, $modus){
     global $g_pdo;
     #return 0;
     // DB Abfrage je nach modus.. Hier bisher nur buli!
-    if (get_curr_wett()[0] <= 1){
+    if (get_curr_wett()[0] <= -6){
         ## Für die alten muss noch die datenbank namen und vereinsnamen rein
         return array("","","","","","","","","");
     }
     $jahr = substr(get_wettbewerb_jahr(get_curr_wett()), 0, 4);
-    #echo "$jahr ";
-    $matches = get_open_db_spieltag("bl1", $jahr, $spieltag);
-    if ($spieltag <= 17) {
-        $heim = "Heim";
-        $aus = "Aus";
+    $heim = "Heim";
+    $aus = "Aus";
+        
+    if (get_wettbewerb_code(get_curr_wett())  == "EM"){
+        switch ($spieltag) {
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+                $opl_spieltag = 1;
+                break;
+            case 6:
+            case 7:
+            case 8:
+            case 9:
+                $opl_spieltag = 2;
+                break;
+            case 10:
+            case 11:
+            case 12:
+            case 13:
+                $opl_spieltag = 3;
+                break;
+            case 14:
+            case 15:
+            case 16:
+            case 17:
+                $opl_spieltag = 4;
+                break;
+            case 18:
+            case 19:
+                $opl_spieltag = 5;
+                break;
+            case 20:
+            case 21:
+                $opl_spieltag = 6;
+                break;
+            case 22:
+                $opl_spieltag = 7;
+                break;
+        }
+        $matches = get_open_db_spieltag(get_openliga_shortcut(get_curr_wett()), $jahr, $opl_spieltag);
+    } elseif (get_wettbewerb_code(get_curr_wett())  == "WM") {
+        switch ($spieltag) {
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+            case 9:   
+            case 10:
+            case 11:
+            case 12:
+            case 13:  
+            case 14:
+            case 15:
+                $opl_spieltag = 1;
+                break;
+            case 16:
+            case 17:
+            case 18:
+            case 19:
+                $opl_spieltag = 2;
+                break;
+            case 20:
+            case 21:
+                $opl_spieltag = 3;
+                break;
+            case 22:
+            case 23:
+                $opl_spieltag = 4;
+                break;
+            case 24:
+                $opl_spieltag = 5;
+                break;
+            case 25:
+                $opl_spieltag = 6;
+                break;
+        }
+        $matches = get_open_db_spieltag(get_openliga_shortcut(get_curr_wett()), $jahr, $opl_spieltag);
+        #print_r($matches);
     } else {
-        $heim = "Aus";
-        $aus = "Heim";
-        $spieltag = $spieltag - 17;
+         $matches = get_open_db_spieltag(get_openliga_shortcut(get_curr_wett()), $jahr, $spieltag);   
+         
+        if ($spieltag >= 18)   {
+            $heim = "Aus";
+            $aus = "Heim";
+            $spieltag = $spieltag - 17;
+        }
     }
+    
     $sql = "SELECT team1, team2, TeamHeim.open_db_name as $heim, TeamAus.open_db_name as $aus, sp_nr
             FROM `Spieltage`, Teams as TeamHeim, Teams as TeamAus 
             WHERE (spieltag = $spieltag) and (team1 = TeamHeim.team_nr) and (team2 = TeamAus.team_nr)";
@@ -227,14 +311,23 @@ function get_tore($spieltag, $modus){
         $spiel[$row['Aus']] = $sp_nr;
         
     }
-    
     $ret = array();
     foreach ($matches as $match) {
-        $sp_nr = $spiel[$match["team1"]["teamName"]];
+ #       print_r($match);
+        if (isset($spiel[$match["team1"]["teamName"]]) && isset($spiel[$match["team2"]["teamName"]])) {
+#print_r($match["team1"]["teamName"]);
+#print_r($match["team2"]["teamName"]);
+#print_r($spiel);
+#            echo $sp_nr;
+#echo "<br><br>";
+            $sp_nr = $spiel[$match["team1"]["teamName"]];
+            if ($spiel[$match["team1"]["teamName"]] == $spiel[$match["team2"]["teamName"]]) {
         $ret[$sp_nr] = "";
-        
-        if ($spiel[$match["team1"]["teamName"]] == $spiel[$match["team2"]["teamName"]]) {
-
+#echo  "UI";
+#print_r($match);
+#print_r($spiel[$match["team2"]["teamName"]]);
+#echo "<br><br>";
+        #print_r($match);
 
 usort($match["goals"], function($a, $b) {
     if ($a['goalID'] > $b['goalID']) {
@@ -283,6 +376,7 @@ usort($match["goals"], function($a, $b) {
             $ret[$sp_nr] .= "</table>";
 
         }
+    }
     }
     
     return $ret;
@@ -457,10 +551,15 @@ function get_group_games($gruppe){
    global $g_pdo;
 //return array(1,1,1,1,1,1);
 
-   $anz_spiele = 6; //Gruppenspiele
-$max_gruppen_spt = 13; // nach dem 15. Spieltag keine Gruppenspiele mehr!
-
-#   for ($i = 1; $i <= $anz_spiele; $i++){
+    $anz_spiele = 6; //Gruppenspiele
+    if (get_wettbewerb_code(get_curr_wett())  == "EM"){
+        $max_gruppen_spt = 13; // nach dem 15. Spieltag keine Gruppenspiele mehr!
+    }
+    if (get_wettbewerb_code(get_curr_wett())  == "WM"){
+        $max_gruppen_spt = 15; // nach dem 15. Spieltag keine Gruppenspiele mehr!
+    }
+    
+    #   for ($i = 1; $i <= $anz_spiele; $i++){
 #      $tore_heim[$i] = "10";
 #      $tore_aus[$i] = "111";
 #   }

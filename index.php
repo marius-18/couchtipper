@@ -5,13 +5,14 @@ header('Content-Type: text/html; charset=UTF-8');
 require_once("../auth/include/security.inc.php");
 is_logged();
 
-$wartung = 1;
+$wartung = 0;
 $aktuelle_wett_id = "6";
 $g_modus = "BuLi";
 $global_wett_id = "6";
 $subdomain = explode(".",$_SERVER['SERVER_NAME'])[0];
 
-if (($wartung) && ($subdomain == "code")){
+#if (($wartung) && ($subdomain == "code")){
+if ((1) && ($subdomain == "code")){
     ini_set('display_errors', 1);
     ini_set('error_reporting', E_ALL ^  E_NOTICE); #E_NOTICE
 }
@@ -67,11 +68,25 @@ if ($index == "cal"){
     include_once("src/api/calendar.php");
     exit;
 }
-// Wettbewerb check in
-check_in_modal();
+// Wettbewerb check in (nur im aktiven Wettbewerb!!)
+#TODO: Der checkin functioniert so nicht!! ANPASSEN!
+#if (is_active_wettbewerb()){
+   # check_in_modal();
+#}
 
-#$player = [34];
-#check_in_manually($player, 6);
+if ((1) && ($subdomain == "code")){
+#$player = [3,4,5,6,7,8,9,10,11,12,13,14,15,17,20,21];
+#$player = [3,5,6,7,13,17,29,76,77,78,79];
+
+#check_in_manually($player, -5);
+    
+    
+#require_once("src/include/code/refresh.php");
+#for ($i=1;$i<35;$i++){
+#    update_tabelle($i);
+#    update_rangliste($i);
+#}    
+}
 
 ####### DU HAST NOCH NICHT BEZAHLT
 ### BITTE BITTE SCHÖNER MACHEN!!
@@ -83,8 +98,16 @@ check_in_modal();
 #        $_SESSION['bezahlt'] = 1;
 #}
 
-
-
+## Beim Wechseln der Saison wollen wir auf der Selben Seite bleiben
+## TODO: Das sollte auch beim cookie reset passieren...
+$url_suffix = "";
+$url_suffix_no_year = "";
+foreach ($_GET as $url_parameter => $url_value){
+    $url_suffix .= "$url_parameter=$url_value&";
+    if ($url_parameter != "year"){
+        $url_suffix_no_year .= "$url_parameter=$url_value&";        
+    }
+}
 ?>
 
 
@@ -108,11 +131,12 @@ check_in_modal();
 
     <link href="src/include/styles/main_style.css?v=1" rel="stylesheet" type="text/css">
     
-    <script src="src/include/scripts/ausblenden.js?v=1"></script> <!-- Zum Ein- und ausblenden verschiedener Elemente -->
+    <script src="src/include/scripts/ausblenden.js?v=<?php echo rand();?>"></script> <!-- Zum Ein- und ausblenden verschiedener Elemente -->
 
     <script src="src/include/scripts/update.js?v=1"></script> <!-- Um neue Einstellungen zu updaten -->
 
-    <script src="src/include/scripts/bootstrap.js?v=1"></script> <!-- Für Bootstrap steuerungen -->
+
+    <script src="src/include/scripts/bootstrap.js?v=2"></script> <!-- Für Bootstrap steuerungen -->
 
 <link href='https://fonts.googleapis.com/css?family=Noto Sans' rel='stylesheet'>
 <style>
@@ -166,19 +190,28 @@ MENÜ
                             <?php echo get_wettbewerb_code(get_curr_wett()). " " .get_wettbewerb_jahr(get_curr_wett());?>
                         </button>
                         <div class="dropdown-menu">
-                            <div class="dropdown-header">Aktuell</div>
-                            <a class="dropdown-item" href="?year=6" style="color:black">BuLi 2023/24</a>
+                            <div class="dropdown-header">Aktuelle Saison</div>
+                            <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=6" style="color:black">BuLi 2023/24</a>
                             <div class="dropdown-divider"></div>
                             <div class="dropdown-header">Vergangene</div>
-                            <a class="dropdown-item" href="?year=5" style="color:black">BuLi 2022/23</a>
-                            <a class="dropdown-item" href="?year=4" style="color:black">BuLi 2021/22</a>
-                            <a class="dropdown-item" href="?year=2" style="color:black">BuLi 2020/21</a>
+                            <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=5" style="color:black">BuLi 2022/23</a>
+                            <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=4" style="color:black">BuLi 2021/22</a>
+                            <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=3" style="color:black">EM 2021</a>
+                            <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=2" style="color:black">BuLi 2020/21</a>
+                            <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=1" style="color:black">BuLi 2019/20</a>
+                            <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=0" style="color:black">BuLi 2018/19</a>
+                            <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=-1" style="color:black">WM 2018</a>
+                            <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=-2" style="color:black">BuLi 2017/18</a>
+                            <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=-3" style="color:black">BuLi 2016/17</a>
+                            <!--<a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=-4" style="color:black">EM 2016</a>
+                            <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=-5" style="color:black">BuLi 2015/16</a>
+                            <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=-6" style="color:black">BuLi 2014/15</a>-->
                             <?php
-                            if (allow_verwaltung()){
-                                echo "<div class=\"dropdown-divider\"></div>
-                            <div class=\"dropdown-header\">Turniere</div>
-                            <a class=\"dropdown-item\" href=\"?year=3\" style=\"color:black\">EM 2021</a>";
-                            }
+                            #if (allow_verwaltung()){
+                                #echo "<div class=\"dropdown-divider\"></div>
+                            #<div class=\"dropdown-header\">Turniere</div>
+                            #<a class=\"dropdown-item\" href=\"?year=3\" style=\"color:black\">EM 2021</a>";
+                            #}
                             ?>
                         </div>
                     </div>
@@ -207,9 +240,14 @@ MENÜ
                 <li class="nav-item">
                     <a class="nav-link" href="?index=2#main">Spieltage</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="?index=3#main">Restprogramm</a>
-                </li>
+                <?php
+                    if (!is_big_tournament(get_curr_wett())) {
+                        echo "
+                            <li class=\"nav-item\">
+                                <a class= \"nav-link\" href=\"?index=3#main\">Restprogramm</a>
+                            </li>";
+                    }
+                ?>
                 <li class="nav-item">
                     <a class="nav-link" href="?index=4#main">Rangliste</a>
                 </li>   
@@ -225,7 +263,7 @@ MENÜ
                 </li>";
                 }
                 ?>
-                <?php if (is_logged()) { echo "
+                <?php if (is_logged() && !is_big_tournament(get_curr_wett())) { echo "
                 <li class=\"nav-item\">
                     <a class=\"nav-link\" href=\"?index=12#main\">Tagessieger</a>
                 </li>";
@@ -239,7 +277,7 @@ MENÜ
                 }
                 ?>   
                 
-                <?php if (is_logged() && ($aktuelle_wett_id == get_curr_wett()[0])){ echo "
+                <?php if (is_logged() && (is_active_wettbewerb())){ echo "
                 <li class=\"nav-item\">
                     <a class=\"nav-link\" href=\"?index=7#main\">Mein Konto</a>
                 </li>";
@@ -275,7 +313,7 @@ MENÜ
                 <?php
                     if (!is_logged()){
                         echo "
-                            <a class=\"btn btn-secondary\" href=\"auth/login.php\">Anmelden</a>";      
+                            <a class=\"btn btn-secondary\" href=\"auth/login.php?return=https://couchtipper.de\">Anmelden</a>";      
                     } else {
                         echo "
                             <a class=\"btn btn-secondary\" href=\"auth/logout.php\">Logout</a>";      
@@ -288,7 +326,7 @@ MENÜ
 
     <?php
     
-        if ((!check_cash(get_curr_wett())) && (is_logged())) {  
+        if ((!check_cash(get_curr_wett())) && (is_logged()) && (is_active_wettbewerb()) ) {  
             echo "<div class=\"alert alert-danger text-center\" style=\"margin-bottom:0\">
                 <strong>Achtung!</strong> Du hast noch nicht bezahlt! <a href=\"?index=11#main\" class=\"alert-link\"> <i class=\"fas fa-info-circle\"></i></a>
                 </div>";
@@ -362,6 +400,10 @@ MENÜ
             <?php
                 switch ($index) {
                     case "":
+                        if (get_wettbewerb_code(get_curr_wett()) == "Sum"){
+                         include_once("src/rangliste_overview.php");
+                         break;
+                        }
                         include_once("src/pages/hello.php");
                         break;
                     case 1:
@@ -416,7 +458,11 @@ MENÜ
                         break;
                     case 11:
                         echo "<h2>FAQ</h2>";
-                        include_once("src/pages/faq.php");
+                        if (!is_big_tournament(get_curr_wett())){
+                            include_once("src/pages/faq.php");
+                        } else {
+                            include_once("src/pages/faq_em.php");                            
+                        }
                         break;
                     case 12: 
                         echo "<h2>Tagessieger</h2>";
