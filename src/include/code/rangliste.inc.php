@@ -1,12 +1,16 @@
 <?php
 
-function rangliste ($begin, $ende, $gruppe){
+function rangliste ($begin, $ende, $gruppe, $rang_wett_id = ""){
     global $g_pdo;
     $akt_spieltag = akt_spieltag();
     if ($ende < $akt_spieltag){
         $akt_spieltag = $ende; ## vielleicht hier ende und akt_spieltag tauschen!!! (alles über ende regeln)
     }
-    list($id, $id_part) = get_curr_wett();
+    if ($rang_wett_id == ""){
+        list($id, $id_part) = get_curr_wett();
+    } else {
+        list($id, $id_part) = $rang_wett_id;  
+    }
     
     if (wettbewerb_has_parts($id)){
         // Decider: Hinrunde oder Rückrunde ?!
@@ -148,14 +152,14 @@ function rangliste ($begin, $ende, $gruppe){
 
 
 
-function print_rangliste($begin, $ende, $modus){
+function print_rangliste($begin, $ende, $modus, $rang_wett_id = ""){
 
  
-    list($punkte, $spiele, $akt_punkte, $schnitt, $letzte_punkte, $user, $platz, $spieltagssieger, $spieltagssieger_last) = rangliste($begin, $ende, $modus);
+    list($punkte, $spiele, $akt_punkte, $schnitt, $letzte_punkte, $user, $platz, $spieltagssieger, $spieltagssieger_last) = rangliste($begin, $ende, $modus, $rang_wett_id);
 
     if (!(($begin == 18) && ($ende == 18)) && !(($begin == 1) && ($ende == 1))  ){
         ## Das brauchen wir nur, um den Platz am vorherigen Spieltag zu bestimmen
-        list($punkte1, $spiele1, $akt_punkte1, $schnitt1, $letzte_punkte1, $user1, $platz_alt, $spieltagssieger1, $spieltagssieger_last1) = rangliste($begin, $ende-1, $modus);
+        list($punkte1, $spiele1, $akt_punkte1, $schnitt1, $letzte_punkte1, $user1, $platz_alt, $spieltagssieger1, $spieltagssieger_last1) = rangliste($begin, $ende-1, $modus, $rang_wett_id);
     } else {
         ## An Spieltag 18 fangen wir neu an! Da sollen die letzten Punkte nix zählen
         foreach ($user as $i => $nr){
@@ -213,6 +217,122 @@ function print_rangliste($begin, $ende, $modus){
    echo "</table></div></div>";
 }
 
+
+
+function print_gesamt_rangliste($punkte, $spiele, $schnitt, $user, $platz){
+
+    echo "<div class=\"container\">
+    <div class=\"table-responsive\">
+        <table class=\"table table-sm table-striped  table-hover text-center center text-nowrap\" align=\"center\">
+        <tr class=\"thead-dark\"><th>Pl</th><th>Spieler</th><th>&#931</th><th>Spt.</th><th>&#216;</th>";
+
+    foreach ($user as $i => $nr){
+        if ($user[$i] == get_usernr()){
+            $logged=" class=\"table-success\"";
+        } else {
+            $logged ="";
+        }
+
+        echo "  <tr $logged>
+                <td>$platz[$nr].</td>
+                <td>".get_username_from_nr($user[$i])."</td>
+                <td>$punkte[$i]</td> 
+                <td>$spiele[$i]</td>
+                <td>$schnitt[$i]</td>
+                "; 
+        echo "
+            </tr>";
+   }
+   
+   echo "</table></div></div>";
+}
+
+function print_rangliste_overview($punkte, $gesamt_punkte, $user, $platz,$seasons, $modus){
+   
+    if ($modus == "punkte"){
+        $symbol = "&#931";
+    }
+    
+    if ($modus == "platz"){
+        $symbol = "&#216;";
+    }
+    
+    
+    echo "<div class=\"container\">
+    <div class=\"table-responsive\">
+        <table 
+         data-toggle=table
+        data-sticky-header=true
+        class=\"table table-sm table-striped  table-hover text-center center text-nowrap\" align=\"center\">
+        
+        <thead style=\"position: sticky;top: 100\" class=\"thead-dark data-sticky-header\"><th>Spieler</th><th data-field=summe  data-sort-order=desc data-sortable=true>$symbol</th>";
+    
+    list ($code, $jahr) = get_all_wettbewerbe();
+    krsort($code);
+    
+    // Tabelle Header
+    foreach ($code as $id => $wett){
+        
+        if ($wett == "BuLi"){
+            $name = $jahr[$id];
+        } else {
+            $name = $wett . "" . $jahr[$id];
+        }
+        if (in_array($id, $seasons)){
+            echo "<th data-field=$name  data-sort-order=desc data-sortable=true>$name</th>";
+        }
+    }
+    echo "</thead>";
+    
+    
+    // Tabelle Body
+    foreach ($user as $i => $nr){
+        if ($user[$i] == get_usernr()){
+            $logged=" class=\"table-success\"";
+        } else {
+            $logged ="";
+        }
+
+        echo "  <tr $logged>
+                <td>".get_username_from_nr($user[$i])."</td>
+                "; 
+        echo "<td>".$gesamt_punkte[$i]."</td>";
+         foreach ($code as $id => $wett){
+            if (in_array($id, $seasons)){
+                if ($modus == "punkte"){
+                    if (isset($punkte[$i][$id])){
+                        $sum = $punkte[$i][$id];
+                    } else{
+                        $sum = "";
+                    }
+                }
+                
+                if ($modus == "platz"){
+                    if (isset($platz[$i][$id])){
+                        if ($platz[$i][$id] == 1){
+                            $sum = "<span style=\"background-color:#C98910\"class=\"badge badge-pill\">".$platz[$i][$id]."</span>";                        
+                        } elseif ($platz[$i][$id] == 2) {
+                            $sum = "<span style=\"background-color:#A8A8A8\"class=\"badge badge-pill\">".$platz[$i][$id]."</span>";                               
+                        } elseif ($platz[$i][$id] == 3) {
+                            $sum = "<span style=\"background-color:#965A38\"class=\"badge badge-pill\">".$platz[$i][$id]."</span>";                               
+                        } else {
+                            $sum = $platz[$i][$id];
+                        }
+                    } else{
+                        $sum = "";
+                    }
+                }
+                
+                
+                echo "<td>$sum</td>";
+            }
+        }   
+        
+        echo "
+            </tr>";
+    }
+    echo "</table></div></div>";
+}
 
 
 ?>

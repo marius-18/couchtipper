@@ -22,6 +22,21 @@ $db_name=get_wettbewerb_db_name();
 $g_pdo = new PDO("mysql:host=$db_host;dbname=$db_name;charset=utf8", $db_ben, $db_pass);
 
 
+function new_db_connection($array){
+  global $g_pdo;
+  $g_pdo = null;
+  
+  $db_host="rdbms.strato.de";
+  
+  $db_ben=get_wettbewerb_db_user($array);
+
+  $db_pass=get_wettbewerb_db_pw($array);
+
+  $db_name=get_wettbewerb_db_name($array);
+
+  $g_pdo = new PDO("mysql:host=$db_host;dbname=$db_name;charset=utf8", $db_ben, $db_pass);
+}
+
 /*
 
 

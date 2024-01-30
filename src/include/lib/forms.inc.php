@@ -240,4 +240,100 @@ function select_gruppe(){
     
 }
 
+
+
+function select_season($selected_seasons){
+    
+    if (isset($_POST['seasons_speicherung'])){
+        $seasons = explode(" ", $_POST['seasons_speicherung']);
+    } else {
+        $seasons = $selected_seasons;   
+    }
+
+
+    list ($code, $jahr) = get_all_wettbewerbe();
+
+    $checked_wetts = "";
+    $all_wetts = "";
+    $all_buli = "";
+    $all_tour = "";
+    $saison_buttons = "";
+    foreach ($code as $id => $wett){
+    
+        if (in_array($id, $seasons)){
+            $checked = "btn-success";
+            $check_val = $id;
+            $checked_wetts .= "$id ";
+
+        } else {
+            $checked = "btn-outline-secondary";  
+            $check_val = "";
+        }
+    
+        if ($wett == "BuLi"){
+            $name = $jahr[$id];
+            $all_buli .= $id.", ";
+        } else {
+            $name = $wett . "" . $jahr[$id];
+            $all_tour .= $id.", ";
+        }
+        $all_wetts .= $id.", ";
+ 
+        $saison_buttons .= "
+            <div class=\"form-check form-check-inline\">
+                <label class=\"btn $checked\" id=\"gesamt_button_".$id."\" for=\"btn-check-outlined\" onclick=\"seasons_toggle_button('".$id."')\">".$name."</label>    
+            </div>";
+ 
+    }
+
+    $all_wetts = "[" . substr_replace($all_wetts ,"", -2) . "]";
+    $all_buli = "[" . substr_replace($all_buli ,"", -2) . "]";
+    $all_tour = "[" . substr_replace($all_tour ,"", -2) . "]";
+    $checked_wetts = substr_replace($checked_wetts ,"", -1);
+
+
+    
+
+    $all_button = "<div class=\"form-check form-check-inline\">
+                    <label class=\"btn btn-info\" for=\"btn-check-outlined\" 
+                        onclick = \"seasons_all_on($all_wetts)\">Alles</label>
+                   </div>";
+
+
+    $buli_button = "<div class=\"form-check form-check-inline\">
+                    <label class=\"btn btn-info\" for=\"btn-check-outlined\" 
+                        onclick = \"seasons_all_off($all_wetts);seasons_all_on($all_buli)\">BuLi</label>
+                   </div>";
+
+
+    $turn_button = "<div class=\"form-check form-check-inline\">
+                    <label class=\"btn btn-info\" for=\"btn-check-outlined\" 
+                        onclick = \"seasons_all_off($all_wetts);seasons_all_on($all_tour)\">Turniere</label>
+                   </div>";
+
+
+    $nix_button = "<div class=\"form-check form-check-inline\">
+                    <label class=\"btn btn-info\" for=\"btn-check-outlined\" 
+                        onclick = \"seasons_all_off($all_wetts)\">Nichts</label>
+                   </div>";    
+
+ 
+    echo $all_button;
+    echo $buli_button;
+    echo $turn_button;
+    echo $nix_button;
+    
+    echo "<br>";
+    
+    echo $saison_buttons;
+
+
+    echo "<form action=\"\" method = \"post\">
+            <input type=\"hidden\"  class=\"$checked_wetts\" id=\"seasons_speicherung\" name=\"seasons_speicherung\" value = \"$checked_wetts\">
+                <button type=\"submit\" class=\"btn btn-primary\">Tabelle Berechnen</button>
+          </form><br>";
+    
+    return $seasons;
+}
+
 ?>
