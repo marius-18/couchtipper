@@ -137,6 +137,9 @@ foreach ($_GET as $url_parameter => $url_value){
 
 
     <script src="src/include/scripts/bootstrap.js?v=2"></script> <!-- Für Bootstrap steuerungen -->
+    
+    <link rel="icon" type="image/png" href="images/logo3-rund.png">
+    <link rel="apple-touch-icon" href="images/logo3.png"/>
 
 <link href='https://fonts.googleapis.com/css?family=Noto Sans' rel='stylesheet'>
 <style>
@@ -170,6 +173,7 @@ MENÜ
                 //if (true) {
                     echo "Nicht angemeldet!";
                 } else {
+                    #echo "<img width=\"30px\" src = \"images/logo2-rund.png\">&nbsp;";
                     echo "Gude, ".get_username();
                 }
             ?> 
@@ -346,7 +350,12 @@ MENÜ
 <div class="container-fluid hintergrund" style="padding-bottom:30px; padding-top:30px;" >
 <div class="container jumbotron text-center grey" style="margin-bottom:0">
     <h1> Willkommen zum <?php echo get_wettbewerb_title(get_curr_wett());?>! </h1> 
-    <p><i class="fas fa-futbol"></i> couchtipper.de <i class="fas fa-futbol"></i></p> 
+    <p>
+    <!--<i class="fas fa-futbol"></i> -->
+    <img width="50px" src = "images/logo3-rund.png">
+    couchtipper.de
+    <img width="50px" src = "images/logo3-rund.png">
+    <!--<i class="fas fa-futbol"></i></p> -->
 </div>
 </div>
 
