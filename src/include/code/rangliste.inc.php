@@ -179,7 +179,14 @@ function print_rangliste($begin, $ende, $modus, $rang_wett_id = ""){
         <table class=\"table table-sm table-striped  table-hover text-center center text-nowrap\" align=\"center\">
         <tr class=\"thead-dark\"><th>Pl</th><th>Spieler</th><th>&#931</th><th class=\"d-none d-sm-table-cell\">Spt.</th><th>&#216;</th>";
 
-    echo "<th><i class=\"fas fa-arrow-down\"></th><th><i class=\"fas fa-arrow-left\"></th><th></th><tr>";
+    
+    if ($begin != $ende) {
+        $sym_last_gameday = "<i class=\"fas fa-arrow-left\">";
+    } else {
+        $sym_last_gameday = "";
+    }
+    
+    echo "<th><i class=\"fas fa-arrow-down\"></th><th>$sym_last_gameday</th><th></th><tr>";
 
     foreach ($user as $i => $nr){
         if ($user[$i] == get_usernr()){
@@ -200,13 +207,19 @@ function print_rangliste($begin, $ende, $modus, $rang_wett_id = ""){
             $aenderung = "<span class=\"badge badge-pill badge-success\"><i class=\"fas fa-arrow-up\"></i> " . $dif[$i] . "</span>";
         }
         
+        
         if ($spieltagssieger[$i]){
             $akt_punkte[$i] = "<span class=\"badge badge-pill badge-warning\">" . $akt_punkte[$i] . "</span>";
         }
         
         if ($spieltagssieger_last[$i]){
             $letzte_punkte[$i] = "<span class=\"badge badge-pill badge-warning\">" . $letzte_punkte[$i] . "</span>";
-        }        
+        }
+        
+        if ($begin == $ende){
+            $aenderung = "";
+            $letzte_punkte[$i] = "";
+        }
 
         echo "  <tr $logged>
                 <td>$platz[$nr].</td>
