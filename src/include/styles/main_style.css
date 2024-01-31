@@ -129,6 +129,37 @@
 
 }
 
+.threepoints{
+    background: #C98910;
+    font-size: 1em;
+    color: white;
+}
+
+.twopoints{
+    background: #A8A8A8;
+    font-size: 1em;
+}
+
+.onepoint{
+    background: #965A38;
+    font-size: 1em;
+    color: white;
+}
+
+.threepoints_sm{
+    background: #C98910;
+    color: white;
+}
+
+.twopoints_sm{
+    background: #A8A8A8;
+}
+
+.onepoint_sm{
+    background: #965A38;
+    color: white;
+}
+
 @media (min-width: 544px) {  
   h1 {font-size:1.5rem;} /*1rem = 16px*/
 }

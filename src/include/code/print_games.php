@@ -91,23 +91,45 @@ function print_games($args, $modus, $change){
 
             $help = $datum[$i];
         }
+        
+        
+        if (($punkte[$real_sp_nr[$i]][get_usernr()] == "+3") && (($modus == "Tipps") || ($modus == "Spieltag"))){
+            $tipp_anzeiger_start = "<span class=\"badge badge-pill threepoints\">";
+            $tipp_anzeiger_ende  = "</span>";
+        } elseif (($punkte[$real_sp_nr[$i]][get_usernr()] == "+2") && (($modus == "Tipps") || ($modus == "Spieltag"))){
+            $tipp_anzeiger_start = "<span class=\"badge badge-pill twopoints\">";
+            $tipp_anzeiger_ende  = "</span>";
+        } elseif (($punkte[$real_sp_nr[$i]][get_usernr()] == "+1") && (($modus == "Tipps") || ($modus == "Spieltag"))){
+            $tipp_anzeiger_start = "<span class=\"badge badge-pill onepoint\"><strong>";
+            $tipp_anzeiger_ende  = "</strong></span>";
+        } else {
+            $tipp_anzeiger_start = "";
+            $tipp_anzeiger_ende  = "";
+        }
     
-        echo "<tr>";
-
+        echo "<tr class=\"align-middle\">";
+        if ($modus == "Tipps"){
+            #echo "<td class=\"align-middle\" align=\"left\"  onclick=\"myFunction($i1)\"><span class=\"badge badge-pill badge-success\">".$punkte[$real_sp_nr[$i]][get_usernr()]."</span></td>";
+        }
         echo "<td class=\"align-middle\" align=\"right\"  onclick=\"myFunction($i1)\"><b>$team_heim[$i]</b></td>";
     
         if (($modus == "Spieltag") && ($team_heim_nr[$i] <= 32) ) {
-            echo "<td align=\"right\"  onclick=\"myFunction($i1)\"><img src=\"images/$img_folder/$team_heim_nr[$i].$endung\" width=\"30\"></td>";
+            echo "<td  class=\"align-middle\" align=\"right\"  onclick=\"myFunction($i1)\"><img src=\"images/$img_folder/$team_heim_nr[$i].$endung\" width=\"30\"></td>";
         }
     
-        echo "<td align=\"center\" class=\"text-nowrap\"><b>$tore_heim[$i] : $tore_aus[$i]</b></td>";
+        echo "<td align=\"center\" class=\"align-middle text-nowrap\">$tipp_anzeiger_start<b>$tore_heim[$i] : $tore_aus[$i]</b>$tipp_anzeiger_ende</td>";
     
         if (($modus == "Spieltag") && ($team_aus_nr[$i] <= 32)) {
-            echo "<td align=\"left\"  onclick=\"myFunction($i1)\"><img src=\"images/$img_folder/$team_aus_nr[$i].$endung\" width=\"30\"></td>";
+            echo "<td  class=\"align-middle\" align=\"left\"  onclick=\"myFunction($i1)\"><img src=\"images/$img_folder/$team_aus_nr[$i].$endung\" width=\"30\"></td>";
         }
 
-        echo "<td class=\"align-middle\" align=\"left\"  onclick=\"myFunction($i1)\"><b>$team_aus[$i]</b></td>";
+        echo "<td class=\"align-middle\" align=\"left\"  onclick=\"myFunction($i1)\"><b>$team_aus[$i]</b>";
+        
 
+        if ($modus == "Tipps"){
+            #echo "<td class=\"align-middle\" align=\"right\"  onclick=\"myFunction($i1)\"><span class=\"badge badge-pill badge-success\">".$punkte[$real_sp_nr[$i]][get_usernr()]."</span></td>";
+        }
+        
         echo "</tr>";
         
 
@@ -141,11 +163,19 @@ function print_games($args, $modus, $change){
                     } else{
                         $active = "";
                     }
-                
+                    if ($punkte[$real_sp_nr[$i]][$nr] == "+3"){
+                        $badgecolor = "threepoints_sm";
+                    } elseif ($punkte[$real_sp_nr[$i]][$nr] == "+2"){
+                        $badgecolor = "twopoints_sm";
+                    } elseif ($punkte[$real_sp_nr[$i]][$nr] == "+1"){
+                        $badgecolor = "onepoint_sm";
+                    } else {
+                        $badgecolor = "";
+                    }
                     echo "<tr $active>
                     <td align=\"right\" width=\"33%\">".$user_name[$real_sp_nr[$i]][$nr]." ". $nachname[$real_sp_nr[$i]][$nr] ."</td>
                     <td align=\"center\" width=\"33%\">".$tipp[$real_sp_nr[$i]][$nr]."</td>
-                    <td width=\"33%\"><span class=\"badge badge-pill badge-success\">".$punkte[$real_sp_nr[$i]][$nr]."</span></td>
+                    <td width=\"33%\"><span class=\"badge badge-pill $badgecolor\">".$punkte[$real_sp_nr[$i]][$nr]."</span></td>
                     </tr>
                             ";
                 }
@@ -160,8 +190,7 @@ function print_games($args, $modus, $change){
 
     }
 
-    echo "</table></div><br>";
-    
+    echo "</table></div>";
     
     
     if (($modus != "Spieltag") && (get_usernr() != "")){
@@ -177,6 +206,16 @@ function print_games($args, $modus, $change){
                 <input type=\"hidden\" value =\"1\" name=\"change\">
                 <input type = \"Submit\"  class=\"btn btn-primary\" value = \"$modus &auml;ndern\"></form><br>";
     }
+ 
+    
+    if (($modus == "Tipps") || ($modus == "Spieltag")){
+        echo "<br><div class=\"alert alert-secondary rounded\"><div class=\"row\">
+          <div class=\"col-6\">Punkte Legende: </div>
+          <div class=\"col-2\"><span class=\"badge badge-pill threepoints\">+3</span></div>
+          <div class=\"col-2\"><span class=\"badge badge-pill twopoints\">+2</span></div>
+          <div class=\"col-2\"><span class=\"badge badge-pill onepoint\">+1</span></div></div></div><br>";
+    }
+ 
  
  echo "</div>";
 }
