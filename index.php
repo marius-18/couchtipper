@@ -129,7 +129,7 @@ foreach ($_GET as $url_parameter => $url_value){
     <script src=https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.16.0/bootstrap-table.min.js></script> <!-- sortierbare Tabellen! (braucht jquery) --> 
     <link href=https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.16.0/bootstrap-table.min.css rel=stylesheet> <!-- stylesheet für sortierbare Tabellen -->
 
-    <link href="src/include/styles/main_style.css?v=1" rel="stylesheet" type="text/css">
+    <link href="src/include/styles/main_style.css?v=1.6" rel="stylesheet" type="text/css">
     
     <script src="src/include/scripts/ausblenden.js?v=<?php echo rand();?>"></script> <!-- Zum Ein- und ausblenden verschiedener Elemente -->
 
@@ -203,9 +203,9 @@ MENÜ
                             <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=-1" style="color:black">WM 2018</a>
                             <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=-2" style="color:black">BuLi 2017/18</a>
                             <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=-3" style="color:black">BuLi 2016/17</a>
-                            <!--<a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=-4" style="color:black">EM 2016</a>
+                            <!--<a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=-4" style="color:black">EM 2016</a>-->
                             <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=-5" style="color:black">BuLi 2015/16</a>
-                            <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=-6" style="color:black">BuLi 2014/15</a>-->
+                            <!--<a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=-6" style="color:black">BuLi 2014/15</a>-->
                             <?php
                             #if (allow_verwaltung()){
                                 #echo "<div class=\"dropdown-divider\"></div>
@@ -370,7 +370,7 @@ MENÜ
             <?php
                 if (($index != 4) && ($index != 2) && ($index != 5) ){
                     echo "<h2>Rangliste:</h2>";
-                    include_once("src/pages/rangliste.php");
+                    include_once("src/pages/rangliste_links.php");
                 }
 
                  if (($index == 5) || ($index == 2)){
