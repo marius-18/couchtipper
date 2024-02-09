@@ -36,7 +36,11 @@ echo "<div class = \"content\"><br>";
 
 
 $show_formular = true;
+
 $error_count = 0;
+$error = false;
+$error_msg = "";
+
 $spiel = array();
 
 if (isset($_POST['spiel1'])){
@@ -68,10 +72,9 @@ if (isset($_POST['spiel9'])){
 }
 
 
-
-for ($sp_nr = 1; $sp_nr <10; $sp_nr++) {
+## Uhrzeiten eintragen
+for ($sp_nr = 1; $sp_nr < 10; $sp_nr++) {
     if (isset($spiel[$sp_nr])) {
-
         $eingabe = $spiel[$sp_nr];
         $sql = "UPDATE Spieltage SET datum$teil1 = $eingabe WHERE sp_nr = $sp_nr AND spieltag = $spieltag";
         $result = $g_pdo->query($sql);
@@ -83,32 +86,28 @@ for ($sp_nr = 1; $sp_nr <10; $sp_nr++) {
 
 
 
-
+## Datum des Spieltags aus DB holen
 $sql = "SELECT datum FROM Datum WHERE spieltag = $real_spieltag";
-
 foreach ($g_pdo->query($sql) as $row) {
     $main_datum = $row['datum'];
 }
 
 
 
+## Hole Spiele aus der DB
 $sql = "SELECT datum$teil1,sp_nr FROM Spieltage WHERE spieltag = $spieltag";
-
 foreach ($g_pdo->query($sql) as $row) {
     $sp_nr = $row['sp_nr'];
     if (isset($row['datum1'])){
         $spiel[$sp_nr] = $row['datum1'];
     } else {
         $spiel[$sp_nr] = $row['datum2'];
-
     }
 }
 
 
 
-
-$error = false;
-$error_msg = "";
+## Fehler ausgeben, wenn Spieltag noch nicht terminiert ist
 if ($main_datum == "") {
     $show_formular = false;
     $error = true;
@@ -118,157 +117,128 @@ if ($main_datum == "") {
 
 
 
-
+## Gebe das eigentliche Formular aus
 if ($show_formular){
-
-   $tag = date("N",$main_datum);
-
-   echo "<form action=\"\" method=\"post\">
-
-   <table border = \"1\" align = \"center\" width = \"100%\">";
-
-
-
-   if ($tag == 5) {
-
-      echo "
-      <tr>
-      <td></td>
-      <td align = \"center\">Fr</td>
-      <td colspan = \"2\" align = \"center\">Sa</td>
-      <td colspan = \"3\" align = \"center\">So</td>
-      </tr>
-
-      <tr>
-      <td></td>
-      <td align = \"center\">20</td>
-      <td align = \"center\">15</td>
-      <td align = \"center\">18</td>
-      <td align = \"center\">15</td>
-      <td align = \"center\">17</td>
-      <td align = \"center\">19</td> 
-
-      </tr>
-
-      <tr>
-      <td></td>
-      <td align = \"center\">30</td>
-      <td align = \"center\">30</td>
-      <td align = \"center\">30</td>
-      <td align = \"center\">30</td>
-      <td align = \"center\">30</td>
-      <td align = \"center\">30</td> 
-
-      </tr>
-      ";
-
-
-   }
-
-
-
-
-   if ($tag == 6) {
-
-      echo "
-      <tr>
-      <td></td>
-      <td colspan = \"3\" align = \"center\">Sa</td>
-      <td colspan = \"3\" align = \"center\">So</td>
-      </tr>
-
-      <tr>
-      <td></td>
-      <td align = \"center\">15</td>
-      <td align = \"center\">18</td>
-      <td align = \"center\">20</td>
-      <td align = \"center\">15</td>
-      <td align = \"center\">17</td> 
-      <td align = \"center\">19</td>
-
-      </tr>
-
-      <tr>
-      <td></td>
-      <td align = \"center\">30</td>
-      <td align = \"center\">30</td>
-      <td align = \"center\">30</td>
-      <td align = \"center\">30</td>
-      <td align = \"center\">30</td>
-      <td align = \"center\">30</td> 
-
-      </tr>
-      ";
-
-
-   }
-   
-   if ($tag == 2) {
-
-      echo "
-      <tr>
-      <td></td>
-      <td colspan = \"2\" align = \"center\">Di</td>
-      <td colspan = \"2\" align = \"center\">Mi</td>
-      </tr>
-
-      <tr>
-      <td></td>
-      <td align = \"center\">18</td>
-      <td align = \"center\">20</td>
-      <td align = \"center\">18</td>
-      <td align = \"center\">20</td>
-
-      </tr>
-
-      <tr>
-      <td></td>
-      <td align = \"center\">30</td>
-      <td align = \"center\">30</td>
-      <td align = \"center\">30</td>
-      <td align = \"center\">30</td>
-
-      </tr>
-      ";
-
-
-   }
-
-
-   $sql = "SELECT sp_nr, t1.team_name AS Team_name$teil1, t2.team_name AS Team_name$teil2,sp_nr
-   FROM `Spieltage`,Teams t1, Teams t2
-   WHERE (`spieltag` = $spieltag) AND (t1.team_nr = team1) AND (t2.team_nr = team2)";
-
-
-   foreach ($g_pdo->query($sql) as $row) {
-
-      echo "<tr>
-      ";  
-      $sp_nr = $row['sp_nr'];
-      $t = $spiel[$sp_nr];
-      echo "<td align = \"center\">".$row['Team_name1']."-".$row['Team_name2']."</td>";
-      echo spiele_term($main_datum, $sp_nr, $t);
-
-
-      echo "</tr>
-      ";
-
-   }
-
-
-   echo "</table><br>
-   <input type=\"hidden\" name =\"spieltag\" value=\"$real_spieltag\" visible=\"false\">
-   <input type=\"Submit\" value=\"Enter\">
-   </form>
-   ";
-
+    $tag = date("N",$main_datum);
+    
+    ## Anstosszeiten definieren 
+    if (!is_big_tournament(get_curr_wett())){
+        if ($tag == 5) {
+            ## Wenn Spieltag Freitags beginnt..
+            $anstosszeiten = 
+                ["Fr" => array("20:30"), 
+                 "Sa" => array("15:30", "18:30"),
+                 "So" => array("15:30", "17:30", "19:30")
+                ];
+        }
+        
+        if ($tag == 6) {
+            ## Wenn Spieltag Samstags beginnt..
+            $anstosszeiten = 
+                [ 
+                 "Sa" => array("15:30", "18:30", "20:30"),
+                 "So" => array("15:30", "17:30", "19:30")
+                ];
+        }
+        
+        if ($tag == 2) {
+            ## Wenn Spieltag Dienstags beginnt..
+            $anstosszeiten = 
+                [
+                 "Di" => array("18:30", "20:30"),
+                 "Mi" => array("18:30", "20:30")
+                ];
+        }
+    } else {
+        ## Bei WM/EM hier die Anstoßzeiten eintragen...   
+        if (get_wettbewerb_code(get_curr_wett())== "EM"){
+            ## EM Anstosszeiten
+            $anstosszeiten = 
+                [
+                "Anstoss" => array("15:00", "18:00", "21:00")
+                ];
+        }
+        
+        if (get_wettbewerb_code(get_curr_wett()) == "WM"){
+            ## WM Anstosszeiten
+            $anstosszeiten = 
+                [
+                "Anstoss" => array("12:00", "14:00", "15:00", "16:00", "17:00", "18:00", "20:00", "21:00")
+                ];
+        }
+    }
+    
+    ## Anstosszeiten anzeigen
+    echo "<form action=\"\" method=\"post\">
+            <table border = \"1\" align = \"center\" width = \"100%\">";
+    
+    ## Tag anzeigen
+    echo "<tr>";
+    echo "<td></td><td></td>";
+    foreach ($anstosszeiten as $days => $zeiten){
+        $my_anz = count($zeiten);
+        echo "<td colspan= \"$my_anz\" align = \"center\">$days</td>";
+    }
+    echo "</tr>";
+       
+    ## Stunde Anzeigen
+    echo "<tr>";
+    echo "<td></td>";
+    foreach ($anstosszeiten as $days => $zeiten){
+        $my_anz = count($zeiten);
+        foreach ($zeiten as $time){
+            $my_stunde = explode(":",$time)[0];
+            echo "<td align = \"center\">$my_stunde</td>";
+        }
+    }
+    echo "</tr>";
+    
+    ## Minuten anzeigen
+    echo "<tr>";
+    echo "<td></td>";
+    foreach ($anstosszeiten as $days => $zeiten){
+        $my_anz = count($zeiten);
+        foreach ($zeiten as $time){
+            $my_stunde = explode(":",$time)[1];
+            echo "<td align = \"center\">$my_stunde</td>";
+        }
+    }
+    echo "</tr>";
+    
+    
+    ## Spiele aus DB holen
+    $sql = "SELECT sp_nr, t1.team_name AS Team_name$teil1, t2.team_name AS Team_name$teil2,sp_nr
+            FROM `Spieltage`,Teams t1, Teams t2
+            WHERE (`spieltag` = $spieltag) AND (t1.team_nr = team1) AND (t2.team_nr = team2)
+            ORDER BY sp_nr ASC";
+    
+    
+    foreach ($g_pdo->query($sql) as $row) {
+        echo "<tr>";
+        
+        $sp_nr   = $row['sp_nr'];
+        $db_time = $spiel[$sp_nr];
+        echo "  <!--<td>$sp_nr</td>-->
+                <td align = \"center\">".$row['Team_name1']."-".$row['Team_name2']."</td>";
+                
+        echo spiele_term($main_datum, $sp_nr, $db_time, $anstosszeiten);
+        
+        echo "</tr>";
+    }
+    
+    echo "</table>
+    <br>
+    <input type=\"hidden\" name =\"spieltag\" value=\"$real_spieltag\" visible=\"false\">
+    <input type=\"Submit\" value=\"Enter\">
+    </form>
+    ";
 }
 
 
 if ($error) {
-   echo "<font color = \"red\"><b> $error_msg</b> </font><br><br>";
+    echo "<font color = \"red\"><b> $error_msg</b> </font><br><br>";
 } else {
-   echo "Es gab ".$error_count." Fehler beim Speichern";
+    echo "Es gab ".$error_count." Fehler beim Speichern";
 }
 
 ?>
@@ -282,200 +252,38 @@ if ($error) {
 
 <?php
 
-function spiele_term($main_datum, $sp_nr, $time){
-   global $g_modus;
+function spiele_term($main_datum, $sp_nr, $time, $anstosszeiten){
+    $anstoss = array();
+    $i = 0;
+    $tage = 0;
+    
+    ## Anstosszeiten Timestamps berechnen
+    foreach ($anstosszeiten as $days => $zeiten){
+        $my_anz = count($zeiten);
+        foreach ($zeiten as $uhrzeit){
+            $stunde = explode(":", $uhrzeit)[0];
+            $minute = explode(":", $uhrzeit)[1];
+            
+            ## start des Tages:
+            $start_datum = $main_datum + 24*60*60*$tage;
 
-   if (get_wettbewerb_code(get_curr_wett()) == "WM"){
-      wm_spiele_term($main_datum, $sp_nr, $time);
-   }
-   if (get_wettbewerb_code(get_curr_wett()) == "EM"){
-      em_spiele_term($main_datum, $sp_nr, $time);
-   }
-   if (get_wettbewerb_code(get_curr_wett()) == "BuLi"){
-      buli_spiele_term($main_datum, $sp_nr, $time);
-   }
-}
-
-
-function wm_spiele_term($main_datum, $sp_nr, $time){
-
-   $anstoss1 = $main_datum + 12*60*60;  // 12 Uhr
-   $anstoss2 = $main_datum + 14*60*60;  // 14 Uhr
-   $anstoss3 = $main_datum + 15*60*60;  // 15 Uhr
-   $anstoss4 = $main_datum + 16*60*60;  // 16 Uhr
-   $anstoss5 = $main_datum + 17*60*60;  // 17 Uhr
-   $anstoss6 = $main_datum + 18*60*60;  // 18 Uhr
-   $anstoss7 = $main_datum + 20*60*60;  // 20 Uhr
-   $anstoss8 = $main_datum + 21*60*60;  // 21 Uhr
-
-   $checked1 = "";
-   $checked2 = "";
-   $checked3 = "";
-   $checked4 = "";
-   $checked5 = "";
-   $checked6 = "";
-   $checked7 = "";
-   $checked8 = "";
-
-   if ($time == $anstoss1) {
-      $checked1 = "checked";
-   }
-   if ($time == $anstoss2) {
-      $checked2 = "checked";
-   }
-   if ($time == $anstoss3) {
-      $checked3 = "checked";
-   }
-   if ($time == $anstoss4) {
-      $checked4 = "checked";
-   }
-   if ($time == $anstoss5) {
-      $checked5 = "checked";
-   }
-   if ($time == $anstoss6) {
-      $checked6 = "checked";
-   }
-   if ($time == $anstoss7) {
-      $checked7 = "checked";
-   }
-   if ($time == $anstoss8) {
-      $checked8 = "checked";
-   }
-
-   echo "
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$anstoss1\" $checked1></td>
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$anstoss2\" $checked2></td>
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$anstoss3\" $checked3></td>
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$anstoss4\" $checked4></td>
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$anstoss5\" $checked5></td>
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$anstoss6\" $checked6></td>
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$anstoss7\" $checked7></td>
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$anstoss8\" $checked8></td>
-   ";
-}
-
-function em_spiele_term($main_datum, $sp_nr, $time){
-
-   $anstoss1 = $main_datum + 15*60*60;  // 15 Uhr
-   $anstoss2 = $main_datum + 18*60*60;  // 18 Uhr
-   $anstoss3 = $main_datum + 21*60*60;  // 21 Uhr
-
-   $checked1 = "";
-   $checked2 = "";
-   $checked3 = "";
-   
-   if ($time == $anstoss1) {
-      $checked1 = "checked";
-   }
-   if ($time == $anstoss2) {
-      $checked2 = "checked";
-   }
-   if ($time == $anstoss3) {
-      $checked3 = "checked";
-   }
-
-   echo "
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$anstoss1\" $checked1></td>
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$anstoss2\" $checked2></td>
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$anstoss3\" $checked3></td>
-   ";
-}
-
-
-function buli_spiele_term($main_datum, $sp_nr, $time) {
-   $tag = date("N",$main_datum);
-   
-   if (($tag == 5) || ($tag == 6)) { // FReitag oder Samstag
-
-      if ($tag == 5){ //Samstag Beginn
-         $sp1  = strtotime(date("d.m.Y 20:30:59", $main_datum));
-         $sp2 = strtotime(date("d.m.Y 15:30:59", $main_datum + 60*60*24));
-         $sp3 = strtotime(date("d.m.Y 18:30:59", $main_datum + 60*60*24));
-         $sp4 = strtotime(date("d.m.Y 15:30:59", $main_datum + 60*60*24*2));
-         $sp5 = strtotime(date("d.m.Y 17:30:59", $main_datum + 60*60*24*2));
-         $sp6 = strtotime(date("d.m.Y 19:30:59", $main_datum + 60*60*24*2));
-      } else{
-         $sp1 = strtotime(date("d.m.Y 15:30:59", $main_datum));
-         $sp2 = strtotime(date("d.m.Y 18:30:59", $main_datum));
-         $sp3 = strtotime(date("d.m.Y 20:30:59", $main_datum));
-         $sp4 = strtotime(date("d.m.Y 15:30:59", $main_datum + 60*60*24));
-         $sp5 = strtotime(date("d.m.Y 17:30:59", $main_datum + 60*60*24));
-         $sp6 = strtotime(date("d.m.Y 19:30:59", $main_datum + 60*60*24));
-      }
-      
-      $checked1 = "";
-      $checked2 = "";
-      $checked3 = "";
-      $checked4 = "";
-      $checked5 = "";
-      $checked6 = "";
-   
-      if ($time == $sp1) {
-         $checked1 = "checked";
-      }
-      if ($time == $sp2) {
-         $checked2 = "checked";
-      }
-      if ($time == $sp3) {
-         $checked3 = "checked";
-      }
-      if ($time == $sp4) {
-         $checked4 = "checked";
-      }
-      if ($time == $sp5) {
-         $checked5 = "checked";
-      }
-      if ($time == $sp6) {
-         $checked6 = "checked";
-      }
-
-
-      echo "
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$sp1\" $checked1></td>
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$sp2\" $checked2></td>
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$sp3\" $checked3></td>
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$sp4\" $checked4></td>
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$sp5\" $checked5></td>
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$sp6\" $checked6></td>
-      ";
-
-   }
-
-
-   if ($tag == 2) {
-
-      $sp1 = strtotime(date("d.m.Y 18:30:59", $main_datum));
-      $sp2 = strtotime(date("d.m.Y 20:30:59", $main_datum));
-      $sp3 = strtotime(date("d.m.Y 18:30:59", $main_datum + 60*60*24));
-      $sp4 = strtotime(date("d.m.Y 20:30:59", $main_datum + 60*60*24));
-
-      $checked1 = "";
-      $checked2 = "";
-      $checked3 = "";
-      $checked4 = "";
-   
-      
-      if ($time == $sp1) {
-         $checked1 = "checked";
-      }
-      if ($time == $sp2) {
-         $checked2 = "checked";
-      }
-      if ($time == $sp3) {
-         $checked3 = "checked";
-      }
-      if ($time == $sp4) {
-         $checked4 = "checked";
-      }
-
-      echo "
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$sp1\" $checked1></td>
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$sp2\" $checked2></td>
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$sp3\" $checked3></td>
-      <td align = \"center\"><input type=\"radio\" name=\"spiel$sp_nr\" value=\"$sp4\" $checked4></td>
-      ";
-   }
-
+            $anstoss[$i] = strtotime(date("d.m.Y", $start_datum) . " $stunde:$minute:59");
+            $i++;
+        }
+        $tage++;
+    }
+    
+    ## Checkboxen für die Anstosszeiten anzeigen
+    foreach ($anstoss as $anstosszeit){
+        $checked = "";
+        if ($time == $anstosszeit) {
+            $checked = "checked";
+        }
+        
+        echo "<td align = \"center\">
+                <input type=\"radio\" name=\"spiel$sp_nr\" value=\"$anstosszeit\" $checked>
+             </td>";
+    }
 }
 
 ?>
