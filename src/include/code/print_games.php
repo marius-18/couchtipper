@@ -92,14 +92,19 @@ function print_games($args, $modus, $change){
             $help = $datum[$i];
         }
         
+        if (isset($punkte[$real_sp_nr[$i]][get_usernr()])){
+            $mypoints = $punkte[$real_sp_nr[$i]][get_usernr()];
+        } else {
+            $mypoints = "";
+        }
         
-        if (($punkte[$real_sp_nr[$i]][get_usernr()] == "+3") && (($modus == "Tipps") || ($modus == "Spieltag"))){
+        if (($mypoints == "+3") && (($modus == "Tipps") || ($modus == "Spieltag"))){
             $tipp_anzeiger_start = "<span class=\"badge badge-pill threepoints\">";
             $tipp_anzeiger_ende  = "</span>";
-        } elseif (($punkte[$real_sp_nr[$i]][get_usernr()] == "+2") && (($modus == "Tipps") || ($modus == "Spieltag"))){
+        } elseif (($mypoints == "+2") && (($modus == "Tipps") || ($modus == "Spieltag"))){
             $tipp_anzeiger_start = "<span class=\"badge badge-pill twopoints\">";
             $tipp_anzeiger_ende  = "</span>";
-        } elseif (($punkte[$real_sp_nr[$i]][get_usernr()] == "+1") && (($modus == "Tipps") || ($modus == "Spieltag"))){
+        } elseif (($mypoints == "+1") && (($modus == "Tipps") || ($modus == "Spieltag"))){
             $tipp_anzeiger_start = "<span class=\"badge badge-pill onepoint\"><strong>";
             $tipp_anzeiger_ende  = "</strong></span>";
         } else {
@@ -132,7 +137,6 @@ function print_games($args, $modus, $change){
         
         echo "</tr>";
         
-
         if (($modus == "Spieltag") || ($modus == "Tipps")){
 
             // DAS SOLL NUR GEHEN WENN DAS SPIEL SCHON BEGONNEN HAT
@@ -163,19 +167,27 @@ function print_games($args, $modus, $change){
                     } else{
                         $active = "";
                     }
-                    if ($punkte[$real_sp_nr[$i]][$nr] == "+3"){
+
+                    if (isset($punkte[$real_sp_nr[$i]][$nr])){
+                        $mypoints = $punkte[$real_sp_nr[$i]][$nr];
+                    } else {
+                        $mypoints = "";
+                    }
+
+                    if ($mypoints == "+3"){
                         $badgecolor = "threepoints_sm";
-                    } elseif ($punkte[$real_sp_nr[$i]][$nr] == "+2"){
+                    } elseif ($mypoints == "+2"){
                         $badgecolor = "twopoints_sm";
-                    } elseif ($punkte[$real_sp_nr[$i]][$nr] == "+1"){
+                    } elseif ($mypoints == "+1"){
                         $badgecolor = "onepoint_sm";
                     } else {
                         $badgecolor = "";
                     }
+                    
                     echo "<tr $active>
                     <td align=\"right\" width=\"33%\">".$user_name[$real_sp_nr[$i]][$nr]." ". $nachname[$real_sp_nr[$i]][$nr] ."</td>
                     <td align=\"center\" width=\"33%\">".$tipp[$real_sp_nr[$i]][$nr]."</td>
-                    <td width=\"33%\"><span class=\"badge badge-pill $badgecolor\">".$punkte[$real_sp_nr[$i]][$nr]."</span></td>
+                    <td width=\"33%\"><span class=\"badge badge-pill $badgecolor\">".$mypoints."</span></td>
                     </tr>
                             ";
                 }

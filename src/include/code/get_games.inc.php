@@ -29,7 +29,6 @@ function get_games ($spieltag, $modus, $change, $user_nr) {
     }
 
 
-
     // Initialisiere Arrays wegen sort()
     for ($i=1; $i<= $anz_spiele; $i++){
         $tore_heim[$i] = "";
@@ -129,7 +128,6 @@ function get_games ($spieltag, $modus, $change, $user_nr) {
     }
 
    array_multisort($datum, SORT_ASC, $team_heim, $team_aus, $tore_heim, $tore_aus, $team_heim_nr, $team_aus_nr, $real_sp_nr);
-
     return array($datum, $team_heim, $team_aus, $tore_heim, $tore_aus, $team_heim_nr, $team_aus_nr, $real_sp_nr, $real_spieltag, $anz_spiele);
 ### letzter parameter: $gruppe.. wofür? vllt für WM/EM?
 // warum nicht gleich ausgeben ?
@@ -160,7 +158,7 @@ function get_ergebnis($spieltag,$modus, $jahr){
     global $g_pdo;
     // DB Abfrage je nach modus.. Hier bisher nur buli!
     $matches = get_open_db_spieltag($modus, $jahr, $spieltag);
-
+    
     if ($spieltag <= 17) {
         $heim = "Heim";
         $aus = "Aus";
@@ -435,9 +433,8 @@ function get_other_tipps($spieltag, $modus) {
             $nachname[$sp_nr][$i] = "";
             //$vorname[$sp_nr][$i] = $row['vorname'];
             //$nachname[$sp_nr][$i] = $row['nachname'];
-            
-            if (($tore1[$sp_nr] != NULL) && ($tore2[$sp_nr] != NULL)){
-            
+
+            if (($tore1[$sp_nr] !== NULL) && ($tore2[$sp_nr] !== NULL)){
                 if (($tore1[$sp_nr] == $tipp1[$sp_nr]) && ($tore2[$sp_nr] == $tipp2[$sp_nr])){
                     $punkte[$sp_nr][$i] = "+3";
                 }
@@ -553,7 +550,7 @@ function get_group_games($gruppe){
 
     $anz_spiele = 6; //Gruppenspiele
     if (get_wettbewerb_code(get_curr_wett())  == "EM"){
-        $max_gruppen_spt = 13; // nach dem 15. Spieltag keine Gruppenspiele mehr!
+        $max_gruppen_spt = 13; // nach dem 13. Spieltag keine Gruppenspiele mehr!
     }
     if (get_wettbewerb_code(get_curr_wett())  == "WM"){
         $max_gruppen_spt = 15; // nach dem 15. Spieltag keine Gruppenspiele mehr!
@@ -576,6 +573,8 @@ function get_group_games($gruppe){
       $team_aus [$sp_nr] = $row['Team_name2'];
       $datum [$sp_nr] = $row['datum'];
       $real_sp_nr [$sp_nr] = $sp_nr;
+      $tore_heim[$sp_nr] = "";
+      $tore_aus[$sp_nr] = "";
    }
 
    $sql = "
