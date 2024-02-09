@@ -144,11 +144,12 @@ if (get_curr_wett()[0] > 2){
 <br><br>
 Bei Fragen zum Tippspiel, schau mal auf der Seite <a href="?index=11#main">"FAQ"</a> nach. 
 <br><br>
+<!--
 <div class="alert alert-success">
 <span class="badge badge-pill badge-danger">NEW!</span> Die Pr&auml;mie f&uuml;r den Spieltagssieger betr&auml;gt ab sofort 6€! <br>
 Mehr dazu unter <a href="?index=11#main">"FAQ"</a>.
-
 </div>
+-->
 <br>
 Viel Spa&szlig; beim Tippen! </h5></div>
 
