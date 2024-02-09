@@ -1,6 +1,7 @@
 <?php
 ini_set('session.cookie_domain', '.couchtipper.de' );
 session_start();
+date_default_timezone_set("CET");
 header('Content-Type: text/html; charset=UTF-8');
 require_once("../auth/include/security.inc.php");
 is_logged();
