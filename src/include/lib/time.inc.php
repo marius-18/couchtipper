@@ -173,7 +173,6 @@ function check_game_date($spieltag, $sp_nr) {
         $datum = $row['datum'];
     }
 
-
     $timestamp = time();
 
 
@@ -222,7 +221,7 @@ function check_game_over($spieltag, $sp_nr) {
 }
 
 function akt_spieltag(){
-    #return 25;
+    #return 18;
     global $g_pdo;
     
     $sql = "Select max(spieltag) as spieltag FROM Datum where datum < (Select UNIX_TIMESTAMP(CURRENT_TIMESTAMP))";
@@ -308,13 +307,16 @@ function spieltag_running($spt=""){
 
 function spt_select(){
     global $g_pdo;
-    
+    global $g_nachholspiel;
     if (spieltag_running()){
         // Der laufende Spieltag wird immer zuerst angezeigt!!
         return akt_spieltag();
     }
     
-    #return 3;
+    if ($g_nachholspiel !== NULL){
+        return $g_nachholspiel;
+    }
+    
     $ende = 1;
     $spt = 0;
 

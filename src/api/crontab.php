@@ -139,10 +139,13 @@ function reminder_tipps(){
 }
 
 function input_results(){
-    ## aktuellen Spieltag herausfinden
-    #echo akt_spieltag();
+    ## Holt die Ergebnisse des aktuellen Spieltags aus OpenLigaDB
+    global $g_nachholspiel;
     if (spieltag_running()){
         input_cronjob(akt_spieltag());
+    }
+    if ($g_nachholspiel !== NULL){
+        input_cronjob($g_nachholspiel);
     }
 }
 

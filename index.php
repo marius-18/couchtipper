@@ -11,6 +11,8 @@ $g_modus = "BuLi";
 $global_wett_id = "6";
 $subdomain = explode(".",$_SERVER['SERVER_NAME'])[0];
 
+$g_nachholspiel = NULL;
+
 #if (($wartung) && ($subdomain == "code")){
 if ((1) && ($subdomain == "code")){
     ini_set('display_errors', 1);
@@ -409,7 +411,7 @@ MENÜ
             <?php
                 switch ($index) {
                     case "":
-                        if (get_wettbewerb_code(get_curr_wett()) == "Sum"){
+                        if (get_wettbewerb_code(get_curr_wett()) == "Überblick"){
                          include_once("src/rangliste_overview.php");
                          break;
                         }
