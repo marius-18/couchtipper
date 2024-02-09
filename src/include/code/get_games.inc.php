@@ -361,7 +361,26 @@ usort($match["goals"], function($a, $b) {
                 if ($goal["isOwnGoal"]){
                     $zusatz = "(ET)";
                 }
-                $ret[$sp_nr] .= "<td>'".$goal["matchMinute"]."</td>";
+                if ($goal["isOvertime"]){
+                    $match_minute = $goal["matchMinute"];
+                    
+                    if ($match_minute > 120){
+                        $rest = $match_minute - 120;
+                        $match_minute = "120'+$rest";
+                    } elseif (($match_minute > 90) && ($match_minute < 115)){
+                        $rest = $match_minute - 90;
+                        $match_minute = "90'+$rest";
+                    } elseif (($match_minute > 45) && ($match_minute < 80)){
+                        $rest = $match_minute - 45;
+                        $match_minute = "45'+$rest";
+                    } else{
+                        $match_minute .= "'";
+                    }
+
+                } else {
+                    $match_minute = $goal["matchMinute"]."'";
+                }
+                $ret[$sp_nr] .= "<td>".$match_minute."</td>";
                 $ret[$sp_nr] .= "<td>".$goal["scoreTeam1"]." : ".$goal["scoreTeam2"]."</td>";
                 $ret[$sp_nr] .= "<td>".$goal["goalGetterName"]."</td>";
                 $ret[$sp_nr] .= "<td>$zusatz</td>";
