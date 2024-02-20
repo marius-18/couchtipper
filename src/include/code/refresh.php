@@ -1,5 +1,5 @@
 <?php
-
+include_once("src/include/code/tabelle.inc.php");
 
 function update_tabelle($spieltag) {
     global $g_pdo;
@@ -106,6 +106,11 @@ function update_tabelle($spieltag) {
         }
 
     }
+    
+    ##TODO: nur für Buli?!
+    if (!is_big_tournament(get_curr_wett())){
+        update_tabelle_platz($spieltag);
+    }
 
     if ($error != 0) {
         echo "Es gab einen Fehler beim Aktualisieren";
@@ -206,6 +211,36 @@ function update_rangliste($spieltag) {
 
 }
 
+function update_tabelle_platz($spieltag) {
+    ## Geht durch den Spieltag und aktualisiert die Platzierung für jeden Verein an dem entsprechenden Spieltag
+    global $g_pdo;
+    
+    list ($punkte, $tore, $gegentore, $diff, $team_name, $sieg, $unentschieden, $niederlage, $modus, $nummer) = tabelle(1,0,$spieltag);
+    
+    foreach ($nummer as $key => $team_nr){
+        $curr_platz = $key +1;
+        
+        ## Check if same platz
+        if ($key > 0){
+            if (($punkte[$key -1] == $punkte[$key]) && 
+                ($tore[$key] - $gegentore[$key] == $tore[$key-1] - $gegentore[$key-1] ) &&
+                ($tore[$key] == $tore[$key-1])){
+                $platz[$team_nr] = $platz_halten;
+            } else {
+                $platz[$team_nr] = $curr_platz;
+                $platz_halten = $curr_platz;
+            }
+        } else {
+            $platz[$team_nr] = $curr_platz;
+                $platz_halten = $curr_platz;
+        }
+        
+        $sql = "UPDATE `Tabelle` SET `platz`= ".$platz[$team_nr]." WHERE `team_nr` = $team_nr AND `spieltag`= $spieltag";
+
+        $statement = $g_pdo->prepare($sql);
+        $result = $statement->execute();
+    }
+}
 
 function update_rangliste_position($spieltag) {
     global $g_pdo;
