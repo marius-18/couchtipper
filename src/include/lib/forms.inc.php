@@ -12,6 +12,7 @@ function select_spieltag ($spieltag) { // ACHTUNG WM EDITION
     }
     
     $spieltag = min($spieltag, $max_spieltage);
+    $aktueller_spieltag = spt_select();
 
     if ($spieltag > 1){
         $left = $spieltag-1;
@@ -48,6 +49,10 @@ function select_spieltag ($spieltag) { // ACHTUNG WM EDITION
 
         if ($spieltag == $i){
             $select = "selected";
+        }
+
+        if ($aktueller_spieltag == $i){
+            $select .= " style=\"font-weight:bold\"";
         }
         
         if (get_wettbewerb_code(get_curr_wett()) == "EM"){
@@ -196,9 +201,11 @@ function select_team(){
 
 function select_gruppe(){
     if (get_wettbewerb_code(get_curr_wett())  == "WM"){
+        ## ASCII Code bis Gruppe H
         $max = 72;
     }
     if (get_wettbewerb_code(get_curr_wett())  == "EM"){
+        ## ASCII Code bis Gruppe F
         $max = 70;
     }
     echo "
