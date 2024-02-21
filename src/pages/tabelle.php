@@ -7,7 +7,7 @@ require_once('src/include/code/get_games.inc.php');
 function rank_ausblenden(wert) {
 a = Math.floor(wert/100);
 
-    for (i=a*100; i<a*100+7; i++){
+    for (i=a*100; i<a*100+8; i++){
         if (i == wert){
             document.getElementById(wert).style.display = "";
             document.getElementById(wert+10).className = "btn btn-info focus";
@@ -38,7 +38,10 @@ echo "
 
 if (get_wettbewerb_code(get_curr_wett()) == "BuLi") {
     #echo "<br><br>";
-    echo "<button type=\"button\" class=\"btn btn-info\" onclick = \"rank_ausblenden(506)\" id=\"516\">Verlauf</button>";
+    echo "<button type=\"button\" class=\"btn btn-info\" onclick = \"rank_ausblenden(506)\" id=\"516\">Verlauf</button>
+    
+    ";
+    echo "<button type=\"button\" class=\"btn btn-info\" onclick = \"rank_ausblenden(507)\" id=\"517\">Bereich</button>";
 }
 
 echo "<br><br>";
@@ -51,6 +54,7 @@ echo "<br><br>";
       <?php print_tabelle(tabelle("Hinrunde", 0), 504, "none"); ?>
       <?php print_tabelle(tabelle("Rückrunde", 17), 505, "none"); ?>
       <?php print_tabelle_verlauf(tabelle_verlauf(), 506, "none"); ?>
-
-
+      <?php print_tabelle(tabelle("Bereich", 0), 507, "none"); ?>
+      
+      
 

@@ -19,9 +19,21 @@ if ($modus == "Hinrunde"){
   $heim = "AND (spieltag <= 17)";
 }
 
+$bereich_choosen = 0;
+if ($modus == "Bereich"){
+    list($beginn, $ende, $spieltag_bereich_form) = spieltag_start_ende();
+    if (($beginn != 0) && ($ende != 0)){
+        $bereich_choosen = 1;
+    }
+    $beginn--;
+} else {
+    $spieltag_bereich_form = "";   
+}
+
 if ($ende !== NULL){
   $endzeit = "AND (spieltag <= $ende)";
 }
+
 
 $sql = "SELECT sum(tore) as tore, sum(gegentore) as gegentore, sum(punkte) as punkte,
                sum(sieg) as sieg, sum(niederlage) as niederlage, sum(unentschieden) as unentschieden,
@@ -55,7 +67,7 @@ if (!isset($punkte)){
 
 array_multisort($punkte, SORT_DESC, $diff, SORT_DESC, $tore, SORT_DESC, $gegentore, SORT_ASC, $team_name, $niederlage, $sieg, $unentschieden, $nummer);
 
-return (array($punkte, $tore, $gegentore, $diff, $team_name, $sieg, $unentschieden, $niederlage, $modus, $nummer));
+return (array($punkte, $tore, $gegentore, $diff, $team_name, $sieg, $unentschieden, $niederlage, $modus, $nummer, $spieltag_bereich_form, $bereich_choosen));
 
 
 }
@@ -153,7 +165,7 @@ echo "<br>";
 
 function print_tabelle($args, $id, $show){
 
-list($punkte, $tore, $gegentore, $diff, $team_name, $sieg, $unentschieden, $niederlage, $modus) = $args;
+list($punkte, $tore, $gegentore, $diff, $team_name, $sieg, $unentschieden, $niederlage, $modus, $nummer, $spieltag_bereich_form, $bereich_choosen) = $args;
 
 echo "<div class=\"container\" id=\"$id\" style=\"display: $show;\">";
 
@@ -177,9 +189,15 @@ if ($modus == "Heim") {
  elseif ($modus == "Rückrunde"){
   echo "<b>R&uuml;ckrunde</b>";
 }
+ elseif ($modus == "Bereich"){
+  echo "<b>Bereich</b>";
+}
  elseif ($modus == "") {
   echo "<b>Tabelle</b>";
 }
+
+echo $spieltag_bereich_form;
+
 
 echo "<div class=\"table-responsive\">";
 echo "<table class=\"table table-sm  table-hover text-center center\">";
@@ -230,6 +248,12 @@ $a++;
 
 
 echo "</table></div></div>";
+
+
+    if ($bereich_choosen){
+        // Schalte direkt auf die Bereich Tabelle um!
+        echo "<script>rank_ausblenden($id);</script>";
+    }
 
 }
 

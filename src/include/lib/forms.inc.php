@@ -343,4 +343,96 @@ function select_season($selected_seasons){
     return $seasons;
 }
 
+
+function spieltag_start_ende(){
+    // Übergabe für Start und Ende
+    if (isset($_POST["spieltag_bereich_start"])){
+        $spieltag_start = $_POST["spieltag_bereich_start"];
+    } else {
+        $spieltag_start = 0;
+    }
+    
+    if (isset($_POST["spieltag_bereich_ende"])){
+        $spieltag_ende =  $_POST["spieltag_bereich_ende"];
+    } else {
+        $spieltag_ende = 0;
+    }
+    
+    
+    // Spieltage mit Start und Endzeitpunkt
+    $ret  = "";
+    $ret .= "<div class=\"container\">";
+    $ret .= "<form action=\"\" method=\"POST\" name=\"spieltag_bereich_form\">";
+    $ret .= "<div class = \"row\">
+               <div class = \"col\">
+                <div class = \"form-group\">
+                <label for=\"spieltag_bereich_start_sel\">Start:</label>
+                <select class=\"form-control\" id=\"spieltag_bereich_start_sel\" name=\"spieltag_bereich_start\" onchange=\"disable_spieltag_bereich()\">
+                    <option value=\"0\">Auswählen</option>";
+                    for ($i=1;$i<=34;$i++){
+                        if ($i == $spieltag_start){
+                            $sel = "selected";
+                        } else {
+                            $sel = "";
+                        }
+                        $ret .= "<option value=\"$i\" $sel>$i</option>";
+                    }
+                $ret .= "</select>
+                </div>
+            </div>
+        
+        <div class=\"col\">
+            <div class=\"form-group\">
+                <label for=\"spieltag_bereich_ende_sel\">Ende:</label>
+                <select class=\"form-control\" id=\"spieltag_bereich_ende_sel\" name=\"spieltag_bereich_ende\" onchange=\"this.form.submit()\">
+                    <option value=\"0\">Auswählen</option>";
+                    for ($i=1;$i<=34;$i++){
+                        if ($i == $spieltag_ende){
+                            $sel = "selected";
+                        } else {
+                            $sel = "";
+                        }
+                        $ret .= "<option value=\"$i\" id=\"spieltag_bereich_ende_opt$i\" class=\"spieltag_bereich_ende_opt\" $sel>$i</option>";
+                    }
+                    
+                    $ret .= "</select>
+                </div>
+            </div>
+        </div>
+    </form>
+    </div>";
+    
+    
+    $ret .= "
+    <script>
+    function disable_spieltag_bereich(rel=0){
+        var start_value = Number(document.getElementById(\"spieltag_bereich_start_sel\").value);
+        
+        var elem_iter = document.getElementsByClassName('spieltag_bereich_ende_opt');
+        for (var i = 0; i < elem_iter.length; ++i) {
+            elem_iter[i].disabled = false;
+        }
+        
+        for (i = 1; i < start_value; i++){
+            var name = \"spieltag_bereich_ende_opt\" + i;
+            document.getElementById(name).disabled = true;
+        }
+        
+        // Wenn des andere Select schon einen passenden Wert hat => Reload
+        var end_value = Number(document.getElementById(\"spieltag_bereich_ende_sel\").value);
+        
+        if ((end_value > 0) && (rel == 0) && (end_value >= start_value) ){
+            document.spieltag_bereich_form.submit();
+        }
+    }
+    
+    // Parameter 1, damit wir nicht direkt wieder reloadens
+    disable_spieltag_bereich(1);
+    </script>";
+    
+    
+    return array($spieltag_start, $spieltag_ende, $ret);
+    
+}
+
 ?>
