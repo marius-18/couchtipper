@@ -306,7 +306,7 @@ function print_wm_tabelle($args){
 
 function tabelle_verlauf(){
     global $g_pdo;
-    $sql = "SELECT DISTINCT team_nr, team_name FROM `Teams`, Spieltage WHERE team_nr = team1 ORDER BY `Teams`.`team_name` ASC";
+    $sql = "SELECT DISTINCT team_nr, team_name FROM `Teams`, Spieltage WHERE team_nr = team1 ORDER BY `Teams`.`team_nr` ASC";
     
     foreach ($g_pdo->query($sql) as $row) {
         $team_nr    = $row['team_nr'];
@@ -323,7 +323,17 @@ function tabelle_verlauf(){
         $team_nr    = $row['team_nr'];
         $spieltag    = $row['spieltag'];
         $platz[$spieltag][$team_nr] = $row['platz'];
+        if ($spieltag == $today){
+            $my_curr_platz[$team_nr] = $row['platz'];
+        }
     }
+    
+    ## Falls Team Nummern noch nicht sortiert sind:
+    #array_multisort($nums);
+    
+    ## Sortiere Die Zahlen nach Reihenfolge der Tabelle
+    array_multisort($my_curr_platz, SORT_ASC, $nums);
+    
     return array($nums, $logos, $platz);
 }
 
@@ -378,5 +388,70 @@ function print_tabelle_verlauf($args, $id, $show){
     
     echo "</table></div></div>";
 }
+
+
+
+function print_kreuztabelle($args, $id, $show){
+    list($nums, $logos, $platz) = $args;
+    
+    $ergebnisse = get_all_ergebnissse();
+    echo "<div class=\"container\" id=\"$id\" style=\"display: $show;\">";
+
+    echo "<b>Tabellenverlauf</b>";
+
+    echo "
+    <div class=\"table-responsive\">
+    
+    <table class=\"table table-sm table-bordered text-center center text-nowrap\" align=\"center\">";
+        
+    
+    ## Erste Zeile: Team Logos
+    echo "<tr><th class=\"table-active\"></th>";
+    $spalte = 1;
+    foreach ($nums as $index => $my_team_id){
+        echo "<th class=\"kreuztab_col$spalte align-middle table-active\" onmouseover=\"highlight_kreuztabelle(0, $spalte)\">".$logos[$my_team_id]."</th>";
+        $spalte ++;
+    }
+    echo "<th class=\"table-active\"></th></tr>";
+    
+    ## Jetzt Alle Ergebnisse/Daten ausgeben
+    $zeile = 1;
+    foreach ($nums as $index1 => $heim){
+        $spalte = 1;
+        echo "<tr id=\"kreuztab_row$zeile\" class=\"align-middle\">";
+        
+        // Linkeste Spalte: Team Logos!
+        echo "<td class=\"table-active align-middle\" onmouseover=\"highlight_kreuztabelle($zeile, 0)\">".$logos[$heim]."</td>";
+        
+        foreach ($nums as $index => $ausw){
+            if ($heim != $ausw){
+                ## Nicht auf der Diagonalen!
+                echo "<td class=\"kreuztab_col$spalte align-middle\" onmouseover=\"highlight_kreuztabelle($zeile, $spalte)\">".$ergebnisse[$heim][$ausw]."</td>";
+            } else {
+                ## Diagonale leer lassen
+                echo "<td class=\"kreuztab_col$spalte table-secondary\" onmouseover=\"highlight_kreuztabelle($zeile, $spalte)\"></td>";
+            }
+            $spalte ++;
+        }
+
+        // Rechteste Spalte: Team Logos!
+        echo "<td class=\"table-active\" onmouseover=\"highlight_kreuztabelle($zeile, 0)\">".$logos[$heim]."</td>";
+        
+        echo "</tr>";
+        $zeile ++;
+    }
+    
+    ## Letzte Zeile: Team Logos
+    echo "<tr><th class=\"table-active\"></th>";
+    $spalte = 1;
+    foreach ($nums as $index => $abcd){
+        echo "<th class=\"kreuztab_col$spalte align-middle table-active\"  onmouseover=\"highlight_kreuztabelle(0, $spalte)\">".$logos[$abcd]."</th>";
+        $spalte ++;
+    }
+    echo "<th class=\"table-active\"></th></tr>";
+    
+    echo "</table></div></div>";
+}
+
 
 ?>

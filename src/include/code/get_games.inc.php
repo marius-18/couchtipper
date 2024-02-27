@@ -638,6 +638,8 @@ function print_gruppe($gruppe){
               <td  style=\"border-left: 3px solid #AAAAAA; padding-left: 1px;\">".stamp_to_date_gruppe($datum[$i])."</td>";
         
         echo "</tr>";
+        
+        echo "<tr><td colspan=\"4\" >ok</td></tr>";
     }
 
     
@@ -645,6 +647,64 @@ function print_gruppe($gruppe){
     echo "</div>";
 }
 
+function get_all_ergebnissse(){
+    ## Ursprünglich für Kreuztabelle
+    ## Gibt Array mit Ergebnissen zurück
+    ## Format: [heim][auswärts] = Ergebnis
+    ## Falls Spiel noch nicht begonnen hat ==> Datum
+    global $g_pdo;
+    
+    // Alle Spieltage, erstmal Datum auslesen
+    $sql = "SELECT `spieltag`, `sp_nr`, team1, team2, datum1, datum2 FROM `Spieltage` WHERE 1";
+    foreach ($g_pdo->query($sql) as $row) {
+        $team1 = $row['team1'];
+        $team2 = $row['team2'];
+        
+        $datum1 = $row['datum1'];
+        $datum2 = $row['datum2'];
+        
+        $ergebnisse[$team1][$team2] = "<font size=\"-1\">".stamp_to_day($datum1)."</font>";
+        $ergebnisse[$team2][$team1] = "<font size=\"-1\">".stamp_to_day($datum2)."</font>";
+    }
+    
+    // Hinrunde mit Ergebnissen überschreiben
+    $sql = "SELECT `Ergebnisse`.`spieltag`, `Spieltage`.`sp_nr`, team1, team2, datum1, tore1, tore2 
+            FROM `Spieltage`, `Ergebnisse` 
+            WHERE `Ergebnisse`.`spieltag` <= 17
+                AND  `Spieltage`.`spieltag` = `Ergebnisse`.`spieltag` 
+                AND `Spieltage`.`sp_nr` = `Ergebnisse`.`sp_nr`";
+    foreach ($g_pdo->query($sql) as $row) {
+        $team1 = $row['team1'];
+        $team2 = $row['team2'];
+        
+        $tore1 = $row['tore1'];
+        $tore2 = $row['tore2'];
+        $spieltag = $row['spieltag'];
+        $datum1 = $row['datum1'];
+        
+        $ergebnisse[$team1][$team2] = "<div data-toggle=\"tooltip\" data-placement=\"top\" title=\"".stamp_to_day($datum1)." - $spieltag. Spieltag\"><b>$tore1:$tore2</b></div>";
+    }
+    
+    // Rückrunde mit Ergebnissen überschreiben
+    $sql = "SELECT `Ergebnisse`.`spieltag`, `Spieltage`.`sp_nr`, team1, team2, datum2, tore1, tore2 
+            FROM `Spieltage`, `Ergebnisse` 
+            WHERE `Ergebnisse`.`spieltag` > 17
+                AND  `Spieltage`.`spieltag` = `Ergebnisse`.`spieltag` -17
+                AND `Spieltage`.`sp_nr` = `Ergebnisse`.`sp_nr`";
+    foreach ($g_pdo->query($sql) as $row) {
+        $team1 = $row['team2'];
+        $team2 = $row['team1'];
+        
+        $tore1 = $row['tore1'];
+        $tore2 = $row['tore2'];
+        $spieltag = $row['spieltag'];
+        $datum2 = $row['datum2'];
+        
+        $ergebnisse[$team1][$team2] = "<div data-toggle=\"tooltip\" data-placement=\"top\" title=\"".stamp_to_day($datum2)." - $spieltag. Spieltag\"><b>$tore1:$tore2</b></div>";
+    }
+    
+    return $ergebnisse;
+}
 
 ?>
 

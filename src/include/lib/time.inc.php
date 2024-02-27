@@ -60,6 +60,23 @@ function stamp_to_date_programm($timestamp){
 
 }
 
+function stamp_to_day($timestamp){
+    
+    if ($timestamp == 0) {
+        return "";
+    }
+    
+    $tage = array("So","Mo","Di","Mi","Do","Fr","Sa");
+    $tag = date("w", $timestamp);
+
+    $wochentag = $tage[$tag];
+
+    $datum = date("j.n.", $timestamp);
+
+    return $datum;
+
+}
+
 function stamp_to_cal($timestamp){
     
     if ($timestamp == 0) {
