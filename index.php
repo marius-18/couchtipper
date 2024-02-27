@@ -78,17 +78,17 @@ if ($index == "cal"){
 #}
 
 if ((1) && ($subdomain == "code")){
-#$player = [3,4,5,6,7,8,9,10,11,12,13,14,15,17,20,21];
-#$player = [3,5,6,7,13,17,29,76,77,78,79];
-
-#check_in_manually($player, -5);
+    #$player = [3,4,5,6,7,8,9,10,11,12,13,14,15,17,20,21];
+    #$player = [3,5,6,7,13,17,29,76,77,78,79];
     
+    #check_in_manually($player, -5);
     
-#require_once("src/include/code/refresh.php");
-#for ($i=1;$i<35;$i++){
-#    update_tabelle($i);
-#    update_rangliste($i);
-#}    
+    #require_once("src/include/code/refresh.php");
+    #for ($i=1;$i<35;$i++){
+        #update_tabelle($i);
+        #update_rangliste($i);
+        #update_tabelle_platz($i);
+    #}
 }
 
 ####### DU HAST NOCH NICHT BEZAHLT

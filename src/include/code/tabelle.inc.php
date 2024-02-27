@@ -58,14 +58,15 @@ $sql = "SELECT sum(tore) as tore, sum(gegentore) as gegentore, sum(punkte) as pu
 
   }
 
-
 if (!isset($punkte)){ 
   ## Falls die Rückrunde noch nicht gestartet ist, sind die arrays nicht vorhanden..
   ## Deshalb Abbruch, damit array_multisort nicht fehlschlägt
-  return;
+  
+  ##return schlägt hier fehl beim Tabellen Bereich.. deswegen Versuch!
+    return(array([],[],[],[],[],[],[],[],$modus,[],$spieltag_bereich_form,$bereich_choosen));
 }
-
 array_multisort($punkte, SORT_DESC, $diff, SORT_DESC, $tore, SORT_DESC, $gegentore, SORT_ASC, $team_name, $niederlage, $sieg, $unentschieden, $nummer);
+
 
 return (array($punkte, $tore, $gegentore, $diff, $team_name, $sieg, $unentschieden, $niederlage, $modus, $nummer, $spieltag_bereich_form, $bereich_choosen));
 
@@ -169,11 +170,6 @@ list($punkte, $tore, $gegentore, $diff, $team_name, $sieg, $unentschieden, $nied
 
 echo "<div class=\"container\" id=\"$id\" style=\"display: $show;\">";
 
-if (!isset($punkte)){
-  echo "<b>Die Tabelle ist noch nicht vorhanden</b></div>";
-  return;
-}
-
 if ($modus == "Heim") {
   echo "<b>Heimtabelle</b>";
 }
@@ -198,6 +194,10 @@ if ($modus == "Heim") {
 
 echo $spieltag_bereich_form;
 
+if (!isset($punkte)){
+  echo "<br><b>Die Tabelle ist noch nicht vorhanden</b></div>";
+  return;
+}
 
 echo "<div class=\"table-responsive\">";
 echo "<table class=\"table table-sm  table-hover text-center center\">";
@@ -397,7 +397,7 @@ function print_kreuztabelle($args, $id, $show){
     $ergebnisse = get_all_ergebnissse();
     echo "<div class=\"container\" id=\"$id\" style=\"display: $show;\">";
 
-    echo "<b>Tabellenverlauf</b>";
+    echo "<b>Kreuztabelle</b>";
 
     echo "
     <div class=\"table-responsive\">
