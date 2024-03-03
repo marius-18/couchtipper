@@ -317,15 +317,18 @@ function tabelle_verlauf(){
     }
 
     $today = akt_spieltag();
-    $sql = "SELECT team_nr, platz, spieltag FROM `Tabelle` WHERE spieltag > 0 AND spieltag <= $today ORDER BY `team_nr` ASC";
+    $sql = "SELECT team_nr, platz, spieltag FROM `Tabelle` WHERE spieltag > 0 AND spieltag <= $today ORDER BY `team_nr` ASC, `spieltag` ASC";
     
     foreach ($g_pdo->query($sql) as $row) {
         $team_nr    = $row['team_nr'];
         $spieltag    = $row['spieltag'];
         $platz[$spieltag][$team_nr] = $row['platz'];
-        if ($spieltag == $today){
-            $my_curr_platz[$team_nr] = $row['platz'];
-        }
+        
+        ## TODO: erste Idee: nur beim aktuellem Spieltag == today..
+        ## Problem: bei laufendem Spieltag ist Array nicht voll
+        ## Einfach Alles immer überschreiben?
+        ## TODO: könnte Problem bei Spieltag 1 werden!
+        $my_curr_platz[$team_nr] = $row['platz'];
     }
     
     ## Falls Team Nummern noch nicht sortiert sind:
@@ -334,7 +337,7 @@ function tabelle_verlauf(){
     ## Sortiere Die Zahlen nach Reihenfolge der Tabelle
     array_multisort($my_curr_platz, SORT_ASC, $nums);
     
-    return array($nums, $logos, $platz);
+    return array($nums, $logos, $platz, $names);
 }
 
 function print_tabelle_verlauf($args, $id, $show){
