@@ -174,7 +174,7 @@ if ($show_formular){
     
     ## Tag anzeigen
     echo "<tr>";
-    echo "<td></td><td></td>";
+    echo "<td></td>";
     foreach ($anstosszeiten as $days => $zeiten){
         $my_anz = count($zeiten);
         echo "<td colspan= \"$my_anz\" align = \"center\">$days</td>";
