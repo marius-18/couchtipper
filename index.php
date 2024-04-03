@@ -7,7 +7,7 @@ require_once("../auth/include/security.inc.php");
 is_logged();
 
 $wartung = 0;
-$aktuelle_wett_id = "6";
+$aktuelle_wett_id = [6,7];
 $g_modus = "BuLi";
 $global_wett_id = "6";
 $subdomain = explode(".",$_SERVER['SERVER_NAME'])[0];
@@ -482,7 +482,7 @@ MENÜ
                         break;
                     case 15:
                         echo "<h2>Statistiken</h2>";
-                        include_once("src/stats3.php");
+                        include_once("src/pages/tabellenverlauf.php");
                         #include_once("src/newbot.php");
                         break;
                     default:
