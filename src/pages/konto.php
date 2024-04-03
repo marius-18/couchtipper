@@ -239,10 +239,11 @@ echo "<div style=\"text-align:left\"><font size =\"+2\"><u>Kalender exportieren<
 echo "<font size =\"+1\">";
 
 if (get_fav_team() != ""){
+    $calendar_year = get_curr_wett()[0];
     echo "<div class=\"alert alert-info\"> Wenn du keine Spiele deiner Lieblingsmannschaft <strong>".get_team_open_db_name(get_fav_team())."</strong> mehr verpassen willst,
     kannst du dir durch einen Klick auf den Button, den Kalender mit allen Spielen auf dein Gerät exportieren!
     </div>    
-    <button type=\"button\" class=\"btn btn-info\" onclick=\"window.location.href='webcal://couchtipper.de?index=cal&team=$my_team'\">Kalender exportieren!</button>
+    <button type=\"button\" class=\"btn btn-info\" onclick=\"window.location.href='webcal://couchtipper.de?index=cal&team=$my_team&year=$calendar_year'\">Kalender exportieren!</button>
     ";
     
 } else {

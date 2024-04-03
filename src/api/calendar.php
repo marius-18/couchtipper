@@ -7,19 +7,32 @@ require_once("src/include/code/programm.inc.php");
 
 function create_team_events($team){
     
-    list($spieltag, $team_nr1, $team_nr2, $team_name, $datum, $zeitraum, $tore1, $tore2) = programm($team,1,34);
-
+    if (!is_big_tournament(get_curr_wett())){
+        list($spieltag, $team_nr1, $team_nr2, $team_name, $datum, $zeitraum, $tore1, $tore2) = programm($team,1,34);
+    } else {
+        list($spieltag, $team_nr1, $team_nr2, $team_name, $datum, $zeitraum, $stadt, $stadion) = tournament_programm($team, "Alles");        
+    }
+    
     foreach ($team_nr1 as $spt => $team1) {
-
         
         if ($team1 == $team){
-            $title = get_team_open_db_name($team_nr2[$spt]);#$team_name[$spt];
-            $title .= " Heimspiel";
-            $location = get_team_city($team)." - ".get_team_stadium($team);
+            if (!is_big_tournament(get_curr_wett())){
+                $title = get_team_open_db_name($team_nr2[$spt]);#$team_name[$spt];
+                $title .= " Heimspiel";
+                $location = get_team_city($team)." - ".get_team_stadium($team);
+            } else {
+                $title = $team_name[$spt];
+                $location = $stadt[$spt]." - ".$stadion[$spt];
+            }
         } else {
-            $title = get_team_open_db_name($team_nr1[$spt]);#$team_name[$spt];
-            $title .= " Auswärtsspiel";
-            $location = get_team_city($team_nr1[$spt])." - ".get_team_stadium($team_nr1[$spt]);
+            if (!is_big_tournament(get_curr_wett())){
+                $title = get_team_open_db_name($team_nr1[$spt]);#$team_name[$spt];
+                $title .= " Auswärtsspiel";
+                $location = get_team_city($team_nr1[$spt])." - ".get_team_stadium($team_nr1[$spt]);
+            } else{
+                $title = $team_name[$spt];
+                $location = $stadt[$spt]." - ".$stadion[$spt];
+            }
         }
         
         if ($datum[$spt] != 0){
@@ -31,17 +44,25 @@ function create_team_events($team){
         }
         
         $uid = $spt."".$datum[$spt]."@couchtipper_cal";
-        $notes = $spt .". Spieltag Bundesliga Saison 2022/23. Automatisch erstellt von couchtipper.de"; 
-    
-    
+        
+        if (!is_big_tournament(get_curr_wett())){
+            $wett_name = get_wettbewerb_name(get_curr_wett());
+            $wett_jahr = get_wettbewerb_jahr(get_curr_wett());
+            
+            $notes = $spt .". Spieltag der Bundesliga Saison $wett_jahr. Automatisch erstellt von couchtipper.de"; 
+        } else {
+            $wett_name = get_wettbewerb_name(get_curr_wett());
+            $wett_jahr = get_wettbewerb_jahr(get_curr_wett());
+            $notes = "Kalender zur $wett_name $wett_jahr - Automatisch erstellt von couchtipper.de";
+        }
+        
         $title = html_entity_decode($title, ENT_COMPAT, 'UTF-8');
         $location = html_entity_decode($location, ENT_COMPAT, 'UTF-8');
         #$location = preg_replace('/([\,;])/','\\\$1', $location); 
-    
+        
         $curr_time = stamp_to_cal(time());
         
         create_event($uid, $location, $title, $notes, $starttime, $endtime, $curr_time);
-
     }
 }
 
@@ -67,7 +88,16 @@ function create_cal($team){
     echo "PRODID:couchtipper.de\n";
     echo "METHOD:REQUEST\n";
     
-    
+    $wett_jahr = get_wettbewerb_jahr(get_curr_wett());
+    if (is_big_tournament(get_curr_wett())){
+        $wett_name = get_wettbewerb_name(get_curr_wett());
+        echo "NAME:Couchtipper $wett_name $wett_jahr\n";
+        echo "X-WR-CALNAME:Couchtipper $wett_name $wett_jahr\n";
+    } else {
+        echo "NAME:Couchtipper Bundesliga Saison $wett_jahr\n";
+        echo "X-WR-CALNAME:Couchtipper Bundesliga Saison $wett_jahr\n";
+    }
+
     echo "BEGIN:VTIMEZONE\n";
     echo "TZID:Europe/Berlin\n";
     echo "X-LIC-LOCATION:Europe/Berlin\n";
@@ -98,6 +128,10 @@ function create_cal($team){
 }
 
 $team = $_GET['team'];
-create_cal($team);
+
+if (isset($_GET['year'])){
+    create_cal($team);
+}
+
 
 ?>
