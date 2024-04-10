@@ -165,6 +165,10 @@ function teams($spieltag, $spiel, $sonst, $team_pos, $mode){
 function erg($spieltag,$spiel,$team_pos){
     global $g_pdo;
     
+    $tore = array();
+    $tore[1] = "";
+    $tore[2] = "";
+    
     $sql = "SELECT tore1, tore2 FROM Ergebnisse WHERE ((spieltag = $spieltag) AND (sp_nr = $spiel))";
     foreach ($g_pdo->query($sql) as $row) {
         $tore[1] = $row['tore1'];
