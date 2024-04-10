@@ -1,6 +1,8 @@
 <?php
 require_once('src/include/code/tabelle.inc.php');
 require_once('src/include/code/get_games.inc.php');
+require_once('src/include/code/print_games.php');
+require_once('src/include/lib/precomputation.inc.php');
 ?>
 
 

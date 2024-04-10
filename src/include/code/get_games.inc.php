@@ -401,29 +401,47 @@ usort($match["goals"], function($a, $b) {
 
 function get_other_tipps($spieltag, $modus) {
     global $g_pdo;
+    ## TODO: $max SPieltag einführen 
+    ## bei Spieltag == 0 geht es zum GruppenModus für Turniere..
+    ## Dabei werden alle Spieltage zusammen ausgegeben
+    $max_spieltag = 13;
+
+    if ($spieltag == 0){
+        $sql = "SELECT tore1, tore2, sp_nr, spieltag
+        FROM `Ergebnisse`
+        WHERE spieltag <= $max_spieltag";
+    } else {
+        $sql = "SELECT tore1, tore2, sp_nr, spieltag
+        FROM `Ergebnisse`
+        WHERE (spieltag = $spieltag)";
+    }
     
-    
-    $sql = "SELECT tore1, tore2, sp_nr
-            FROM `Ergebnisse` 
-            WHERE (spieltag = $spieltag)";
 
     foreach ($g_pdo->query($sql) as $row) {
         $sp_nr = $row['sp_nr'];
-        $tore1[$sp_nr] = $row['tore1'];
-        $tore2[$sp_nr] = $row['tore2'];
+        $spt   = $row['spieltag'];
+        $tore1[$spt][$sp_nr] = $row['tore1'];
+        $tore2[$spt][$sp_nr] = $row['tore2'];
         
-        if ($tore1[$sp_nr] == ""){
-            $tore1[$sp_nr] = NULL;
+        if ($tore1[$spt][$sp_nr] == ""){
+            $tore1[$spt][$sp_nr] = NULL;
         }
         
-        if ($tore2[$sp_nr] == ""){
-            $tore2[$sp_nr] = NULL;
+        if ($tore2[$spt][$sp_nr] == ""){
+            $tore2[$spt][$sp_nr] = NULL;
         }
     }
     
-    $sql = "SELECT Tipps.user_nr AS user_nr, tore1, tore2, sp_nr
-            FROM `Tipps` 
-            WHERE (spieltag = $spieltag)";
+    if ($spieltag == 0){
+        $sql = "SELECT Tipps.user_nr AS user_nr, tore1, tore2, sp_nr, spieltag
+        FROM `Tipps`
+        WHERE  spieltag <= $max_spieltag";
+    } else {
+        $sql = "SELECT Tipps.user_nr AS user_nr, tore1, tore2, sp_nr, spieltag
+        FROM `Tipps`
+        WHERE (spieltag = $spieltag)";
+    }
+
     $user_nr = NULL;
     $user_name = NULL;
     $tipp = NULL;
@@ -435,36 +453,37 @@ function get_other_tipps($spieltag, $modus) {
     foreach ($g_pdo->query($sql) as $row) {
         $i = $row['user_nr'];
         $sp_nr = $row['sp_nr'];
+        $spt   = $row['spieltag'];
 
-        if (check_game_date($spieltag,$sp_nr)){
+        if (check_game_date($spt,$sp_nr)){
             continue;
         }
         
         
         $tipp1[$sp_nr] = $row['tore1'];
-        $tipp2[$sp_nr] = $row['tore2'];  
+        $tipp2[$sp_nr] = $row['tore2'];
         
-        if (((($modus == "Tipps")) || ( $modus == "Spieltag")) && isset($tore1[$sp_nr]) && isset($tore2[$sp_nr])){
-            $tipp[$sp_nr][$i] = $tipp1[$sp_nr]." : ". $tipp2[$sp_nr];
-            $user_nr[$sp_nr][$i] = $i;
-            $user_name[$sp_nr][$i] = $user_dict[$i];#get_username_from_nr($i);  
-            $vorname[$sp_nr][$i] = "";
-            $nachname[$sp_nr][$i] = "";
+        if (((($modus == "Tipps")) || ( $modus == "Spieltag")) && isset($tore1[$spt][$sp_nr]) && isset($tore2[$spt][$sp_nr])){
+            $tipp[$spt][$sp_nr][$i] = $tipp1[$sp_nr]." : ". $tipp2[$sp_nr];
+            $user_nr[$spt][$sp_nr][$i] = $i;
+            $user_name[$spt][$sp_nr][$i] = $user_dict[$i];#get_username_from_nr($i);
+            $vorname[$spt][$sp_nr][$i] = "";
+            $nachname[$spt][$sp_nr][$i] = "";
             //$vorname[$sp_nr][$i] = $row['vorname'];
             //$nachname[$sp_nr][$i] = $row['nachname'];
 
-            if (($tore1[$sp_nr] !== NULL) && ($tore2[$sp_nr] !== NULL)){
-                if (($tore1[$sp_nr] == $tipp1[$sp_nr]) && ($tore2[$sp_nr] == $tipp2[$sp_nr])){
-                    $punkte[$sp_nr][$i] = "+3";
+            if (($tore1[$spt][$sp_nr] !== NULL) && ($tore2[$spt][$sp_nr] !== NULL)){
+                if (($tore1[$spt][$sp_nr] == $tipp1[$sp_nr]) && ($tore2[$spt][$sp_nr] == $tipp2[$sp_nr])){
+                    $punkte[$spt][$sp_nr][$i] = "+3";
                 }
-                elseif ($tore1[$sp_nr] - $tore2[$sp_nr] == $tipp1[$sp_nr] - $tipp2[$sp_nr]){  
-                    $punkte[$sp_nr][$i] = "+2";
+                elseif ($tore1[$spt][$sp_nr] - $tore2[$spt][$sp_nr] == $tipp1[$sp_nr] - $tipp2[$sp_nr]){
+                    $punkte[$spt][$sp_nr][$i] = "+2";
                 }
-                elseif ((($tore1[$sp_nr] - $tore2[$sp_nr] > 0) && ($tipp1[$sp_nr] - $tipp2[$sp_nr] > 0)) || (($tore1[$sp_nr] - $tore2[$sp_nr] < 0) && ($tipp1[$sp_nr] - $tipp2[$sp_nr] < 0)) ){
-                    $punkte[$sp_nr][$i] = "+1";
+                elseif ((($tore1[$spt][$sp_nr] - $tore2[$spt][$sp_nr] > 0) && ($tipp1[$sp_nr] - $tipp2[$sp_nr] > 0)) || (($tore1[$spt][$sp_nr] - $tore2[$spt][$sp_nr] < 0) && ($tipp1[$sp_nr] - $tipp2[$sp_nr] < 0)) ){
+                    $punkte[$spt][$sp_nr][$i] = "+1";
                 }
                 else {
-                    $punkte[$sp_nr][$i] = "";
+                    $punkte[$spt][$sp_nr][$i] = "";
                 }
             }
         
@@ -474,7 +493,11 @@ function get_other_tipps($spieltag, $modus) {
     
     #if (!check_game_date($spieltag,$sp_nr)){
         #return 0;
-        return array($user_nr, $user_name, $tipp, $vorname, $nachname, $punkte);
+        if ($spieltag == 0){
+            return array(array($user_nr, $user_name, $tipp, $vorname, $nachname), $punkte);
+        } else {
+            return array(array($user_nr[$spieltag], $user_name[$spieltag], $tipp[$spieltag], $vorname[$spieltag], $nachname[$spieltag]), $punkte[$spieltag]);
+        }
     #}
 }
 
@@ -614,37 +637,6 @@ function get_group_games($gruppe){
 
    return array($datum, $team_heim, $team_aus, $tore_heim, $tore_aus, $real_sp_nr);
 
-}
-
-function print_gruppe($gruppe){
-
-
-    echo "<br>"; 
-
-    $args = get_group_games($gruppe);
-    list ($datum, $team_heim, $team_aus, $tore_heim, $tore_aus, $real_sp_nr) = $args;
-
-    
-    echo "<div class=\"table-responsive-sm\">";
-    echo "<table class=\"table table-striped table-sm  table-hover text-center center\">";
-
-
-    foreach ($real_sp_nr AS $i){
-        echo "<tr>";
-
-        echo "<td align = \"right\"> $team_heim[$i] </td> 
-              <td align = \"center\"> $tore_heim[$i]:$tore_aus[$i] </td> 
-              <td align =\"left\"> $team_aus[$i] </td> 
-              <td  style=\"border-left: 3px solid #AAAAAA; padding-left: 1px;\">".stamp_to_date_gruppe($datum[$i])."</td>";
-        
-        echo "</tr>";
-        
-        echo "<tr><td colspan=\"4\" >ok</td></tr>";
-    }
-
-    
-    echo "</table>";
-    echo "</div>";
 }
 
 function get_all_ergebnissse(){

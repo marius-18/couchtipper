@@ -92,3 +92,17 @@ function changeGroupTablePrev(max){
     document.getElementById("curr_group").value = new_id;
     changeGroupTable("group" + new_id);
 }
+
+    
+function game_details_ausblenden(wert, ende, prefix) {
+    var id = prefix + wert;
+    if ( document.getElementById(id).style.display==""){
+        document.getElementById(id).style.display = "none";
+    } else {
+        for (var i=100;i<= ende; i++){
+            var out = prefix + i;
+            document.getElementById(out).style.display = "none";
+        }
+        document.getElementById(id).style.display = "";
+    }
+}

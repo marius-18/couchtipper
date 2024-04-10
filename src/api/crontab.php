@@ -4,6 +4,7 @@ echo "begin<br>";
 ### Für Spieltag und Tipps reminder
 require_once("../auth/include/bot.inc.php");
 require_once("src/include/code/get_games.inc.php");
+require_once('src/include/lib/precomputation.inc.php');
 
 ### Fürs Ergebnisse aus der DB holen (get_games wird auch benutzt)
 include_once("src/include/code/input_template.inc.php");
@@ -40,6 +41,11 @@ delete_hello_id();
 ### Ergebnisse aus der offenen DB holen 
 input_results();
 
+### Do Some precomputation
+if (is_big_tournament(get_curr_wett())){
+    ## TODO: vielleicht nicht immer machen?
+    #precompute_all_tipps_to_db("Spieltag");
+}
 
 # define functions that will be called..
 
@@ -161,6 +167,7 @@ function notfiy_result(){
     ### Ergebnisse verschicken? 
     ### Von den Spielen und auch den Tipps
 }
+
 
 echo "alles ok";
 ?>
