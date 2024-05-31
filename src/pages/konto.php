@@ -133,50 +133,40 @@ echo "<br><br>";
 echo "<hr>";
 echo "<div style=\"text-align:left\"><font size =\"+2\"><u>Tippgruppen</u></font></div><br>";
 
-## Hier vielleicht noch einfügen, dass alle (aktiven) Wettbewerbe gelistet werden
 
-
-if (user_is_in_wettbewerb(get_hinrunde(get_curr_wett()))){
-    ## Hinrunde (bzw. bei anderen Wettbewerben der Hauptteil
-    $hin = check_cash(get_hinrunde(get_curr_wett()));
-    if ($hin){
-        $color = "success";
+foreach ($aktuelle_wett_id as $id => $my_wett){
+    ## Geht durch die aktiven Wettbewerbe
+    if (wettbewerb_has_parts($my_wett)){
+        ## Falls der Wettbewerb 2 Teile hat, schauen wir uns beide an
+        $my_wett_id = [array($my_wett, 0), array($my_wett, 1)];
     } else {
-        $color = "danger";
+        $my_wett_id = [array($my_wett, 0)];
     }
-    echo "<div class=\"alert alert-$color\">";
-        echo "<font size=\"+1\">".get_wettbewerb_name(get_hinrunde(get_curr_wett()))." ".get_wettbewerb_jahr(get_curr_wett()).":<br><br>";
-        if ($hin){
-            echo "<strong>Du hast schon bezahlt&nbsp; <i class=\"fas fa-check warning text-success\"></i></strong>";
-        } else {
-            echo "<strong>Du hast noch <b>nicht</b> bezahlt&nbsp; <i class=\"fas fa-times\"></i></strong>";
+    
+    ## Gehe durch die vorher bestimmten Wettbewerbe und Gebe die Anzeige aus
+    foreach ($my_wett_id as $my_id => $my_wett_id_val){
+        if (user_is_in_wettbewerb($my_wett_id_val)){
+            ## Nur wenn Nutzer registriert, Box anzeigen
+            $paid = check_cash($my_wett_id_val);
+            if ($paid){
+                $color = "success";
+            } else {
+                $color = "danger";
+            }
+            
+            echo "<div class=\"alert alert-$color\">";
+            echo "<font size=\"+1\">";
+            echo get_wettbewerb_name($my_wett_id_val) . " ";
+            echo get_wettbewerb_jahr($my_wett_id_val) . ":<br><br>";
+            
+            if ($paid){
+                echo "<strong>Du hast schon bezahlt&nbsp; <i class=\"fas fa-check warning text-success\"></i></strong>";
+            } else {
+                echo "<strong>Du hast noch <b>nicht</b> bezahlt&nbsp; <i class=\"fas fa-times\"></i></strong>";
+            }
+            echo "</font></div>";
         }
-    
-    echo "</font></div>";
-
-}
-    
-
-if (user_is_in_wettbewerb(get_rueckrunde(get_curr_wett()))){
-    ## Wenn es noch eine Rückrunde gibt:
-    $rueck = check_cash(get_rueckrunde(get_curr_wett()));
-    if ($rueck){
-        $color = "success";
-    } else {
-        $color = "danger";
     }
-    echo "<br>";
-    
-    echo "<div class=\"alert alert-$color\">";
-        echo "<font size=\"+1\">".get_wettbewerb_name(get_rueckrunde(get_curr_wett()))." ".get_wettbewerb_jahr(get_curr_wett()).":<br><br>";
-
-        if ($rueck){
-            echo "<strong>Du hast schon bezahlt&nbsp; <i class=\"fas fa-check warning text-success\"></i></strong>";
-        } else {
-            echo "<strong>Du hast noch <b>nicht</b> bezahlt&nbsp; <i class=\"fas fa-times\"></i></strong>";
-        }
-
-    echo "</font></div>";
 }
 
 
