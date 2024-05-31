@@ -154,6 +154,7 @@ function print_gruppe($gruppe){
     ## TODO: transform get all tips, alles direkt aus der DB ziehen!
     
     list($other_tipps_args, $punkte) = get_precompute_tipps();
+    $tore = get_precompute_tore();
 
     foreach ($real_sp_nr AS $i){
         $visible_index = $x + 100;
@@ -168,7 +169,11 @@ function print_gruppe($gruppe){
         
         list($my_spnr, $my_spieltag) = explode("-", $i);
         
-        $alle_tore = array();#get_tore($my_spieltag, "Spieltag");
+        if (isset($tore[$my_spieltag])){
+            $alle_tore = $tore[$my_spieltag];
+        } else {
+            $alle_tore = array();            
+        }
         
         $identity = [0,1,2,3,4,5,6,7,8,9,10,11,12,13];
         $my_args = array("Spieltag", $my_spnr, $identity, $punkte, $alle_tore, $visible_index, $other_tipps_args, $gruppe);

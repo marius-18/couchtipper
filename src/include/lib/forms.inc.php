@@ -244,6 +244,24 @@ function select_gruppe(){
             </tr>
         </table>
     ";
+
+    ## Mit Pfeiltasten durch Gruppen navigieren
+
+    echo "<script>
+    document.addEventListener('keydown', function(event) {
+    switch (event.keyCode) {
+        case 37:
+            changeGroupTablePrev(". $max .");
+            break;
+        case 38:
+            //Up function
+            break;
+        case 39:
+            //Right function
+            changeGroupTableNext(". $max .");
+            break;
+    }});
+    </script>";
     
 }
 

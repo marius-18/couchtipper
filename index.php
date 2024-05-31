@@ -73,11 +73,20 @@ if ($index == "cal"){
 }
 // Wettbewerb check in (nur im aktiven Wettbewerb!!)
 #TODO: Der checkin functioniert so nicht!! ANPASSEN!
-#if (is_active_wettbewerb()){
-   # check_in_modal();
-#}
+#TODO: checkin nur, wenn der wettbewerb "aktiv" ist..
+if (is_active_wettbewerb()){
+    #TODO:
+    ## Check in page ändern..
+    #funktion is_checked_in einführen und dann Tipps seite sperren
+    ## Dann Statt "du hast noch nicht bezahlt" einfach "Du bist noch nicht im Wettbewerb eingetragen".. Dann Verlinken zur Seite.. oder einfach auf Hello? Statt dem Modal..
+    ## Da dann einfach alle Aktiven Wettbewerbe auflisten, dann kann man auswählen wo man
+    ## tippen will und sich eintragen.. mit bestätigung über den einsatz oder so..
 
-if ((1) && ($subdomain == "code")){
+    #TODO: weiter: unter "Mein Konto" alle laufenden Wettbewerbe anzeigen
+    #check_in_modal();
+}
+
+#if ((1) && ($subdomain == "code")){
     #$player = [3,4,5,6,7,8,9,10,11,12,13,14,15,17,20,21];
     #$player = [3,5,6,7,13,17,29,76,77,78,79];
     
@@ -89,7 +98,7 @@ if ((1) && ($subdomain == "code")){
         #update_rangliste($i);
         #update_tabelle_platz($i);
     #}
-}
+#}
 
 ####### DU HAST NOCH NICHT BEZAHLT
 ### BITTE BITTE SCHÖNER MACHEN!!
@@ -214,11 +223,11 @@ MENÜ
                             <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=-5" style="color:black">BuLi 2015/16</a>
                             <!--<a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=-6" style="color:black">BuLi 2014/15</a>-->
                             <?php
-                            #if (allow_verwaltung()){
-                                #echo "<div class=\"dropdown-divider\"></div>
-                            #<div class=\"dropdown-header\">Turniere</div>
-                            #<a class=\"dropdown-item\" href=\"?year=3\" style=\"color:black\">EM 2021</a>";
-                            #}
+                            if (allow_verwaltung()){
+                                echo "<div class=\"dropdown-divider\"></div>
+                                    <div class=\"dropdown-header\">Turniere</div>
+                                    <a class=\"dropdown-item\" href=\"?year=7\" style=\"color:black\">EM 2024</a>";
+                            }
                             ?>
                         </div>
                     </div>

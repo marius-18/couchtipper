@@ -195,6 +195,7 @@ function get_ergebnis($spieltag,$modus, $jahr){
 
 
 function get_tore($spieltag, $modus){
+    #TODO: ordentlich machen, wozu $modus??
     global $g_pdo;
     #return 0;
     // DB Abfrage je nach modus.. Hier bisher nur buli!
@@ -442,14 +443,21 @@ function get_other_tipps($spieltag, $modus) {
         WHERE (spieltag = $spieltag)";
     }
 
-    $user_nr = NULL;
-    $user_name = NULL;
-    $tipp = NULL;
-    $vorname = NULL;
-    $nachname = NULL;
-    $punkte = NULL;
+    $user_nr = array();
+    $user_name = array();
+    $tipp = array();
+    $vorname = array();
+    $nachname = array();
+    $punkte = array();
     $user_dict = get_all_username();
-
+    
+    $user_nr[$spieltag] = NULL;
+    $user_name[$spieltag] = NULL;
+    $tipp[$spieltag] = NULL;
+    $vorname[$spieltag] = NULL;
+    $nachname[$spieltag] = NULL;
+    $punkte[$spieltag] = NULL;
+    
     foreach ($g_pdo->query($sql) as $row) {
         $i = $row['user_nr'];
         $sp_nr = $row['sp_nr'];
