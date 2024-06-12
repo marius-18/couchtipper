@@ -101,6 +101,25 @@ $praemie = get_wettbewerb_praemie(get_curr_wett());
     Ja, schau mal unter <a href="?index=7#main">"Mein Konto"</a> nach.
 </div>
 
+
+<?php
+    ## Ab hier nur noch für eingeloggte User!
+    if (!is_logged()){
+        echo "</div>";
+        return 0;
+    }
+?>
+
+<div class="alert alert-secondary">
+    <i class="fas fa-question-circle"></i> <b>Gibt es eine couchtipper Chat-Gruppe oder sowas?</b>
+</div>
+<div class="alert alert-success">
+    Ja, es gibt eine WhatsApp Gruppe zum Tippspiel. Wer will kann über folgenden Link beitreten: 
+    <a href="https://chat.whatsapp.com/BAzcQVzSmso5q79TO0ywUN" class="alert-link"> WhatsApp <i class="fa-brands fa-whatsapp"></i></a>  
+    <br>
+    <strong>Achtung!</strong> Wenn du der Gruppe beitrittst, sehen natürlich alle Mitglieder der Gruppe deine Kontaktdaten. 
+</div>
+
 <!--
 <div class="alert alert-secondary">
     <i class="fas fa-question-circle"></i> <b>Was passiert, wenn ein Spiel im Elfmeterschießen oder der Verlängerung entschieden wird?</b>

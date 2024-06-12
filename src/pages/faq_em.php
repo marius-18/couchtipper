@@ -1,11 +1,19 @@
+<?php
+include_once("src/include/code/gewinn.inc.php");
+$einsatz = get_wettbewerb_einsatz(get_curr_wett());
+$praemie = get_wettbewerb_praemie(get_curr_wett());
+?>
+
+
 <div class = "container">
+
 
 
 <div class="alert alert-secondary">
     <i class="fas fa-question-circle"></i> <b>Was kostet mich das Tippspiel und bis wann muss ich bezahlen?</b>
 </div>
 <div class="alert alert-success">
-    Das Tippspiel kostet einmalig 10€. Bitte zahle bis sp&auml;testens zum Ende der Gruppenphase.
+    Das Tippspiel kostet einmalig <strong><?php echo $einsatz;?>€</strong>. Bitte zahle bis sp&auml;testens zum Ende der Gruppenphase.
 </div>
 
 
@@ -14,11 +22,33 @@
     <i class="fas fa-question-circle"></i> <b>Wie kann ich bezahlen?</b>
 </div>
 <div class="alert alert-success">
-    Entweder &uuml;ber Paypal (marius@ing-hagemann.de) oder direkt in Bar an mich <br>
+    Am liebsten einfach &uuml;ber Paypal: <a href="https://PayPal.Me/couchtipper" class="alert-link" >PayPal.Me/couchtipper</a>. 
+    <br>
+    (Bitte benutzt den Link und schickt das Geld <strong>nicht</strong> an meinen privaten Account). 
+    <br>
+    Zur Not geht es auch direkt in Bar. <br>
     (Bei Paypal &Uuml;berweisungen sollte nat&uuml;rlich erkennbar sein, f&uuml;r welchen Nutzer bezahlt wurde...) <i class="far fa-smile-wink"></i>
 </div>
 
 
+<div class="alert alert-secondary">
+    <i class="fas fa-question-circle"></i> <b>Was gibt es zu gewinnen?</b>
+</div>
+<div class="alert alert-success">
+    Der komplette Einsatz aller Spieler wird als Gewinn an die besten Spieler ausgezahlt. 
+    Wie sich der Gewinn für die entsprechenden Plätze ergibt, seht ihr auf der Seite
+    <a href="?index=10#main" class="alert-link">"Gewinnverteilung"</a> im Menü.
+</div>
+
+
+
+<div class="alert alert-secondary">
+    <i class="fas fa-question-circle"></i> <b>Was passiert mit dem Gewinn bei Punktgleichheit?</b>
+</div>
+<div class="alert alert-success">
+    Wenn mehrere Spieler am Ende die gleiche Anzahl an Punkten haben, werden die
+    Gewinne der einzelnen Plätze addiert und durch die Anzahl an den punktgleichen Spielern geteilt.
+</div>
 
 <div class="alert alert-secondary">
     <i class="fas fa-question-circle"></i> <b>Wie setzen sich die Punkte zusammen?</b>
@@ -39,19 +69,12 @@
     <i class="fas fa-question-circle"></i> <b>Bis wann müssen die Tipps eingegeben sein?</b>
 </div>
 <div class="alert alert-success">
-    Die Tipps müssen vor dem Anpfiff des jeweiligen Spiels eingetragen sein. 
+    Die Tipps müssen <strong>vor</strong> dem Anpfiff des jeweiligen Spiels eingetragen sein. 
     Eine spätere Eintragung ist nicht möglich.
 </div>
 
 
 
-<div class="alert alert-secondary">
-    <i class="fas fa-question-circle"></i> <b>Was passiert mit dem Gewinn bei Punktgleichheit?</b>
-</div>
-<div class="alert alert-success">
-    Wenn mehrere Spieler am Ende die gleiche Anzahl an Punkten haben, werden die
-    Gewinne der einzelnen Plätze addiert und durch die Anzahl an den punktgleichen Spielern geteilt.
-</div>
 
 
 
@@ -76,6 +99,24 @@
 </div>
 
 
+
+<?php
+    ## Ab hier nur noch für eingeloggte User!
+    if (!is_logged()){
+        echo "</div>";
+        return 0;
+    }
+?>
+
+<div class="alert alert-secondary">
+    <i class="fas fa-question-circle"></i> <b>Gibt es eine couchtipper Chat-Gruppe oder sowas?</b>
+</div>
+<div class="alert alert-success">
+    Ja, es gibt eine WhatsApp Gruppe zum Tippspiel. Wer will kann über folgenden Link beitreten: 
+    <a href="https://chat.whatsapp.com/BAzcQVzSmso5q79TO0ywUN" class="alert-link"> WhatsApp <i class="fa-brands fa-whatsapp"></i></a>  
+    <br>
+    <strong>Achtung!</strong> Wenn du der Gruppe beitrittst, sehen natürlich alle Mitglieder der Gruppe deine Kontaktdaten. 
+</div>
 
 
 </div>
