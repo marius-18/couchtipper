@@ -36,11 +36,17 @@ function get_games ($spieltag, $modus, $change, $user_nr) {
     } 
 
 
-
-    $sql = "SELECT spieltag, sp_nr, t1.team_name AS Team_name$teil1, t2.team_name AS Team_name$teil2, 
-            datum$teil1 AS datum, t1.team_nr AS Team_nr$teil1, t2.team_nr AS Team_nr$teil2
+    if (get_wettbewerb_code(get_curr_wett()) == "BuLi"){
+        $sql = "SELECT spieltag, sp_nr, t1.team_name AS Team_name$teil1, t2.team_name AS Team_name$teil2, 
+            datum$teil1 AS datum, t1.team_nr AS Team_nr$teil1, t2.team_nr AS Team_nr$teil2, t$teil1.stadium AS stadion, t$teil1.city AS stadt
             FROM Spieltage,Teams t1, Teams t2
             WHERE (spieltag = $spieltag) AND (t1.team_nr = team1) AND (t2.team_nr = team2)";
+    } else {
+        $sql = "SELECT spieltag, sp_nr, t1.team_name AS Team_name$teil1, t2.team_name AS Team_name$teil2, 
+            datum$teil1 AS datum, t1.team_nr AS Team_nr$teil1, t2.team_nr AS Team_nr$teil2, stadion, stadt
+            FROM Spieltage,Teams t1, Teams t2, Spielorte
+            WHERE (spieltag = $spieltag) AND (t1.team_nr = team1) AND (t2.team_nr = team2) AND (Spielorte.id=spielort)";
+    }
 
     foreach ($g_pdo->query($sql) as $row) {
         $sp_nr = $row['sp_nr'];
@@ -50,6 +56,9 @@ function get_games ($spieltag, $modus, $change, $user_nr) {
         $team_heim_nr [$sp_nr] = $row['Team_nr1'];
         $team_aus_nr [$sp_nr] = $row['Team_nr2'];
         $real_sp_nr [$sp_nr] = $sp_nr;
+        $stadion[$sp_nr] = $row['stadion'];
+        $stadt[$sp_nr] = $row['stadt'];
+        
     }
 
 
@@ -127,8 +136,8 @@ function get_games ($spieltag, $modus, $change, $user_nr) {
 
     }
 
-   array_multisort($datum, SORT_ASC, $team_heim, $team_aus, $tore_heim, $tore_aus, $team_heim_nr, $team_aus_nr, $real_sp_nr);
-    return array($datum, $team_heim, $team_aus, $tore_heim, $tore_aus, $team_heim_nr, $team_aus_nr, $real_sp_nr, $real_spieltag, $anz_spiele);
+   array_multisort($datum, SORT_ASC, $team_heim, $team_aus, $tore_heim, $tore_aus, $team_heim_nr, $team_aus_nr, $real_sp_nr, $stadt, $stadion);
+    return array($datum, $team_heim, $team_aus, $tore_heim, $tore_aus, $team_heim_nr, $team_aus_nr, $real_sp_nr, $real_spieltag, $anz_spiele, $stadt, $stadion);
 ### letzter parameter: $gruppe.. wofür? vllt für WM/EM?
 // warum nicht gleich ausgeben ?
 // Wegen mobil/desktop/ipad?
@@ -613,9 +622,9 @@ function get_group_games($gruppe){
 
    $sql = "
      SELECT spieltag, sp_nr, t1.team_name AS Team_name1, t2.team_name AS Team_name2, 
-     datum1 AS datum, t1.team_nr AS Team_nr1, t2.team_nr AS Team_nr2
-     FROM Spieltage,Teams t1, Teams t2
-     WHERE (t1.gruppe = '$gruppe') AND (t1.team_nr = team1) AND (t2.team_nr = team2) AND (spieltag<=$max_gruppen_spt)";
+     datum1 AS datum, t1.team_nr AS Team_nr1, t2.team_nr AS Team_nr2, Spielorte.stadt AS stadt, Spielorte.stadion AS stadion
+     FROM Spieltage,Teams t1, Teams t2, Spielorte
+     WHERE (t1.gruppe = '$gruppe') AND (t1.team_nr = team1) AND (t2.team_nr = team2) AND (spieltag<=$max_gruppen_spt)  AND (spielort = Spielorte.id)";
 
      foreach ($g_pdo->query($sql) as $row) {
       $sp_nr = $row['sp_nr']."-".$row['spieltag'];
@@ -625,6 +634,8 @@ function get_group_games($gruppe){
       $real_sp_nr [$sp_nr] = $sp_nr;
       $tore_heim[$sp_nr] = "";
       $tore_aus[$sp_nr] = "";
+      $stadt[$sp_nr] = $row["stadt"];
+      $stadion[$sp_nr] = $row["stadion"];
    }
 
    $sql = "
@@ -643,7 +654,7 @@ function get_group_games($gruppe){
       $tore_aus [$sp_nr] = $row['tore2'];
    }
 
-   return array($datum, $team_heim, $team_aus, $tore_heim, $tore_aus, $real_sp_nr);
+   return array($datum, $team_heim, $team_aus, $tore_heim, $tore_aus, $real_sp_nr, $stadt, $stadion);
 
 }
 

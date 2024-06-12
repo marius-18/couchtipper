@@ -9,7 +9,7 @@ function print_games($args, $modus, $change){
         $endung = "png";
     }
     list ($datum, $team_heim, $team_aus, $tore_heim, $tore_aus, $team_heim_nr, 
-            $team_aus_nr, $real_sp_nr, $real_spieltag, $anz_spiele) = $args;
+            $team_aus_nr, $real_sp_nr, $real_spieltag, $anz_spiele, $stadt, $stadion) = $args;
     
     $zeitraum = get_zeitraum_of_all_spt(); 
     
@@ -104,7 +104,7 @@ function print_games($args, $modus, $change){
         
         if (($modus == "Spieltag") || ($modus == "Tipps")){
             ## Zeige die Details des Spiels an
-            print_game_details($modus, $i, $real_sp_nr, $punkte, $alle_tore, $visible_index, $other_tipps_args, '');
+            print_game_details($modus, $i, $real_sp_nr, $punkte, $alle_tore, $visible_index, $other_tipps_args, '', $stadt[$i], $stadion[$i]);
         }
 
     }
@@ -144,7 +144,7 @@ function print_gruppe($gruppe){
     ## Print Big Tournament Group Games
 
     $args = get_group_games($gruppe);
-    list ($datum, $team_heim, $team_aus, $tore_heim, $tore_aus, $real_sp_nr) = $args;
+    list ($datum, $team_heim, $team_aus, $tore_heim, $tore_aus, $real_sp_nr, $stadt, $stadion) = $args;
 
     
     echo "<div class=\"table-responsive-sm\">";
@@ -175,8 +175,10 @@ function print_gruppe($gruppe){
             $alle_tore = array();            
         }
         
+        
+        ## TODO: was zum henker hab ich hier gemacht?!
         $identity = [0,1,2,3,4,5,6,7,8,9,10,11,12,13];
-        $my_args = array("Spieltag", $my_spnr, $identity, $punkte, $alle_tore, $visible_index, $other_tipps_args, $gruppe);
+        $my_args = array("Spieltag", $my_spnr, $identity, $punkte, $alle_tore, $visible_index, $other_tipps_args, $gruppe, $stadt[$i], $stadion[$i]);
         
         print_all_game_details($my_args, $my_spieltag);
         
@@ -201,14 +203,18 @@ function print_tore($alle_tore, $real_sp_nr, $sp_nr){
 
 
 
-function print_game_details($modus, $sp_nr, $real_sp_nr, $punkte, $alle_tore, $visible_index, $args, $prefix){
+function print_game_details($modus, $sp_nr, $real_sp_nr, $punkte, $alle_tore, $visible_index, $args, $prefix, $stadt, $stadion){
     ## TODO: Ändern, dass das nach Spielbeginn direkt angezeigt wird 
     list($user_nr, $user_name, $tipp, $vorname, $nachname) = $args;
 
     echo "<tr id=\"$prefix$visible_index\" style=\"display: none;\">";
     
     echo "<td class=\"center\" colspan = \"5\"  style=\"text-align:center\">";
-
+    
+    echo "<div class=\"container container-fluid\"  style=\"margin-bottom:5px\">";
+    print_r( $stadion);
+    echo "</div>";
+    
     if ($modus == "Spieltag"){
         print_tore($alle_tore, $real_sp_nr, $sp_nr);     
     }
@@ -256,14 +262,22 @@ function print_game_details($modus, $sp_nr, $real_sp_nr, $punkte, $alle_tore, $v
 
 function print_all_game_details($args, $my_spieltag){
     ## Extract all args
-    list ($modus, $my_spnr, $identity, $punkte, $alle_tore, $visible_index, $other_tipps_args, $gruppe) = $args;
+    list ($modus, $my_spnr, $identity, $punkte, $alle_tore, $visible_index, $other_tipps_args, $gruppe, $stadt, $stadion) = $args;
     list ($user_nr, $user_name, $tipp, $vorname, $nachname) = $other_tipps_args;
     
     ## Set args to respective matchday
-    $other_tipps_args = array($user_nr[$my_spieltag], $user_name[$my_spieltag], $tipp[$my_spieltag], $vorname[$my_spieltag], $nachname[$my_spieltag]);
+    if (isset($user_nr[$my_spieltag])){
+        $other_tipps_args = array($user_nr[$my_spieltag], $user_name[$my_spieltag], $tipp[$my_spieltag], $vorname[$my_spieltag], $nachname[$my_spieltag]);
+    } else {
+        $other_tipps_args = array([[]], [[]], [[]], [[]], [[]]);        
+    }
     
     ## Print the details of the game
-    print_game_details($modus, $my_spnr, $identity, $punkte[$my_spieltag], $alle_tore, $visible_index, $other_tipps_args, $gruppe);
+    if (isset($punkte[$my_spieltag])){
+        print_game_details($modus, $my_spnr, $identity, $punkte[$my_spieltag], $alle_tore, $visible_index, $other_tipps_args, $gruppe, $stadt, $stadion);        
+    } else {
+        print_game_details($modus, $my_spnr, $identity, [], $alle_tore, $visible_index, $other_tipps_args, $gruppe, $stadt, $stadion);                
+    }
 }
 
 
