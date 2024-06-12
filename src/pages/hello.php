@@ -7,8 +7,16 @@
 
 <?php
 include_once("src/include/code/gewinn.inc.php");
+
 echo "<div class=\"container\">";
 
+
+if ((!is_checked_in()) && (is_logged()) && (is_active_wettbewerb()) ) {  
+    echo "<div class=\"alert alert-warning\"> <strong>Achtung!</strong> Du bist noch nicht für diesen Wettbewerb eingecheckt!
+    <br>
+    Du kannst also noch keine Tipps abgeben! <br>
+    Wenn du dies ändern möchtest, klicke <a href=\"?new_check_in=1\" class=\"alert-link\">hier</a>!</div>";
+}
 #############################################################################'
 #####   DAS MUSS AUCH NOCH BESSER WERDEN
 #############################################################################
@@ -155,7 +163,28 @@ Viel Spa&szlig; beim Tippen! </h5></div>
 
 
 
+
+
+
+<?php
+    ## Ab hier nur noch für eingeloggte User!
+    if (!is_logged()){
+        echo "</div>";
+        return 0;
+    }
+?>
+
+
+<div class="alert alert-success h5">
+    Wer der couchtipper WhatsApp Gruppe beitreten will, um immer auf dem neusten Stand zu sein, kann auf den folgenden Link klicken:
+    <br>
+    <br>
+    <div class="h4"><div class="badge badge-pill badge-success p-3"><a href="https://chat.whatsapp.com/BAzcQVzSmso5q79TO0ywUN" class="alert-link"> WhatsApp <i class="fa-brands fa-whatsapp"></i></a>  </div></div>
+    <br>
+    <strong>Achtung!</strong> Wenn du der Gruppe beitrittst, sehen natürlich alle Mitglieder der Gruppe deine Kontaktdaten. 
 </div>
 
+
+</div>
 
 <?php //leader() ?>

@@ -88,7 +88,12 @@
   .hintergrund{
    background-color: #4d4b46;
    scroll-margin-top: 108px;
+}
 
+  .hintergrundmodal{
+   background-color: rgb(107, 104, 96, .98);
+   //#4d4b46%30;
+   scroll-margin-top: 108px;
 }
 
 .fenster{

@@ -1,3 +1,5 @@
+<div class="container">
+
 <?php
 //require_once('src/functions/main.inc.php');
 //require_once('src/functions/template.inc.php'); ??? BRAUCHT MAN?
@@ -8,18 +10,26 @@ require_once('src/include/code/refresh.php');
 require_once('src/include/lib/forms.inc.php');
 
 
-/*    // vielleicht nur wer angemeldet ? 	was ist mit anderen tipps ?
-
-    WER NICHT ANGEMELDET IST KOMMT NICHT REIN
-ERROR
-
-vllt erst dann übersicht ??
-achtung zeitsperre
-*/
+if (!is_logged()){
+    echo "<div class=\"alert alert-danger\"><span class=\"badge badge-pill badge-danger\">Fehler!</span> Dieser Bereich steht nur für eingeloggte User zur Verfügung!</div>";
+    exit;
+}
 
 
+if ((!is_checked_in()) && (is_logged()) && (is_active_wettbewerb()) ) {  
+    echo "<div class=\"alert alert-warning text-center\" style=\"margin-bottom:0\">
+                <strong>Achtung!</strong> Du bist im aktuellen Wettbewerb noch nicht eingecheckt! 
+                <br>
+                Du kannst deswegen noch keine Tipps abgeben! 
+                <br>
+                Wenn du dies ändern möchtest, klicke <a href=\"?new_check_in=1\" class=\"alert-link\">hier</a>!
+        </div>";
+    exit;
+}
 
-echo "<div class=\"container\">";
+
+
+
 $error = false;
 $error_msg = "";
 
@@ -51,11 +61,9 @@ print_games($args, "Tipps", $change);
 
 
 echo $error_msg;
-
-echo "</div>";
-echo "<br>";
-
-
-
-
 ?>
+
+
+
+</div>
+<br>

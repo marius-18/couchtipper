@@ -7,10 +7,11 @@ require_once("../auth/include/security.inc.php");
 is_logged();
 
 $wartung = 0;
-$aktuelle_wett_id = [6,7];
+$aktuelle_wett_id = [7];
 $g_modus = "BuLi";
-$global_wett_id = "6";
+$global_wett_id = "7";
 $subdomain = explode(".",$_SERVER['SERVER_NAME'])[0];
+$fulldomain = (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://" . $_SERVER['HTTP_HOST'];
 
 $g_nachholspiel = NULL;
 
@@ -83,14 +84,17 @@ if (is_active_wettbewerb()){
     ## tippen will und sich eintragen.. mit bestätigung über den einsatz oder so..
 
     #TODO: weiter: unter "Mein Konto" alle laufenden Wettbewerbe anzeigen
-    #check_in_modal();
+    if (isset($_GET["new_check_in"]) && $_GET["new_check_in"] == 1){
+        $_SESSION["seen_check_in_modal"] = 0;
+    }
+    check_in_modal();
 }
 
 #if ((1) && ($subdomain == "code")){
     #$player = [3,4,5,6,7,8,9,10,11,12,13,14,15,17,20,21];
     #$player = [3,5,6,7,13,17,29,76,77,78,79];
-    
-    #check_in_manually($player, -5);
+    #$player = [55];
+    #check_in_manually($player, 7);
     
     #require_once("src/include/code/refresh.php");
     #for ($i=1;$i<35;$i++){
@@ -135,13 +139,16 @@ foreach ($_GET as $url_parameter => $url_value){
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
 
+    <script src="https://kit.fontawesome.com/59d142c614.js" crossorigin="anonymous"></script>
+    <!--
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    -->
 
     <script src=https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.16.0/bootstrap-table.min.js></script> <!-- sortierbare Tabellen! (braucht jquery) --> 
     <link href=https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.16.0/bootstrap-table.min.css rel=stylesheet> <!-- stylesheet für sortierbare Tabellen -->
 
-    <link href="src/include/styles/main_style.css?v=1.6" rel="stylesheet" type="text/css">
+    <link href="src/include/styles/main_style.css?v=2" rel="stylesheet" type="text/css">
     
     <script src="src/include/scripts/ausblenden.js?v=<?php echo rand();?>"></script> <!-- Zum Ein- und ausblenden verschiedener Elemente -->
 
@@ -207,6 +214,7 @@ MENÜ
                         </button>
                         <div class="dropdown-menu">
                             <div class="dropdown-header">Aktuelle Saison</div>
+                            <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=7" style="color:black">EM 2024</a>
                             <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=6" style="color:black">BuLi 2023/24</a>
                             <div class="dropdown-divider"></div>
                             <div class="dropdown-header">Vergangene</div>
@@ -329,7 +337,7 @@ MENÜ
                 <?php
                     if (!is_logged()){
                         echo "
-                            <a class=\"btn btn-secondary\" href=\"auth/login.php?return=https://couchtipper.de\">Anmelden</a>";      
+                            <a class=\"btn btn-secondary\" href=\"auth/login.php?return=$fulldomain\">Anmelden</a>";      
                     } else {
                         echo "
                             <a class=\"btn btn-secondary\" href=\"auth/logout.php\">Logout</a>";      
@@ -342,11 +350,24 @@ MENÜ
 
     <?php
     
-        if ((!check_cash(get_curr_wett())) && (is_logged()) && (is_active_wettbewerb()) ) {  
-            echo "<div class=\"alert alert-danger text-center\" style=\"margin-bottom:0\">
-                <strong>Achtung!</strong> Du hast noch nicht bezahlt! <a href=\"?index=11#main\" class=\"alert-link\"> <i class=\"fas fa-info-circle\"></i></a>
+        if ((!is_checked_in()) && (is_logged()) && (is_active_wettbewerb()) ) {  
+            echo "<div class=\"alert alert-warning text-center\" style=\"margin-bottom:0\">
+                <strong>Achtung!</strong> Du bist im aktuellen Wettbewerb noch nicht eingecheckt! 
+                <a href=\"?new_check_in=1\" class=\"alert-link\"> <i class=\"fas fa-info-circle\"></i></a>
                 </div>";
         }
+        
+        elseif ((!check_cash(get_curr_wett())) && (is_logged()) && (is_active_wettbewerb()) ) {  
+            echo "<div class=\"alert alert-danger text-center\" style=\"margin-bottom:0\">
+                <a href=\"?index=11#main\" class=\"alert-link\"> 
+                <!--<i class=\"fas fa-info-circle\"></i>-->
+                <strong>Achtung!</strong></a> Du hast noch nicht bezahlt! 
+                <a href=\"https://paypal.me/couchtipper\" class=\"alert-link\">PayPal <i class=\"fa-brands fa-paypal\"></i></a> 
+                <!--&nbsp;&nbsp;-->
+                </div>";
+        }
+        
+        
     
     ?>
 </div>
@@ -517,8 +538,6 @@ MENÜ
     <br>
     <p>&copy; couchtipper.de v4.2</p>
 </div>
-
-
 </body>
 </html>
  
