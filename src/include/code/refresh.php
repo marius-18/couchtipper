@@ -245,11 +245,10 @@ function update_tabelle_platz($spieltag) {
 function update_rangliste_position($spieltag) {
     global $g_pdo;
     
-    // Bei modus buli vllt einfach ab 18 wieder von 0 anfangen.. wenn jemand nicht getippt hatte, dann einfach mit max( spieler) vollmachen... // Das muss auf jeden fall zum spieler eintritt..
+    // TODO: Bei modus buli vllt einfach ab 18 wieder von 0 anfangen.. wenn jemand nicht getippt hatte, dann einfach mit max( spieler) vollmachen... // Das muss auf jeden fall zum spieler eintritt..
     // oder halt einfach bei der statistik am ende alles auf max setzen.. ist vermutlich einfacher..
     
-    // ACHTUNG, NUR IM BULI MODUS!
-    if ($spieltag > 17){
+    if (($spieltag > 17) && !is_big_tournament(get_curr_wett())) {
         $start = 18;
     } else {
         $start = 1;
