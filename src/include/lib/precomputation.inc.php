@@ -32,9 +32,9 @@ function precompute_all_tipps_to_db($modus){
     }
     
     if (!$input_error){
-        echo "Precomputation erfolgreich abgeschlossen<br>";
+        echo "Precomputation Tipps erfolgreich abgeschlossen<br>";
     } else {
-        echo "FEHLER bei Precomputation<br>";   
+        echo "FEHLER bei Precomputation Tipps<br>";   
     }
 }
 
@@ -91,9 +91,9 @@ function precompute_all_tore_to_db($max_spieltag, $modus){
     }
 
     if (!$input_error){
-        echo "Precomputation erfolgreich abgeschlossen<br>";
+        echo "Precomputation Tore erfolgreich abgeschlossen<br>";
     } else {
-        echo "FEHLER bei Precomputation<br>";
+        echo "FEHLER bei Precomputation Tore<br>";
     }
 }
 

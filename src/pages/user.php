@@ -21,6 +21,12 @@ pay_update(get_curr_wett());
 rechte_update(get_curr_wett());
 
 
+### Insert Missing player
+if (isset($_POST["add_missing_player"]) && is_numeric($_POST["add_missing_player"])){
+    $add_missing_player = [$_POST["add_missing_player"]];
+    check_in_manually($add_missing_player, get_curr_wett());
+}
+
 #########################################################################################
 ########## B E Z A H L U N G
 #########################################################################################
@@ -67,6 +73,34 @@ echo "<input type=\"hidden\" value = \"1\" name =\"paysecure\"><input type = \"s
 
 
 
+echo "<hr>";
+
+
+#########################################################################################
+########## R E C H T E    V E R W A L T U N G 
+#########################################################################################
+
+
+#echo rechte1(get_curr_wett());
+
+
+### Überschrift
+echo "<div style=\"text-align:left\"><font size =\"+2\"><u>Spieler eintragen</u></font></div><br>";
+
+
+
+    $missing = missing_user(get_curr_wett());
+    
+    echo "<form action=\"?index=9#main\" method=\"post\">";
+
+    echo "<select class=\"form-select\" name=\"add_missing_player\">";
+    foreach ($missing AS $id => $user){
+        echo "<option value=\"$id\">$user</option>";
+        echo "<br>";
+    }
+    echo "</select><br><bR>";
+  echo "<input type = \"submit\" value = \"Spieler Eintragen!\" >";
+        echo "</form>";
 echo "<hr>";
 
 

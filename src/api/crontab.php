@@ -44,7 +44,8 @@ input_results();
 ### Do Some precomputation
 if (is_big_tournament(get_curr_wett())){
     ## TODO: vielleicht nicht immer machen?
-    #precompute_all_tipps_to_db("Spieltag");
+    precompute_all_tipps_to_db("Spieltag");
+    precompute_all_tore_to_db(15, "");
 }
 
 # define functions that will be called..
@@ -110,7 +111,7 @@ function reminder_tipps(){
     ### Welches Zeitintervall darf bei Benachrichtigungen nicht unterschritten werden?
     $min_interval = 3 * 60 - 10;
     
-    
+
     ## Liste der nächsten Spiele
     list($next_games, $date) = get_next_games();
 
@@ -148,6 +149,7 @@ function input_results(){
     ## Holt die Ergebnisse des aktuellen Spieltags aus OpenLigaDB
     global $g_nachholspiel;
     if (spieltag_running()){
+        echo "Spieltag läuft!<br>";
         input_cronjob(akt_spieltag());
     }
     if ($g_nachholspiel !== NULL){

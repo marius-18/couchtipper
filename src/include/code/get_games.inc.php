@@ -147,75 +147,6 @@ function get_games ($spieltag, $modus, $change, $user_nr) {
 
 function get_open_db_spieltag($modus, $jahr, $spieltag){
     
-    #$url = "https://www.openligadb.de/api/getmatchdata/$modus/$jahr/$spieltag";
-    $url = "https://api.openligadb.de/getmatchdata/$modus/$jahr/$spieltag";
-    
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-
-    $output = curl_exec($ch);
-    curl_close($ch);
-
-    $matches = json_decode($output, true);
-    
-    return $matches;
-}
-
-
-function get_ergebnis($spieltag,$modus, $jahr){
-    global $g_pdo;
-    // DB Abfrage je nach modus.. Hier bisher nur buli!
-    $matches = get_open_db_spieltag($modus, $jahr, $spieltag);
-    
-    if ($spieltag <= 17) {
-        $heim = "Heim";
-        $aus = "Aus";
-    } else {
-        $heim = "Aus";
-        $aus = "Heim";
-        $spieltag = $spieltag - 17;
-    }
-    $sql = "SELECT team1, team2, TeamHeim.open_db_name as $heim, TeamAus.open_db_name as $aus, sp_nr
-            FROM `Spieltage`, Teams as TeamHeim, Teams as TeamAus 
-            WHERE (spieltag = $spieltag) and (team1 = TeamHeim.team_nr) and (team2 = TeamAus.team_nr)";
-    foreach ($g_pdo->query($sql) as $row) {
-        $team1 = $row['Heim'];
-        $team2 = $row['Aus'];
-        $sp_nr = $row['sp_nr'];
-
-        foreach ($matches as $match) {
-            if (!strnatcmp($match["team1"]["teamName"], $team1) and !strcmp($match["team2"]["teamName"], $team2)) {
-                // Das ist das aktuelle Spiel!
-                $tore_heim[$sp_nr] = $match["matchResults"][1]["pointsTeam1"];
-                $tore_aus[$sp_nr]  = $match["matchResults"][1]["pointsTeam2"];
-        
-                echo "Spiel $sp_nr ";
-                echo "$team1 ".$tore_heim[$sp_nr]." - ".$tore_aus[$sp_nr]." $team2";
-                echo "<br>";
-
-            }
-        }
-        
-    }
-    
-    return array($tore_heim, $tore_aus);
-}
-
-
-function get_tore($spieltag, $modus){
-    #TODO: ordentlich machen, wozu $modus??
-    global $g_pdo;
-    #return 0;
-    // DB Abfrage je nach modus.. Hier bisher nur buli!
-    if (get_curr_wett()[0] <= -6){
-        ## Für die alten muss noch die datenbank namen und vereinsnamen rein
-        return array("","","","","","","","","");
-    }
-    $jahr = substr(get_wettbewerb_jahr(get_curr_wett()), 0, 4);
-    $heim = "Heim";
-    $aus = "Aus";
-        
     if (get_wettbewerb_code(get_curr_wett())  == "EM"){
         switch ($spieltag) {
             case 1:
@@ -255,7 +186,8 @@ function get_tore($spieltag, $modus){
                 $opl_spieltag = 7;
                 break;
         }
-        $matches = get_open_db_spieltag(get_openliga_shortcut(get_curr_wett()), $jahr, $opl_spieltag);
+        #$matches = get_open_db_spieltag(get_openliga_shortcut(get_curr_wett()), $jahr, $opl_spieltag);
+        $spieltag = $opl_spieltag;
     } elseif (get_wettbewerb_code(get_curr_wett())  == "WM") {
         switch ($spieltag) {
             case 1:
@@ -296,16 +228,93 @@ function get_tore($spieltag, $modus){
                 $opl_spieltag = 6;
                 break;
         }
-        $matches = get_open_db_spieltag(get_openliga_shortcut(get_curr_wett()), $jahr, $opl_spieltag);
+        $spieltag = $opl_spieltag;
+        #$matches = get_open_db_spieltag(get_openliga_shortcut(get_curr_wett()), $jahr, $opl_spieltag);
         #print_r($matches);
+    }
+    
+    #$url = "https://www.openligadb.de/api/getmatchdata/$modus/$jahr/$spieltag";
+    $url = "https://api.openligadb.de/getmatchdata/$modus/$jahr/$spieltag";
+    #echo $url;
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+    $output = curl_exec($ch);
+    curl_close($ch);
+
+    $matches = json_decode($output, true);
+    
+    return $matches;
+}
+
+
+function get_ergebnis($spieltag,$modus, $jahr){
+    global $g_pdo;
+    //TODO: DB Abfrage je nach modus.. Funktioniert hier bisher nur für buli!
+    $matches = get_open_db_spieltag($modus, $jahr, $spieltag);
+    
+    
+    if (($spieltag <= 17) || (is_big_tournament(get_curr_wett()))) {
+        $heim = "Heim";
+        $aus = "Aus";
     } else {
-         $matches = get_open_db_spieltag(get_openliga_shortcut(get_curr_wett()), $jahr, $spieltag);   
-         
-        if ($spieltag >= 18)   {
-            $heim = "Aus";
-            $aus = "Heim";
-            $spieltag = $spieltag - 17;
+        $heim = "Aus";
+        $aus = "Heim";
+        $spieltag = $spieltag - 17;
+    }
+    $sql = "SELECT team1, team2, TeamHeim.open_db_name as $heim, TeamAus.open_db_name as $aus, sp_nr
+            FROM `Spieltage`, Teams as TeamHeim, Teams as TeamAus 
+            WHERE (spieltag = $spieltag) and (team1 = TeamHeim.team_nr) and (team2 = TeamAus.team_nr)";
+    foreach ($g_pdo->query($sql) as $row) {
+        $team1 = $row['Heim'];
+        $team2 = $row['Aus'];
+        $sp_nr = $row['sp_nr'];
+        #echo "$team1 - $team2";
+
+        foreach ($matches as $match) {
+            #echo "$team1 - $team2 und ";
+            #echo $match["team1"]["teamName"] . " - " . $match["team2"]["teamName"];
+            #echo "<br><br>";
+            if ((!strnatcmp($match["team1"]["teamName"], $team1) and !strcmp($match["team2"]["teamName"], $team2))
+            or (!strnatcmp($match["team1"]["teamName"], $team2) and !strcmp($match["team2"]["teamName"], $team1))){
+                // Das ist das aktuelle Spiel!
+                $tore_heim[$sp_nr] = $match["matchResults"][1]["pointsTeam1"];
+                $tore_aus[$sp_nr]  = $match["matchResults"][1]["pointsTeam2"];
+        
+                echo "Spiel $sp_nr ";
+                echo "$team1 ".$tore_heim[$sp_nr]." - ".$tore_aus[$sp_nr]." $team2";
+                echo "<br>";
+
+            }
         }
+        
+    }
+    
+    return array($tore_heim, $tore_aus);
+}
+
+
+function get_tore($spieltag, $modus){
+    #TODO: ordentlich machen, wozu $modus??
+    global $g_pdo;
+    #return 0;
+    // DB Abfrage je nach modus.. Hier bisher nur buli!
+    if (get_curr_wett()[0] <= -6){
+        ## Für die alten muss noch die datenbank namen und vereinsnamen rein
+        return array("","","","","","","","","");
+    }
+    $jahr = substr(get_wettbewerb_jahr(get_curr_wett()), 0, 4);
+    $heim = "Heim";
+    $aus = "Aus";
+    
+    $matches = get_open_db_spieltag(get_openliga_shortcut(get_curr_wett()), $jahr, $spieltag);
+
+    
+    if (($spieltag >= 18) && !(is_big_tournament(get_curr_wett()))) {
+        $heim = "Aus";
+        $aus = "Heim";
+        $spieltag = $spieltag - 17;
     }
     
     $sql = "SELECT team1, team2, TeamHeim.open_db_name as $heim, TeamAus.open_db_name as $aus, sp_nr
@@ -337,15 +346,23 @@ function get_tore($spieltag, $modus){
 #echo "<br><br>";
         #print_r($match);
 
+// usort($match["goals"], function($a, $b) {
+//     if ($a['goalID'] > $b['goalID']) {
+//         return 1;
+//     } elseif ($a['goalID'] < $b['goalID']) {
+//         return -1;
+//     }
+//     return 0;
+// });
+
 usort($match["goals"], function($a, $b) {
-    if ($a['goalID'] > $b['goalID']) {
+    if ($a['matchMinute'] > $b['matchMinute']) {
         return 1;
-    } elseif ($a['goalID'] < $b['goalID']) {
+    } elseif ($a['matchMinute'] < $b['matchMinute']) {
         return -1;
     }
     return 0;
 });
-
 
 
 //echo "<br><br><br>";
@@ -524,10 +541,11 @@ function get_next_games(){
     global $g_pdo;
     list($wett_id, $part) = get_curr_wett();
     if (wettbewerb_has_parts($wett_id)){
+        ## TODO: Warum denn +1? soll das so?
         $part += 1;
         $date = "datum$part";
     } else {
-        $date = "datum";   
+        $date = "datum1";   
     }
     
     $time = time();

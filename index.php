@@ -94,7 +94,7 @@ if (is_active_wettbewerb()){
     #$player = [3,4,5,6,7,8,9,10,11,12,13,14,15,17,20,21];
     #$player = [3,5,6,7,13,17,29,76,77,78,79];
     #$player = [55];
-    #check_in_manually($player, 7);
+    #check_in_manually($player, 7,0);
     
     #require_once("src/include/code/refresh.php");
     #for ($i=1;$i<35;$i++){
