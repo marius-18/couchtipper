@@ -325,6 +325,12 @@ function spieltag_running($spt=""){
 function spt_select(){
     global $g_pdo;
     global $g_nachholspiel;
+    
+    if (is_big_tournament(get_curr_wett())){
+        ## Bei großen Turnieren zeigen wir einfach immer den aktuellen Spieltag an.. 
+        return akt_spieltag();
+    }
+    
     if (spieltag_running()){
         // Der laufende Spieltag wird immer zuerst angezeigt!!
         return akt_spieltag();

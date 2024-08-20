@@ -44,8 +44,15 @@ input_results();
 ### Do Some precomputation
 if (is_big_tournament(get_curr_wett())){
     ## TODO: vielleicht nicht immer machen?
-    precompute_all_tipps_to_db("Spieltag");
-    precompute_all_tore_to_db(15, "");
+    #precompute_all_tipps_to_db("Spieltag");
+    #precompute_all_tore_to_db(15, "");
+
+    ## 
+    if (is_active_wettbewerb()){
+        echo "Update KO Runde!<br>";
+        update_gruppenbeste();
+        update_all_ko_spiele();
+    }
 }
 
 # define functions that will be called..
@@ -102,8 +109,8 @@ function reminder_tipps(){
         return 0;
     }
     
-    ## Zu welchen Zeitpunkten soll gemeldet werden? (in min)
-    $timelist = array(120, 60, 30, 10, 5);
+    ## Zu welchen Zeitpunkten soll gemeldet werden? (in min) (+1min, weil in DB :59 gespeichert ist)
+    $timelist = array(121, 61, 31, 16, 11, 6);
 
     ## Wie groß soll das Melde Fenster sein? 
     $fenster = 2 * 60;

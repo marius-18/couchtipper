@@ -7,9 +7,9 @@ require_once("../auth/include/security.inc.php");
 is_logged();
 
 $wartung = 0;
-$aktuelle_wett_id = [7];
+$aktuelle_wett_id = [8,7];
 $g_modus = "BuLi";
-$global_wett_id = "7";
+$global_wett_id = "8";
 $subdomain = explode(".",$_SERVER['SERVER_NAME'])[0];
 $fulldomain = (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://" . $_SERVER['HTTP_HOST'];
 
@@ -214,10 +214,11 @@ MENÜ
                         </button>
                         <div class="dropdown-menu">
                             <div class="dropdown-header">Aktuelle Saison</div>
+                            <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=8" style="color:black">BuLi 2024/25</a>
                             <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=7" style="color:black">EM 2024</a>
-                            <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=6" style="color:black">BuLi 2023/24</a>
                             <div class="dropdown-divider"></div>
                             <div class="dropdown-header">Vergangene</div>
+                            <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=6" style="color:black">BuLi 2023/24</a>
                             <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=5" style="color:black">BuLi 2022/23</a>
                             <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=4" style="color:black">BuLi 2021/22</a>
                             <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=3" style="color:black">EM 2021</a>
@@ -232,9 +233,9 @@ MENÜ
                             <!--<a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=-6" style="color:black">BuLi 2014/15</a>-->
                             <?php
                             if (allow_verwaltung()){
-                                echo "<div class=\"dropdown-divider\"></div>
-                                    <div class=\"dropdown-header\">Turniere</div>
-                                    <a class=\"dropdown-item\" href=\"?year=7\" style=\"color:black\">EM 2024</a>";
+                                #echo "<div class=\"dropdown-divider\"></div>
+                                #    <div class=\"dropdown-header\">Turniere</div>
+                                #    <a class=\"dropdown-item\" href=\"?year=7\" style=\"color:black\">EM 2024</a>";
                             }
                             ?>
                         </div>
@@ -410,12 +411,12 @@ MENÜ
         <!-- Linkes Fenster, Standard Rangliste, sonst ...? mobil nicht sichtbar! -->
         <div class="col-lg-4 d-none d-xl-block d-lg-block text-center fenster rounded main">
             <?php
-                if (($index != 4) && ($index != 2) && ($index != 5) ){
+                if (($index != 4) && ($index != 2) && ($index != 5) && ($index != "1.2") && ($index != "16")){
                     echo "<h2>Rangliste:</h2>";
                     include_once("src/pages/rangliste_links.php");
                 }
 
-                 if (($index == 5) || ($index == 2)){
+                 if (($index == 5) || ($index == 2) || ($index == "1.2")){
                     if (get_wettbewerb_code(get_curr_wett()) == "BuLi"){
                         echo "<h2>Bundesliga-Tabelle:</h2>";
                         include_once("src/pages/tabelle.php");
@@ -514,6 +515,10 @@ MENÜ
                         echo "<h2>Statistiken</h2>";
                         include_once("src/pages/tabellenverlauf.php");
                         #include_once("src/newbot.php");
+                        break;
+                    case 16:
+                        echo "<h2>TEST</h2>";
+                        include_once("src/liga_anlegen.php");
                         break;
                     default:
                         include_once("src/pages/error.php");

@@ -101,19 +101,33 @@ function help($i){
     
     if (get_wettbewerb_jahr(get_curr_wett()) == "2024"){
         $array = array(
-            1 => 1, 
-            2 => 3, 
-            3 => 5, 
-            4 => 6, 
+            1 => 4, 
+            2 => 2, 
+            3 => 6, 
+            4 => 5, 
             5 => 7,
             6 => 8,
-            7 => 2, 
-            8 => 4);
+            7 => 3, 
+            8 => 1);
     }
     
     
     return $array[$i];
     
+}
+
+function help_vf($i){
+    if (get_wettbewerb_jahr(get_curr_wett()) == "2024"){
+        $array = array(
+            1 => 1, 
+            2 => 2, 
+            3 => 4, 
+            4 => 3);
+        
+        return $array[$i];
+    } else {
+        return $i;
+    }
 }
 
 function label($zeile, $spalte, $typ){
@@ -124,8 +138,8 @@ function label($zeile, $spalte, $typ){
                 echo "<a data-toggle=\"popover\" title=\"Achtelfinale ".help(($zeile+2)/3) ."\" data-content=\" " .datum(1,help(($zeile+2)/3))."\"> <i class=\"far fa-clock\"></i></a>";
                 break;
             case 2:
-                echo "VF ".($zeile+4)/6;
-                echo "<a data-toggle=\"popover\" title=\"Viertelfinale ".($zeile+4)/6 ."\" data-content=\" " .datum(2,($zeile+4)/6)."\"> <i class=\"far fa-clock\"></i></a>";
+                echo "VF ".help_vf(($zeile+4)/6);
+                echo "<a data-toggle=\"popover\" title=\"Viertelfinale ".help_vf(($zeile+4)/6) ."\" data-content=\" " .datum(2,help_vf(($zeile+4)/6))."\"> <i class=\"far fa-clock\"></i></a>";
                 break;
 
             case 3:
@@ -184,7 +198,14 @@ function datum($spieltag, $spiel){
     
     ## EM Übersetzung: KO Spiele zwischen 14 und 22. spieltag aufteilung usw..
     $array = [
-       1 => [ 1 => array(14,1), 2 => array(14,2), 3 => array(15,1),   4 => array(15,2), 5 => array(16,1), 6 => array(16,2), 7 => array(17,1), 8 => array(17,2) ],
+       1 => [   1 => array(14,1), 
+                2 => array(14,2), 
+                3 => array(15,1),   
+                4 => array(15,2), 
+                5 => array(16,1), 
+                6 => array(16,2), 
+                7 => array(17,1), 
+                8 => array(17,2) ],
        2 => [ 1 => array(18,1), 2 => array(18,2), 3 => array(19,1),   4 => array(19,2)],
        3 => [ 1 => array(20,1), 2 => array(21,1)],
        4 => [ 1 => array(22,1) ]];
@@ -200,7 +221,7 @@ function datum($spieltag, $spiel){
         $spielort = $row['stadt'];
     }
     
-    return stamp_to_date_programm($date)." ".$spielort;
+    return stamp_to_date_programm($date)." ".$spielort; # ."($real_spt, $real_spl)"; ##For Debug!
 }
 
 
@@ -256,6 +277,13 @@ function team_label($zeile, $spalte, $mode){
         ## Spiel Nummer: zwei mal 1, dann zwei mal 2.. (für jedes Spiel 2 mannschaften)
         $vf_spiel = ((ceil($vf_zeile/2)+1) % 2)+1;
         
+        if (($vf_spt == 19) && ($vf_spiel == 1)){
+            ## TODO: Igitt! Reihenfolge ist halt falsch..
+            $vf_spiel = 2;
+        } elseif (($vf_spt == 19) && ($vf_spiel == 2)) {
+            $vf_spiel = 1;  
+        }
+        
         return teams($vf_spt,$vf_spiel,"Sieger AF ".help($vf_zeile),$vf_team_pos, $mode);
         
     }
@@ -268,10 +296,10 @@ function team_label($zeile, $spalte, $mode){
                 return teams(20,1,"Sieger VF 2",2, $mode);
                 break;        
             case 3:
-                return teams(21,1,"Sieger VF 3",1, $mode);
+                return teams(21,1,"Sieger VF 4",1, $mode);
                 break;
             case 4:
-                return teams(21,1,"Sieger VF 4",2, $mode);
+                return teams(21,1,"Sieger VF 3",2, $mode);
                 break;              
         }        
     }

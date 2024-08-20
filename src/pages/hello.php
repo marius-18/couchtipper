@@ -100,7 +100,7 @@ function gewinner($array){
             <br>(erstmal ohne Gew&auml;hr, weil sich das Couchtipper-Team nicht sicher ist, ob das so klappt.. <i class=\"far fa-laugh-squint\"></i>)
         </div>";
     
-    if ($id > 3){
+    if (($id > 3) && (!is_big_tournament(get_curr_wett()))){
     print_gesamt_gewinner($array);
     } else {
         print_gewinner($array);
@@ -145,7 +145,18 @@ if (get_curr_wett()[0] > 2){
 
 <br>
 
-
+<!--
+<div class="alert alert-success h5">
+    Bald startet die Bundesliga wieder in eine neue Saison! 
+    Wer wieder beim Tippspiel dabei sein will, kann über folgenden Link beitreten:
+    <br>
+    <br>
+    <div class="h4">
+    <div class="badge badge-pill badge-success p-3"><a href="?year=8&index=" class="alert-link"> BuLi 2024/25 </a>  </div></div>
+    <br>
+    <strong>Hinweis:</strong> Oben im Menü kannst du zwischen den verschiedenen Wettbewerben (EM, WM, Bundesliga) wechseln.
+</div>
+-->
 
 
 <div class="alert alert-secondary"><h5>Sch&ouml;n, dass du (wieder) bei unserer Tipp-Gruppe dabei bist. <i class="far fa-smile"></i>

@@ -104,7 +104,7 @@ function print_games($args, $modus, $change){
         
         if (($modus == "Spieltag") || ($modus == "Tipps")){
             ## Zeige die Details des Spiels an
-            print_game_details($modus, $i, $real_sp_nr, $punkte, $alle_tore, $visible_index, $other_tipps_args, '', $stadt[$i], $stadion[$i]);
+            print_game_details($modus, $i, $real_sp_nr, $punkte, $alle_tore, $visible_index, $other_tipps_args, '', $stadt[$i], $stadion[$i], $team_heim_nr[$i], $team_aus_nr[$i]);
         }
 
     }
@@ -201,9 +201,41 @@ function print_tore($alle_tore, $real_sp_nr, $sp_nr){
     }
 }
 
+function print_pre_games($team_nr1, $team_nr2){
+
+    echo "<div class=\"container\" style=\"margin-bottom:5px\">";  
+    echo "Letzte Spiele: ";
+    echo "<table class=\"table\">";
+
+    list($team1, $team2, $tore1, $tore2, $result) = get_pre_games($team_nr1);   
+    foreach ($team1 AS $id => $team){
+        echo "<tr class=\"".$result[$id]."\">";
+        echo "<td>".$team1[$id]."</td>";
+        echo "<td>".$tore1[$id] . " - " . $tore2[$id]."</td>";
+        echo "<td>".$team2[$id]."</td>";
+        echo "</tr>";
+    }
+    
+    echo "<tr class=\"bg-secondary\"><td colspan = \"3\"></td></tr>";
+    
+    list($team1, $team2, $tore1, $tore2, $result) = get_pre_games($team_nr2);   
+    foreach ($team1 AS $id => $team){
+        echo "<tr class=\"".$result[$id]."\">";
+        echo "<td>".$team1[$id]."</td>";
+        echo "<td>".$tore1[$id] . " - " . $tore2[$id]."</td>";
+        echo "<td>".$team2[$id]."</td>";
+        echo "</tr>";
+    }
+    
+    echo "</table>";
+    echo "</div>";
+
+    
+}
 
 
-function print_game_details($modus, $sp_nr, $real_sp_nr, $punkte, $alle_tore, $visible_index, $args, $prefix, $stadt, $stadion){
+
+function print_game_details($modus, $sp_nr, $real_sp_nr, $punkte, $alle_tore, $visible_index, $args, $prefix, $stadt, $stadion, $team1, $team2){
     ## TODO: Ändern, dass das nach Spielbeginn direkt angezeigt wird 
     list($user_nr, $user_name, $tipp, $vorname, $nachname) = $args;
 
@@ -217,6 +249,10 @@ function print_game_details($modus, $sp_nr, $real_sp_nr, $punkte, $alle_tore, $v
     
     if ($modus == "Spieltag"){
         print_tore($alle_tore, $real_sp_nr, $sp_nr);     
+    }
+    
+    if (($modus == "Tipps") && !isset($user_nr[$real_sp_nr[$sp_nr]])){ 
+        print_pre_games($team1, $team2);   
     }
     
     echo "<table class=\"table\" align = \"center\" width = \"75%\" padding-left = \"10em\">";
@@ -274,9 +310,9 @@ function print_all_game_details($args, $my_spieltag){
     
     ## Print the details of the game
     if (isset($punkte[$my_spieltag])){
-        print_game_details($modus, $my_spnr, $identity, $punkte[$my_spieltag], $alle_tore, $visible_index, $other_tipps_args, $gruppe, $stadt, $stadion);        
+        print_game_details($modus, $my_spnr, $identity, $punkte[$my_spieltag], $alle_tore, $visible_index, $other_tipps_args, $gruppe, $stadt, $stadion, 0, 0);        
     } else {
-        print_game_details($modus, $my_spnr, $identity, [], $alle_tore, $visible_index, $other_tipps_args, $gruppe, $stadt, $stadion);                
+        print_game_details($modus, $my_spnr, $identity, [], $alle_tore, $visible_index, $other_tipps_args, $gruppe, $stadt, $stadion, 0, 0);                
     }
 }
 

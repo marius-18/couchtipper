@@ -276,6 +276,7 @@ function get_ergebnis($spieltag,$modus, $jahr){
             #echo "$team1 - $team2 und ";
             #echo $match["team1"]["teamName"] . " - " . $match["team2"]["teamName"];
             #echo "<br><br>";
+            ## TODO: gute Idee gewesen, beide Varianten abzufragen?
             if ((!strnatcmp($match["team1"]["teamName"], $team1) and !strcmp($match["team2"]["teamName"], $team2))
             or (!strnatcmp($match["team1"]["teamName"], $team2) and !strcmp($match["team2"]["teamName"], $team1))){
                 // Das ist das aktuelle Spiel!
@@ -354,11 +355,19 @@ function get_tore($spieltag, $modus){
 //     }
 //     return 0;
 // });
-
 usort($match["goals"], function($a, $b) {
     if ($a['matchMinute'] > $b['matchMinute']) {
         return 1;
     } elseif ($a['matchMinute'] < $b['matchMinute']) {
+        return -1;
+    }
+    return 0;
+});
+
+usort($match["goals"], function($a, $b) {
+    if ($a['scoreTeam1'] + $a['scoreTeam2'] > $b['scoreTeam1'] + $b['scoreTeam2']) {
+        return 1;
+    } elseif ($a['scoreTeam1'] + $a['scoreTeam2'] < $b['scoreTeam1'] + $b['scoreTeam2']) {
         return -1;
     }
     return 0;
@@ -560,6 +569,52 @@ function get_next_games(){
     return array($spiel, $datum);
 }
 
+function get_pre_games($team_nr){
+    global $g_pdo;
+   
+    $sql = "SELECT Spieltage.spieltag, Spieltage.sp_nr, team1, team2, tore1, tore2, t1.team_name AS tname1, t2.team_name  AS tname2
+            FROM `Spieltage`, Ergebnisse, Teams AS t1, Teams AS t2
+            WHERE (`team1` = $team_nr OR `team2` = $team_nr) 
+            AND (Spieltage.spieltag = Ergebnisse.spieltag) 
+            AND (Spieltage.sp_nr = Ergebnisse.sp_nr)
+            AND (t1.team_nr = team1)            
+            AND (t2.team_nr = team2)
+            ORDER BY Spieltage.spieltag DESC";
+    
+    foreach ($g_pdo->query($sql) as $row) {
+        $sp_nr = $row['spieltag'] . "-" . $row['sp_nr'];
+        $team1[$sp_nr] = $row['tname1'];
+        $team2[$sp_nr] = $row['tname2'];
+
+        $team_nr1[$sp_nr] = $row['team1'];
+        $team_nr2[$sp_nr] = $row['team2'];
+        
+        $tore1[$sp_nr] = $row['tore1'];
+        $tore2[$sp_nr] = $row['tore2'];
+        
+        if ($team_nr == $team_nr1[$sp_nr]){
+            if ($tore1[$sp_nr] > $tore2[$sp_nr]){
+                $result[$sp_nr] = "table-success";
+            } elseif ($tore1[$sp_nr] < $tore2[$sp_nr]){
+                $result[$sp_nr] = "table-danger";                
+            } else {
+                $result[$sp_nr] = "";   
+            }
+        } else {
+            if ($tore2[$sp_nr] > $tore1[$sp_nr]){
+                $result[$sp_nr] = "table-success";
+            } elseif ($tore2[$sp_nr] < $tore1[$sp_nr]){
+                $result[$sp_nr] = "table-danger";                
+            } else {
+                $result[$sp_nr] = "";   
+            }
+        }
+        
+    }
+    
+    return array($team1, $team2, $tore1, $tore2, $result);
+}
+
 function get_bot_spiele($user_nr, $next_games, $mode){
     ### $mode == "gameday": Erstellt eine Liste von Spielen des Spieltags
     ### $mode == "Tipps"  : Erstellt selbe Liste und prüft ob Spiele schon getippt wurden.. 
@@ -590,7 +645,12 @@ function get_bot_spiele($user_nr, $next_games, $mode){
                 }       
                 $spiele .= "\n";
                 $time = round(($datum[$index] - time()) / (60*60),1);
-                $time .= " Stunden";
+                if ($time < 1) {
+                    $time = floor(($datum[$index] - time()) / (60));
+                    $time .= " Minuten"; 
+                } else {
+                    $time .= " Stunden";
+                }
             }
                     
         }

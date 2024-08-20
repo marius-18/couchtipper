@@ -4,7 +4,8 @@ include_once("src/include/code/tabelle.inc.php");
 function update_tabelle($spieltag) {
     global $g_pdo;
     global $g_modus;
-    if (($g_modus == "WM") || ($g_modus == "EM")){
+    #if (($g_modus == "WM") || ($g_modus == "EM")){
+    if (is_big_tournament(get_curr_wett())){ 
         $max_group_spt = 13;
         if ($spieltag > $max_group_spt) {
             return 0;
@@ -346,63 +347,100 @@ function ko_sieger($spieltag, $spiel){
 function update_ko($spieltag, $spiel, $teamteil, $team_nr){
     global $g_pdo;
     
-    return 0;
+    #return 0;
     ### ACHTUNG, ANPASSEN!
 
-    $sql2 = "UPDATE `Spieltage` SET `team$teamteil`=:team_nr WHERE spieltag = :spieltag AND sp_nr = :spiel";
-
-        $statement = $g_pdo->prepare($sql2);
-        $result = $statement->execute(array('team_nr' => $team_nr, 'spieltag' => $spieltag, 'spiel' => $spiel));
+    $sql = "UPDATE `Spieltage` SET `team$teamteil`=:team_nr WHERE spieltag = :spieltag AND sp_nr = :spiel";
+    
+    $statement = $g_pdo->prepare($sql);
+    $result = $statement->execute(array('team_nr' => $team_nr, 'spieltag' => $spieltag, 'spiel' => $spiel));
     
 }
 
-function check_all_ko(){
-    // Viertelfinale
-    update_ko(18,1,1,ko_sieger(16,1));
-    update_ko(18,1,2,ko_sieger(16,2));
-
-    update_ko(18,2,1,ko_sieger(14,2));
-    update_ko(18,2,2,ko_sieger(15,2));
-
-    update_ko(19,1,1,ko_sieger(14,1));
-    update_ko(19,1,2,ko_sieger(15,1));
+function update_all_ko_spiele(){
+    // VF 1
+    update_ko(18,1,1,ko_sieger(15,2));
+    update_ko(18,1,2,ko_sieger(14,2));
     
+    // VF 2
+    update_ko(18,2,1,ko_sieger(16,2));
+    update_ko(18,2,2,ko_sieger(16,1));
+    
+    // VF 3
+    update_ko(19,1,1,ko_sieger(15,1));
+    update_ko(19,1,2,ko_sieger(14,1));
+    
+    // VF 4
     update_ko(19,2,1,ko_sieger(17,1));
     update_ko(19,2,2,ko_sieger(17,2));
     
     
-    //Halbfinale
+    // HF 1
     update_ko(20,1,1,ko_sieger(18,1));
     update_ko(20,1,2,ko_sieger(18,2));
+    
+    // HF 2
+    update_ko(21,1,1,ko_sieger(19,2));
+    update_ko(21,1,2,ko_sieger(19,1));  
 
-    update_ko(21,1,1,ko_sieger(19,1));
-    update_ko(21,1,2,ko_sieger(19,2));  
-
-    //Finale
+    // Finale
     update_ko(22,1,1,ko_sieger(20,1));
     update_ko(22,1,2,ko_sieger(21,1));    
 }
-#echo sieger(2,2,0);
-check_all_ko();
 
 
-//include "src/include/code/tabelle.inc.php";
-
-function ko_gruppe($gruppe, $sieger){
-
-    // Das gibt den ersten/zweiten der Tabelle aus
+function ko_gruppe($gruppe, $platz){
+    ## Gibt die team_nr des Teams zurück, das in Gruppe $gruppe auf Platz: $platz steht.
+    $platz -= 1; ## Array fängt bei 0 an...
     list($punkte, $tore, $gegentore, $diff, $team_name, $sieg, $unentschieden, $niederlage, $gruppe, $team_nr) = wm_tabelle($gruppe);
-
-    return $team_nr[$sieger-1];
-
-    #print_r($team_nr);
-
+    
+    
+    if ($sieg[$platz] + $unentschieden[$platz] + $niederlage[$platz] == 3){
+        ## Prüfen, ob schon alle Spiele gespielt.., vllt noch auf spielende Warten?
+        return $team_nr[$platz];
+    } else {
+        ## Gruppe noch nicht beendet.. Noch nichts eingeben..
+        return 0;
+    }
+        
 }
 
-#ko_gruppe("A",0);
 
+function update_gruppenbeste(){
+    ## AF 1
+    update_ko(14,1,1,ko_gruppe("A", 2));
+    update_ko(14,1,2,ko_gruppe("B", 2));
+    
+    ## AF 2
+    update_ko(14,2,1,ko_gruppe("A", 1));
+    update_ko(14,2,2,ko_gruppe("C", 2));
 
+    ## AF 3
+    update_ko(15,1,1,ko_gruppe("C", 1));
+    ##update_ko(15,1,2,ko_gruppe("A", 2));
 
+    ## AF 4
+    update_ko(15,2,1,ko_gruppe("B", 1));
+    ##update_ko(15,2,2,ko_gruppe("A", 2));
+
+    ## AF 5
+    update_ko(16,1,1,ko_gruppe("D", 2));
+    update_ko(16,1,2,ko_gruppe("E", 2));
+
+    ## AF 6
+    update_ko(16,2,1,ko_gruppe("F", 1));
+    ##update_ko(16,2,2,ko_gruppe("A", 2));
+
+    ## AF 7
+    update_ko(17,1,1,ko_gruppe("E", 1));
+    ##update_ko(17,1,2,ko_gruppe("A", 2));
+
+    ## AF 8
+    update_ko(17,2,1,ko_gruppe("D", 1));
+    update_ko(17,2,2,ko_gruppe("F", 2));    
+}
+
+/*
 function check_finals() {
     // Das muss auf jeden Fall angepasst werden!
     # erstmal sql insert
@@ -442,7 +480,7 @@ function check_finals() {
 
         $statement = $g_pdo->prepare($sql);
         $result = $statement->execute();
-}
+}*/
 
 // HIer muss das irgenwie ausgeführt werden....?
 //check_finals();

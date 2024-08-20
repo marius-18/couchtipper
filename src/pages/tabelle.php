@@ -81,9 +81,10 @@ echo "  <div class=\"btn-group\">
 if ((get_wettbewerb_code(get_curr_wett()) == "BuLi") && (get_curr_wett()[1] == 1)) {
     echo "      
             <button type=\"button\" class=\"btn btn-info m-1\" onclick = \"rank_ausblenden(504)\" id=\"514\">Hinrunde</button>
-            <button type=\"button\" class=\"btn btn-info m-1\" onclick = \"rank_ausblenden(505)\" id=\"515\">R&uuml;ckrunde</button>
-        </div>";
+            <button type=\"button\" class=\"btn btn-info m-1\" onclick = \"rank_ausblenden(505)\" id=\"515\">R&uuml;ckrunde</button>";
 }
+
+echo "</div>";
 
 if (get_wettbewerb_code(get_curr_wett()) == "BuLi") {
     echo "
