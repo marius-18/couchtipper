@@ -24,7 +24,12 @@ rechte_update(get_curr_wett());
 ### Insert Missing player
 if (isset($_POST["add_missing_player"]) && is_numeric($_POST["add_missing_player"])){
     $add_missing_player = [$_POST["add_missing_player"]];
-    check_in_manually($add_missing_player, get_curr_wett());
+    if (wettbewerb_has_parts(get_curr_wett())){
+        check_in_manually($add_missing_player, get_hinrunde(get_curr_wett()));
+        check_in_manually($add_missing_player, get_rueckrunde(get_curr_wett()));
+    } else {
+        check_in_manually($add_missing_player, get_curr_wett());
+    }
 }
 
 #########################################################################################
