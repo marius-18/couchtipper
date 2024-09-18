@@ -13,7 +13,12 @@ function rank_ausblenden(wert) {
             document.getElementById(wert+10).className = "btn btn-info focus m-1";
         } else{
             document.getElementById(i).style.display = "none";
-            document.getElementById(i+10).className = "btn btn-info m-1";
+            try{
+                document.getElementById(i+10).className = "btn btn-info m-1";
+            } catch (error){
+                console.log("Error, weil Hinrunde/Rückrunde Button nicht existiert");
+                console.error(error);
+            }
         }
     }
 }
