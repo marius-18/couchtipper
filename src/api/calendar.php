@@ -66,6 +66,60 @@ function create_team_events($team){
     }
 }
 
+function create_additional_events($team){
+    #echo "<br><br>";
+    #echo getcwd();
+    list($wett_id, $wett_id_part) = get_curr_wett();
+    
+    $lines = file("src/api/other_games.txt");
+    for($i=0;$i < count($lines); $i++){
+        
+        $values = explode(", ", $lines[$i]);
+
+        if ($values[0] != $wett_id){
+            continue;
+        }
+        
+        $datum      = $values[1];
+        $uhrzeit    = $values[2];
+        $gegner     = $values[3];
+        $wett_name  = $values[4];
+        $spt        = $values[5];
+        $wo         = $values[6];
+        $stadt      = $values[7];
+        $stadion    = $values[8];
+        
+        $datum = strtotime($datum . $uhrzeit);
+
+        
+        $starttime = stamp_to_cal($datum);
+        $endtime = stamp_to_cal($datum +90*60 + 15*60);
+
+        $title = $gegner;
+        $title .= " " . $wo;
+        
+        $location = "$stadt - $stadion";
+        $notes = "$spt $wett_name - Automatisch erstellt von couchtipper.de";
+    
+        
+        $uid = $spt."".$datum."@couchtipper_cal";
+        
+        $title = html_entity_decode($title, ENT_COMPAT, 'UTF-8');
+        $location = html_entity_decode($location, ENT_COMPAT, 'UTF-8');
+        $curr_time = stamp_to_cal(time());
+
+        create_event($uid, $location, $title, $notes, $starttime, $endtime, $curr_time);
+        
+    }
+    
+
+    
+
+
+
+    #echo "<br><br>";
+}
+
 
 function create_event($uid, $location, $title, $notes, $starttime, $endtime, $curr_time){
     $out = "BEGIN:VEVENT\n";
@@ -122,7 +176,7 @@ function create_cal($team){
 
     
     create_team_events($team);
-    
+    create_additional_events($team);
     
     echo "END:VCALENDAR";
 }
