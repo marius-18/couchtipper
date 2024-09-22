@@ -282,7 +282,15 @@ function get_ergebnis($spieltag,$modus, $jahr){
                 // Das ist das aktuelle Spiel!
                 $tore_heim[$sp_nr] = $match["matchResults"][1]["pointsTeam1"];
                 $tore_aus[$sp_nr]  = $match["matchResults"][1]["pointsTeam2"];
-        
+                
+                foreach ($match["goals"] as $scored_goals){
+                    ## Gehe alle Tore durch und schaue, ob ein Score höher ist, als eingetragenes Ergebnis..
+                    ## Wenn ja, setze den Score als aktuelles Ergebnis
+                    if (($scored_goals["scoreTeam1"] > $tore_heim[$sp_nr]) or ($scored_goals["scoreTeam2"] > $tore_aus[$sp_nr])){
+                        $tore_heim[$sp_nr] = $scored_goals["scoreTeam1"];
+                        $tore_aus[$sp_nr]  = $scored_goals["scoreTeam2"];         
+                    }
+                }
                 echo "Spiel $sp_nr ";
                 echo "$team1 ".$tore_heim[$sp_nr]." - ".$tore_aus[$sp_nr]." $team2";
                 echo "<br>";
