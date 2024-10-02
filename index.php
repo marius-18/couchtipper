@@ -50,6 +50,9 @@ require_once("src/include/lib/queries.inc.php");
 ### Library für alle möglichen Eingabeforms
 require_once("src/include/lib/forms.inc.php");
 
+### Um precomputations im Hintergrund auszuführen
+require_once("src/include/lib/precomputation.inc.php");
+
 ### Bindet die Befugnisse ein. Wer darf was ?
 require_once("../auth/include/permissions.inc.php");
 

@@ -4,7 +4,6 @@ echo "begin<br>";
 ### Für Spieltag und Tipps reminder
 require_once("../auth/include/bot.inc.php");
 require_once("src/include/code/get_games.inc.php");
-require_once('src/include/lib/precomputation.inc.php');
 
 ### Fürs Ergebnisse aus der DB holen (get_games wird auch benutzt)
 include_once("src/include/code/input_template.inc.php");
@@ -41,17 +40,24 @@ delete_hello_id();
 ### Ergebnisse aus der offenen DB holen 
 input_results();
 
+
 ### Do Some precomputation
 if (is_big_tournament(get_curr_wett())){
-    ## TODO: vielleicht nicht immer machen?
-    #precompute_all_tipps_to_db("Spieltag");
-    #precompute_all_tore_to_db(15, "");
-
-    ## 
+    ## Nur bei laufenden Wettbewerben
     if (is_active_wettbewerb()){
         echo "Update KO Runde!<br>";
         update_gruppenbeste();
         update_all_ko_spiele();
+        
+        ## TODO: vielleicht nicht immer machen?
+        precompute_all_tipps_to_db(0, "Spieltag");
+        precompute_all_tore_to_db(NULL, 15);
+    }
+} else  {
+    ## Normale Bundesliga Saison
+    if (spieltag_running() && is_active_wettbewerb()){
+        precompute_all_tipps_to_db(akt_spieltag(), "Spieltag");   
+        precompute_all_tore_to_db(akt_spieltag(), NULL);    
     }
 }
 

@@ -33,9 +33,20 @@ function print_games($args, $modus, $change){
     
     
     $help = "";
-    $alle_tore = get_tore($real_spieltag, $modus);
-    list($other_tipps_args, $punkte) = get_other_tipps($real_spieltag,$modus);
     
+    ## Hole die Torschützen
+    $alle_tore = get_precompute_tore($real_spieltag);
+    if (empty($alle_tore)){
+        ## Falls Tore noch nicht vorberechnet wurden!
+        $alle_tore = get_tore($real_spieltag, $modus);
+    }
+    
+    ## Hole andere Tipps
+    list($other_tipps_args, $punkte) = get_precompute_tipps($real_spieltag);
+    if (empty($other_tipps_args)){
+        ## Falls Tipps noch nicht vorberechnet wurden!
+        list($other_tipps_args, $punkte) = get_other_tipps($real_spieltag,$modus);
+    }
     
     if (!is_big_tournament(get_curr_wett())) {
         $img_folder = "Vereine"; 
