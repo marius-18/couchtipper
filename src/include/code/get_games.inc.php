@@ -385,16 +385,19 @@ usort($match["goals"], function($a, $b) {
 //echo "<br><br><br>";
             //print_r($match["goals"]);
 // Das ist das aktuelle Spiel!
-            $ret[$sp_nr] = "<table align=\"center\">";
+            $ret[$sp_nr] = "<table class=\"table\" align=\"center\" style=\"width: auto !important; min-width:75%;\">";
             $t1 = 0;
             $t2 = 0;
             foreach ($match["goals"] as $goal){
                 $zusatz = "";
                 if ($goal["scoreTeam1"] >  $t1) {
-                    $ret[$sp_nr] .= "<tr class=\"table-info\">";
+                    $ret[$sp_nr] .= "<tr class=\"table-secondary\">";
+                    $heimtor = true;
                 }
                 else if ($goal["scoreTeam2"] >  $t2) {
-                    $ret[$sp_nr] .= "<tr class=\"table-primary\">";
+                    $ret[$sp_nr] .= "<tr class=\"table-secondary\">";
+                    $heimtor = false;
+
                 } else {
                     $zusatz = "(VAR)";
                 }
@@ -424,9 +427,21 @@ usort($match["goals"], function($a, $b) {
                 } else {
                     $match_minute = $goal["matchMinute"]."'";
                 }
+                
                 $ret[$sp_nr] .= "<td>".$match_minute."</td>";
-                $ret[$sp_nr] .= "<td>".$goal["scoreTeam1"]." : ".$goal["scoreTeam2"]."</td>";
-                $ret[$sp_nr] .= "<td>".$goal["goalGetterName"]."</td>";
+                
+                if ($heimtor){
+                    $ret[$sp_nr] .= "<td>".$goal["goalGetterName"]."</td>";
+                } else {
+                    $ret[$sp_nr] .= "<td></td>";
+                }
+                
+                $ret[$sp_nr] .= "<td class=\"text-nowrap\">".$goal["scoreTeam1"]." : ".$goal["scoreTeam2"]."</td>";
+                if (!$heimtor){
+                    $ret[$sp_nr] .= "<td>".$goal["goalGetterName"]."</td>";
+                } else {
+                    $ret[$sp_nr] .= "<td></td>";
+                }
                 $ret[$sp_nr] .= "<td>$zusatz</td>";
                 $ret[$sp_nr] .= "</tr>";
                 

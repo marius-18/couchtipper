@@ -6,7 +6,7 @@ header('Content-Type: text/html; charset=UTF-8');
 require_once("../auth/include/security.inc.php");
 is_logged();
 
-$wartung = 1;
+$wartung = 0;
 $aktuelle_wett_id = [8,7];
 $g_modus = "BuLi";
 $global_wett_id = "8";

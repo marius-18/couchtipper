@@ -296,13 +296,20 @@ function print_game_details($modus, $sp_nr, $real_sp_nr, $punkte, $alle_tore, $v
     #echo "<hr>";
     echo "</div>";
     
-    if ($modus == "Spieltag"){
+    if (($modus == "Spieltag") || ($modus == "Tipps")){
         print_tore($alle_tore, $real_sp_nr, $sp_nr);     
     }
     
     if (($modus == "Tipps") && !isset($user_nr[$real_sp_nr[$sp_nr]])){ 
         print_pre_games($team1, $team2);   
     }
+    
+    if (($modus == "Tipps") && isset($user_nr[$real_sp_nr[$sp_nr]])){ 
+        # TODO: Hier könnte man noch das tatsächliche Ergebnis anzeigen
+        #print_r($alle_tore);
+    }
+    
+    
     
     echo "<table class=\"table\" align = \"center\" width = \"75%\" padding-left = \"10em\">";
     if (isset($user_nr[$real_sp_nr[$sp_nr]])){
