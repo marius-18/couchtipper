@@ -577,7 +577,7 @@ function get_next_games(){
     return array($spiel, $datum);
 }
 
-function get_pre_games($team_nr){
+function get_pre_games($team_nr, $min_spt){
     global $g_pdo;
    
     $sql = "SELECT Spieltage.spieltag, Spieltage.sp_nr, team1, team2, tore1, tore2, t1.team_name AS tname1, t2.team_name  AS tname2
@@ -587,10 +587,13 @@ function get_pre_games($team_nr){
             AND (Spieltage.sp_nr = Ergebnisse.sp_nr)
             AND (t1.team_nr = team1)            
             AND (t2.team_nr = team2)
+            AND Spieltage.spieltag > $min_spt
             ORDER BY Spieltage.spieltag DESC";
     
     foreach ($g_pdo->query($sql) as $row) {
         $sp_nr = $row['spieltag'] . "-" . $row['sp_nr'];
+        $spieltag[$sp_nr] = $row['spieltag'];
+
         $team1[$sp_nr] = $row['tname1'];
         $team2[$sp_nr] = $row['tname2'];
 
@@ -602,25 +605,29 @@ function get_pre_games($team_nr){
         
         if ($team_nr == $team_nr1[$sp_nr]){
             if ($tore1[$sp_nr] > $tore2[$sp_nr]){
-                $result[$sp_nr] = "table-success";
+                $result[$sp_nr] = "success";
             } elseif ($tore1[$sp_nr] < $tore2[$sp_nr]){
-                $result[$sp_nr] = "table-danger";                
+                $result[$sp_nr] = "danger";                
             } else {
-                $result[$sp_nr] = "";   
+                $result[$sp_nr] = "secondary";   
             }
+            $gegner_id[$sp_nr] = $team_nr2[$sp_nr];
+            $heimspiel[$sp_nr] = true;
         } else {
             if ($tore2[$sp_nr] > $tore1[$sp_nr]){
-                $result[$sp_nr] = "table-success";
+                $result[$sp_nr] = "success";
             } elseif ($tore2[$sp_nr] < $tore1[$sp_nr]){
-                $result[$sp_nr] = "table-danger";                
+                $result[$sp_nr] = "danger";                
             } else {
-                $result[$sp_nr] = "";   
+                $result[$sp_nr] = "secondary";   
             }
+            $gegner_id[$sp_nr] = $team_nr1[$sp_nr];
+            $heimspiel[$sp_nr] = false;
         }
         
     }
     
-    return array($team1, $team2, $tore1, $tore2, $result);
+    return array($team1, $team2, $tore1, $tore2, $result, $gegner_id, $heimspiel, $spieltag);
 }
 
 function get_bot_spiele($user_nr, $next_games, $mode){

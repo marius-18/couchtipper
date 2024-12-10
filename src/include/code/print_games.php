@@ -3,11 +3,7 @@
 
 function print_games($args, $modus, $change){
 
-    if (get_wettbewerb_code(get_curr_wett()) == "BuLi"){
-        $endung = "gif";
-    } else {
-        $endung = "png";
-    }
+    
     list ($datum, $team_heim, $team_aus, $tore_heim, $tore_aus, $team_heim_nr, 
             $team_aus_nr, $real_sp_nr, $real_spieltag, $anz_spiele, $stadt, $stadion) = $args;
     
@@ -48,13 +44,7 @@ function print_games($args, $modus, $change){
         list($other_tipps_args, $punkte) = get_other_tipps($real_spieltag,$modus);
     }
     
-    if (!is_big_tournament(get_curr_wett())) {
-        $img_folder = "Vereine"; 
-    } elseif (get_wettbewerb_code(get_curr_wett()) == "EM")  {
-        $img_folder = "Nations/EM";   
-    } else {
-        $img_folder = "Nations/WM";           
-    }
+    list($img_folder, $endung) = get_img_details();
     
     for ($i = 0; $i < $anz_spiele; $i++){
         $visible_index = $i + 100 ;
@@ -213,35 +203,81 @@ function print_tore($alle_tore, $real_sp_nr, $sp_nr){
 }
 
 function print_pre_games($team_nr1, $team_nr2){
-
-    echo "<div class=\"container\" style=\"margin-bottom:5px\">";  
-    echo "Letzte Spiele: ";
-    echo "<table class=\"table\">";
-
-    list($team1, $team2, $tore1, $tore2, $result) = get_pre_games($team_nr1);   
-    foreach ($team1 AS $id => $team){
-        echo "<tr class=\"".$result[$id]."\">";
-        echo "<td>".$team1[$id]."</td>";
-        echo "<td>".$tore1[$id] . " - " . $tore2[$id]."</td>";
-        echo "<td>".$team2[$id]."</td>";
-        echo "</tr>";
-    }
+    ## Gibt die letzten Spiele des Teams zurück
     
-    echo "<tr class=\"bg-secondary\"><td colspan = \"3\"></td></tr>";
+    echo "<hr>";
+    echo "<div class=\"container mb-2\">";  
+    echo "<h6><b>Vergangene Spiele von ".get_team_name($team_nr1).": </b></h6>";
+    print_pre_games_badges($team_nr1);
+    echo "</div>";
+    echo "<hr>";
+    echo "<div class=\"container mt-2\">";  
+    echo "<h6><b>Vergangene Spiele von ".get_team_name($team_nr2).": </b></h6>";
+    print_pre_games_badges($team_nr2);
+    echo "</div>";
     
-    list($team1, $team2, $tore1, $tore2, $result) = get_pre_games($team_nr2);   
-    foreach ($team1 AS $id => $team){
-        echo "<tr class=\"".$result[$id]."\">";
-        echo "<td>".$team1[$id]."</td>";
-        echo "<td>".$tore1[$id] . " - " . $tore2[$id]."</td>";
-        echo "<td>".$team2[$id]."</td>";
-        echo "</tr>";
-    }
     
-    echo "</table>";
+    
+//     echo "<table class=\"table\">";
+// 
+//     list($team1, $team2, $tore1, $tore2, $result, $gegner_id, $heimspiel) = get_pre_games($team_nr1);   
+//     foreach ($team1 AS $id => $team){
+//         echo "<tr class=\"table-".$result[$id]."\">";
+//         echo "<td>".$team1[$id] ."</td>";
+//         echo "<td>".$tore1[$id] . " - " . $tore2[$id]."</td>";
+//         echo "<td>".$team2[$id]."</td>";
+//         echo "</tr>";
+//     }
+//     
+//     echo "<tr class=\"bg-secondary\"><td colspan = \"3\"></td></tr>";
+//     
+//     list($team1, $team2, $tore1, $tore2, $result) = get_pre_games($team_nr2);   
+//     foreach ($team1 AS $id => $team){
+//         echo "<tr class=\"table-".$result[$id]."\">";
+//         echo "<td>".$team1[$id]."</td>";
+//         echo "<td>".$tore1[$id] . " - " . $tore2[$id]."</td>";
+//         echo "<td>".$team2[$id]."</td>";
+//         echo "</tr>";
+//     }
+//     
+//     echo "</table>";
+    
+    
     echo "</div>";
 
     
+}
+
+function print_pre_games_badges($team_nr){
+    
+    list($img_folder, $endung) = get_img_details();
+    echo "<div class=\"row\">";
+    list($team1, $team2, $tore1, $tore2, $result, $gegner_id, $heimspiel, $spieltag) = get_pre_games($team_nr, akt_spieltag()-12);   
+    foreach ($team1 AS $id => $team){
+        
+        $short_result = $team1[$id] . " " . $tore1[$id] . " - " . $tore2[$id] . " " . $team2[$id];
+
+        echo "<div class=\"col p-1  align-middle\">";
+        
+        echo "<a data-html=\"true\" data-toggle=\"tooltip\" title=\"".$spieltag[$id].". Spieltag<br>$short_result\">";
+        
+        echo "<div class=\"badge align-middle badge-".$result[$id]."\">";
+        
+        if ($heimspiel[$id]){
+            echo "<i class=\"fa-solid fa-house\"></i> ";
+        } else {
+            echo "<i class=\"fa-solid fa-plane\"></i> ";
+        }
+        
+        echo "<img src=\"images/$img_folder/".$gegner_id[$id].".$endung\" style=\" max-width: 30px;   max-height:30px;\"> ";
+        #echo "<strong class=\"align-middle h5 \">N</strong> ";
+        echo "<strong class=\"align-middle h6 \">".$tore1[$id] . ":" . $tore2[$id]."</strong>";
+
+        echo "</div>"; 
+        echo "</a>";
+        echo "</div>";
+    }
+    echo "</div>";
 }
 
 
@@ -255,7 +291,9 @@ function print_game_details($modus, $sp_nr, $real_sp_nr, $punkte, $alle_tore, $v
     echo "<td class=\"center\" colspan = \"5\"  style=\"text-align:center\">";
     
     echo "<div class=\"container container-fluid\"  style=\"margin-bottom:5px\">";
-    print_r( $stadion);
+    
+    echo "<h5><span class=\"badge badge-light p-2\"> 🏟️ $stadion</span></h5>";
+    #echo "<hr>";
     echo "</div>";
     
     if ($modus == "Spieltag"){
@@ -326,6 +364,7 @@ function print_all_game_details($args, $my_spieltag){
         print_game_details($modus, $my_spnr, $identity, [], $alle_tore, $visible_index, $other_tipps_args, $gruppe, $stadt, $stadion, 0, 0);                
     }
 }
+
 
 
 

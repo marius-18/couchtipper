@@ -5,6 +5,10 @@ $(document).ready(function(){
 });
 
 
+$(document).ready(function(){
+  $('[data-toggle="popover"]').popover();
+});
+
 // Funktionen für die Auswahl von Saisons
 function seasons_all_on(list){
   list.forEach(seasons_button_on);
@@ -46,5 +50,4 @@ function seasons_toggle_button(id){
     seasons_button_on(id);
   }
 }
-
 

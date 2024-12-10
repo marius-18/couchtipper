@@ -6,7 +6,7 @@ header('Content-Type: text/html; charset=UTF-8');
 require_once("../auth/include/security.inc.php");
 is_logged();
 
-$wartung = 0;
+$wartung = 1;
 $aktuelle_wett_id = [8,7];
 $g_modus = "BuLi";
 $global_wett_id = "8";
@@ -75,6 +75,7 @@ if ($index == "cal"){
     include_once("src/api/calendar.php");
     exit;
 }
+
 // Wettbewerb check in (nur im aktiven Wettbewerb!!)
 #TODO: Der checkin functioniert so nicht!! ANPASSEN!
 #TODO: checkin nur, wenn der wettbewerb "aktiv" ist..
@@ -158,7 +159,7 @@ foreach ($_GET as $url_parameter => $url_value){
     <script src="src/include/scripts/update.js?v=1"></script> <!-- Um neue Einstellungen zu updaten -->
 
 
-    <script src="src/include/scripts/bootstrap.js?v=2"></script> <!-- Für Bootstrap steuerungen -->
+    <script src="src/include/scripts/bootstrap.js?v=3"></script> <!-- Für Bootstrap steuerungen -->
     
     <link rel="icon" type="image/png" href="images/logo3-rund.png">
     <link rel="apple-touch-icon" href="images/logo3.png"/>

@@ -39,4 +39,25 @@ function get_team_open_db_name($team){
     }
     return $open_db_name;
 }
+
+
+
+function get_img_details(){
+    ## Returns Image Path and image suffix for corresponding competition
+    if (!is_big_tournament(get_curr_wett())) {
+        $img_folder = "Vereine"; 
+    } elseif (get_wettbewerb_code(get_curr_wett()) == "EM")  {
+        $img_folder = "Nations/EM";   
+    } else {
+        $img_folder = "Nations/WM";           
+    }
+    
+    if (get_wettbewerb_code(get_curr_wett()) == "BuLi"){
+        $endung = "gif";
+    } else {
+        $endung = "png";
+    }
+    
+    return array($img_folder, $endung);
+}
 ?>
