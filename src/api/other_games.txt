@@ -8,3 +8,4 @@
 8, 23.01.2025, 21:00, Ferencvaros Budapest, Europa League, 7. Spieltag, Heimspiel, Frankfurt, Deutsche Bank Park, 
 8, 30.01.2025, 21:00, AS Rom, Europa League, 8. Spieltag, Auswärtsspiel, Rom, Olimpico, 
 8, 30.10.2024, 18:00, M'Gladbach, DFB-Pokal, 2. Spieltag, Heimspiel, Frankfurt, Deutsche Bank Park, 
+8, 04.12.2024, 20:45, RB Leipzig, DFB-Pokal, Achtelfinale, Auswärtsspiel, Leipzig, RB Arena, 
