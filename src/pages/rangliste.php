@@ -45,11 +45,11 @@ if ((get_wettbewerb_code(get_curr_wett()) == "BuLi") && ($id_part == 1)) {
     
         
     echo "<div class=\"\" id=\"rang1\" style=\"display: none;\">";
-        print_rangliste(1,17,1);
+        print_rangliste(1,17,1, true);
     echo "</div>";
 
     echo "<div class=\"\" id=\"rang2\" style=\"display: block;\">";
-        print_rangliste(18,akt_spieltag(),1);
+        print_rangliste(18,akt_spieltag(),1, true);
     echo "</div>";
 
     echo "<div class=\"\" id=\"rang3\" style=\"display: none;\">";
@@ -69,7 +69,7 @@ if ((get_wettbewerb_code(get_curr_wett()) == "BuLi") && ($id_part == 1)) {
     
     echo "</div>";
 } else {
-    print_rangliste(1,akt_spieltag(),1);
+    print_rangliste(1,akt_spieltag(),1, true);
 }
 
 

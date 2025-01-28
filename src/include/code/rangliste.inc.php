@@ -16,14 +16,22 @@ function rangliste ($begin, $ende, $gruppe, $rang_wett_id = ""){
         list($id, $id_part) = $rang_wett_id;  
     }
     
+    $pay_border = Null;
+    
     if (wettbewerb_has_parts($id)){
         // Decider: Hinrunde oder Rückrunde ?!
         if ($begin <= 17 && $ende <= 17 ) {
             $array1 = [$id, 0];
-            $array2 = [$id, 0];        
+            $array2 = [$id, 0];
+            
+            $pay_border = get_wettbewerb_num_gewinner($array1);
+            
         } elseif ($begin >= 18 && $ende >= 18 ) {
             $array1 = [$id, 1];
-            $array2 = [$id, 1];   
+            $array2 = [$id, 1]; 
+            
+            $pay_border = get_wettbewerb_num_gewinner($array1);
+
         } else {
             $array1 = [$id, 0];
             $array2 = [$id, 1];
@@ -32,6 +40,8 @@ function rangliste ($begin, $ende, $gruppe, $rang_wett_id = ""){
     } else {
         $array1 = [$id, 0];
         $array2 = [$id, 0];
+        
+        $pay_border = get_wettbewerb_num_gewinner($array1);
     }
     
 
@@ -153,21 +163,29 @@ function rangliste ($begin, $ende, $gruppe, $rang_wett_id = ""){
 
     }
 
-    return array($punkte, $spiele, $akt_punkte, $schnitt, $letzte_punkte, $user, $platz_r, $spieltagssieger, $spieltagssieger_last);
+    return array($punkte, $spiele, $akt_punkte, $schnitt, $letzte_punkte, $user, $platz_r, $spieltagssieger, $spieltagssieger_last, $pay_border);
 
 }
 
 
 
-function print_rangliste($begin, $ende, $modus, $rang_wett_id = ""){
-
+function print_rangliste($begin, $ende, $modus, $chk_pay_line = false){
+     $rang_wett_id = "";
+     
+     if ($chk_pay_line){
+        $pay_line_info = "<br><div class=\"alert alert-info\">
+                            <strong>Hinweis:</strong>
+                            Die graue Linie markiert die Platzierung, bis zu der Gewinne ausgezahlt werden.</div>";
+     } else {
+        $pay_line_info = "";
+     }
  
-    list($punkte, $spiele, $akt_punkte, $schnitt, $letzte_punkte, $user, $platz, $spieltagssieger, $spieltagssieger_last) = rangliste($begin, $ende, $modus, $rang_wett_id);
+    list($punkte, $spiele, $akt_punkte, $schnitt, $letzte_punkte, $user, $platz, $spieltagssieger, $spieltagssieger_last, $pay_border) = rangliste($begin, $ende, $modus, $rang_wett_id);
     
 
     if ($ende != $begin) {
         ## Das brauchen wir nur, um den Platz am vorherigen Spieltag zu bestimmen
-        list($punkte1, $spiele1, $akt_punkte1, $schnitt1, $letzte_punkte1, $user1, $platz_alt, $spieltagssieger1, $spieltagssieger_last1) = rangliste($begin, $ende-1, $modus, $rang_wett_id);
+        list($punkte1, $spiele1, $akt_punkte1, $schnitt1, $letzte_punkte1, $user1, $platz_alt, $spieltagssieger1, $spieltagssieger_last1, $pay_border) = rangliste($begin, $ende-1, $modus, $rang_wett_id);
     } else {
         ## An Spieltag 18 fangen wir neu an! Da sollen die letzten Punkte nix zählen
         foreach ($user as $i => $nr){
@@ -187,6 +205,8 @@ function print_rangliste($begin, $ende, $modus, $rang_wett_id = ""){
     }
     
     echo "<th><i class=\"fas fa-arrow-down\"></th><th>$sym_last_gameday</th><th></th><tr>";
+    
+    
 
     foreach ($user as $i => $nr){
         if ($user[$i] == get_usernr()){
@@ -220,8 +240,19 @@ function print_rangliste($begin, $ende, $modus, $rang_wett_id = ""){
             $aenderung = "";
             $letzte_punkte[$i] = "";
         }
-
-        echo "  <tr $logged>
+        
+        if (($pay_border != Null) && ($platz[$nr] > $pay_border) && ($chk_pay_line)){
+            $pay_line = "<tr class=\"bg-secondary\">
+                            <td colspan=\"3\"></td>
+                            <td class=\"d-none d-sm-table-cell\"></td>
+                            <td colspan=\"4\"></td></tr>";
+            $chk_pay_line = false;
+        } else {
+            $pay_line = "";
+        }
+        
+        echo "  $pay_line 
+                <tr $logged>
                 <td>$platz[$nr].</td>
                 <td>".get_username_from_nr($user[$i])."</td>
                 <td>$punkte[$i]</td> 
@@ -235,7 +266,9 @@ function print_rangliste($begin, $ende, $modus, $rang_wett_id = ""){
             </tr>";
    }
    
-   echo "</table></div></div>";
+   echo "</table></div>";
+   echo $pay_line_info;
+   echo "</div>";
 }
 
 
