@@ -7,7 +7,7 @@ require_once("../auth/include/security.inc.php");
 is_logged();
 
 $wartung = 0;
-$aktuelle_wett_id = [8,7];
+$aktuelle_wett_id = [8];
 $g_modus = "BuLi";
 $global_wett_id = "8";
 $subdomain = explode(".",$_SERVER['SERVER_NAME'])[0];
@@ -219,9 +219,9 @@ MENÜ
                         <div class="dropdown-menu">
                             <div class="dropdown-header">Aktuelle Saison</div>
                             <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=8" style="color:black">BuLi 2024/25</a>
-                            <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=7" style="color:black">EM 2024</a>
                             <div class="dropdown-divider"></div>
                             <div class="dropdown-header">Vergangene</div>
+                            <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=7" style="color:black">EM 2024</a>
                             <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=6" style="color:black">BuLi 2023/24</a>
                             <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=5" style="color:black">BuLi 2022/23</a>
                             <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=4" style="color:black">BuLi 2021/22</a>
