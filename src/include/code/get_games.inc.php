@@ -595,15 +595,31 @@ function get_next_games(){
 function get_pre_games($team_nr, $min_spt){
     global $g_pdo;
    
-    $sql = "SELECT Spieltage.spieltag, Spieltage.sp_nr, team1, team2, tore1, tore2, t1.team_name AS tname1, t2.team_name  AS tname2
+    $sql = "SELECT Ergebnisse.spieltag, Ergebnisse.sp_nr, tore1, tore2,
+    CASE 
+        WHEN Ergebnisse.spieltag > 17 THEN team2 
+        ELSE team1 
+    END AS team1,
+    CASE 
+        WHEN Ergebnisse.spieltag > 17 THEN team1 
+        ELSE team2 
+    END AS team2,
+    CASE 
+        WHEN Ergebnisse.spieltag > 17 THEN t2.team_name 
+        ELSE t1.team_name 
+    END AS tname1,
+    CASE 
+        WHEN Ergebnisse.spieltag > 17 THEN t1.team_name 
+        ELSE t2.team_name 
+    END AS tname2
             FROM `Spieltage`, Ergebnisse, Teams AS t1, Teams AS t2
             WHERE (`team1` = $team_nr OR `team2` = $team_nr) 
-            AND (Spieltage.spieltag = Ergebnisse.spieltag) 
+            AND ((Spieltage.spieltag = Ergebnisse.spieltag) OR (Spieltage.spieltag = Ergebnisse.spieltag - 17))
             AND (Spieltage.sp_nr = Ergebnisse.sp_nr)
             AND (t1.team_nr = team1)            
             AND (t2.team_nr = team2)
-            AND Spieltage.spieltag > $min_spt
-            ORDER BY Spieltage.spieltag DESC";
+            AND Ergebnisse.spieltag > $min_spt
+            ORDER BY Ergebnisse.spieltag DESC";
     
     foreach ($g_pdo->query($sql) as $row) {
         $sp_nr = $row['spieltag'] . "-" . $row['sp_nr'];

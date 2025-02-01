@@ -214,38 +214,10 @@ function print_pre_games($team_nr1, $team_nr2){
     echo "<div class=\"container mt-2\">";  
     echo "<h6><b>Vergangene Spiele von ".get_team_name($team_nr2).": </b></h6>";
     print_pre_games_badges($team_nr2);
-    echo "</div>";
-    
-    
-    
-//     echo "<table class=\"table\">";
-// 
-//     list($team1, $team2, $tore1, $tore2, $result, $gegner_id, $heimspiel) = get_pre_games($team_nr1);   
-//     foreach ($team1 AS $id => $team){
-//         echo "<tr class=\"table-".$result[$id]."\">";
-//         echo "<td>".$team1[$id] ."</td>";
-//         echo "<td>".$tore1[$id] . " - " . $tore2[$id]."</td>";
-//         echo "<td>".$team2[$id]."</td>";
-//         echo "</tr>";
-//     }
-//     
-//     echo "<tr class=\"bg-secondary\"><td colspan = \"3\"></td></tr>";
-//     
-//     list($team1, $team2, $tore1, $tore2, $result) = get_pre_games($team_nr2);   
-//     foreach ($team1 AS $id => $team){
-//         echo "<tr class=\"table-".$result[$id]."\">";
-//         echo "<td>".$team1[$id]."</td>";
-//         echo "<td>".$tore1[$id] . " - " . $tore2[$id]."</td>";
-//         echo "<td>".$team2[$id]."</td>";
-//         echo "</tr>";
-//     }
-//     
-//     echo "</table>";
+    echo "</div>";  
     
     
     echo "</div>";
-
-    
 }
 
 function print_pre_games_badges($team_nr){
