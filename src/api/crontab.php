@@ -9,6 +9,9 @@ require_once("src/include/code/get_games.inc.php");
 include_once("src/include/code/input_template.inc.php");
 include_once("src/include/code/refresh.php");
 
+### Spieltage Terminieren
+require_once("src/include/code/spiele_terminieren.inc.php");
+
 ###########################################################
 ###########################################################
 ####### U S E R  -  B E N A C H R I C H T I G U N G E N
@@ -40,6 +43,9 @@ delete_hello_id();
 ### Ergebnisse aus der offenen DB holen 
 input_results();
 
+### Wöchentliche Updates ausführen
+weekly_update("Thursday", "10:00", "11:00");
+
 
 ### Do Some precomputation
 if (is_big_tournament(get_curr_wett())){
@@ -57,7 +63,7 @@ if (is_big_tournament(get_curr_wett())){
     ## Normale Bundesliga Saison
     if (spieltag_running() && is_active_wettbewerb()){
         precompute_all_tipps_to_db(akt_spieltag(), "Spieltag");   
-        precompute_all_tore_to_db(akt_spieltag(), NULL);    
+        precompute_all_tore_to_db(akt_spieltag(), NULL);  
     }
 }
 
@@ -157,6 +163,52 @@ function reminder_tipps(){
     }
     
 }
+
+
+function weekly_update($allowed_day, $start_time, $end_time){
+    ## Führt Wöchtentliche Updates aus. 
+    ## Bisher: Prüfen ob Spiele zu terminieren sind..
+    
+    // Aktuellen Wochentag und Zeit holen
+    $current_day = date("l"); // "Monday", "Tuesday", etc.
+    $current_time = date("H:i");
+        
+    $lock_file = "weekly_update.lock";
+    
+    // Prüfen, ob wir im richtigen Zeitfenster sind
+    if ($current_day === $allowed_day && $current_time >= $start_time && $current_time <= $end_time) {
+        // Datei als "Lock" verwenden, um zu verhindern, dass die Funktion mehrfach in diesem Zeitfenster ausgeführt wird
+        if (!file_exists($lock_file)) {
+            touch($lock_file); // Lock-Datei erstellen
+            
+            #######
+            ### Hier können die Funktionen eingetragen werden, die ausgeführt werden sollen!
+            #######
+            echo "Do weekly update! <br>";
+            
+            list($error, $msg) = set_all_spieltag_date();
+            
+            if (!$error){
+                send_bot_message(2, "Das wöchentliche Update wurde erfolgreich durchgeführt!\n<b>Log-Output:</b>\n". str_replace("<br>", "\n", $msg));
+                echo $msg;
+                echo "Weekly Update Done.<br>";
+            } else {
+                send_bot_message(2, "Das wöchentliche Update ist fehlgeschlagen!\nLogs\n". str_replace("<br>", "\n", $msg));
+                echo "Weekly Update Failed.<br>";
+            }
+            
+            #######
+            ### Bis hier können die Funktionen eingetragen werden, die ausgeführt werden sollen!
+            #######
+        }
+    } else {
+        // Lock-Datei löschen, wenn wir außerhalb des Zeitfensters sind
+        if (file_exists($lock_file)) {
+            unlink($lock_file);
+        }
+    }
+}
+
 
 function input_results(){
     ## Holt die Ergebnisse des aktuellen Spieltags aus OpenLigaDB
