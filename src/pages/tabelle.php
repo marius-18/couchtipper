@@ -7,17 +7,28 @@ require_once('src/include/code/get_games.inc.php');
 function rank_ausblenden(wert) {
     a = Math.floor(wert/100);
     
-    for (i=a*100; i<a*100+9; i++){
+    if ((wert == 506) && (document.getElementById(wert).style.display != "none")){
+        // Bei doppeltem klick auf "Verlauf" zwischen Tabelle und Chart wechseln
+        rank_ausblenden(509);
+        return;
+    }
+    
+    for (i=a*100; i<=a*100+9; i++){
         if (i == wert){
             document.getElementById(wert).style.display = "";
-            document.getElementById(wert+10).className = "btn btn-info focus m-1";
+            try{
+                document.getElementById(wert+10).className = "btn btn-info focus m-1";
+            }  catch (error){
+                //console.log("Error, weil Hinrunde/Rückrunde Button nicht existiert");
+                //console.log(error);
+            }
         } else{
             document.getElementById(i).style.display = "none";
             try{
                 document.getElementById(i+10).className = "btn btn-info m-1";
             } catch (error){
-                console.log("Error, weil Hinrunde/Rückrunde Button nicht existiert");
-                console.error(error);
+                //console.log("Error, weil Hinrunde/Rückrunde Button nicht existiert");
+                //console.log(error);
             }
         }
     }
@@ -123,8 +134,11 @@ print_tabelle(tabelle("Hinrunde", 0), 504, "none");
 ## Rückrundentabelle
 print_tabelle(tabelle("Rückrunde", 17), 505, "none");
 
+## Verlaufs Chart
+print_tabelle_verlauf_chart(tabelle_verlauf(), 506, "none");
+
 ## Verlaufstabelle
-print_tabelle_verlauf(tabelle_verlauf(), 506, "none");
+print_tabelle_verlauf(tabelle_verlauf(), 509, "none");
 
 ## Teiltabelle
 print_tabelle(tabelle("Bereich", 0), 507, "none");
