@@ -44,7 +44,7 @@ delete_hello_id();
 input_results();
 
 ### Wöchentliche Updates ausführen
-weekly_update("Thursday", "10:00", "11:00");
+weekly_update("Monday", "10:00", "12:00");
 
 
 ### Do Some precomputation
