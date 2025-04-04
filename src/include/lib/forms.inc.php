@@ -453,4 +453,47 @@ function spieltag_start_ende(){
     
 }
 
+
+
+
+function verlauf_hin_rueck(){
+    ## Erstellt eine Form zum Auswählen von Hinrunde & Rückrunde für das Verlaufschart
+    if (isset($_POST["verlauf_hin_rueck"])){
+        $verlauf_hin_rueck = $_POST["verlauf_hin_rueck"];
+    } else {
+        $verlauf_hin_rueck = 0;
+    }
+    
+    if ($verlauf_hin_rueck == 1){
+        $sel1 = "selected";
+    } else { $sel1 = ""; }
+    
+    if ($verlauf_hin_rueck == 2){
+        $sel2 = "selected";
+    } else { $sel2 = ""; }
+    
+    
+    $ret  = "";
+    $ret .= "<div class=\"container\">";
+    $ret .= "<form action=\"\" method=\"POST\" name=\"verlauf_hin_rueck_form\">";
+    
+    $ret .= "<div class = \"row\">
+               <div class = \"col\">
+                 <div class = \"form-group\">
+                   <select class=\"form-control\" id=\"verlauf_hin_rueck_sel\" name=\"verlauf_hin_rueck\" onchange=\"this.form.submit()\">
+                     <option value=\"0\">Spielzeit auswählen</option>
+                     <option value=\"1\" $sel1>Hinrunde</option>
+                     <option value=\"2\" $sel2>R&uuml;ckrunde</option>
+                   </select>
+                 </div>
+               </div>
+             </div>";
+    
+    $ret .= "</form>";
+    $ret .= "</div>";
+    
+    
+    return array($verlauf_hin_rueck, $ret);
+    
+}
 ?>

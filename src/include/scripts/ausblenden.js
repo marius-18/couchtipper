@@ -2,7 +2,7 @@
 
 function rangliste_ausblenden(wert) {
     // Blendet die verschiedenen Ranglisten ein und aus
-    for (i=1; i<=4; i++){
+    for (i=1; i<=5; i++){
         if (i == wert){
             document.getElementById("rang" + wert).style.display = "";
             document.getElementById("rangbutton" + wert).className = "btn btn-info focus";
