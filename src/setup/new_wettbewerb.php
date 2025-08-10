@@ -14,7 +14,7 @@
 
 <?php
 
-if (!allow_verwaltung()){
+if (!allow_main_verwaltung()){
     echo "<div class=\"alert alert-danger\"> Dieser Bereich ist <strong>nur f&uuml;r Administratoren</strong>!<br>
         Frage beim Administrator nach, um Rechte zum &Auml;ndern von Rechten zu bekommen.</div>";
     echo "</div>";

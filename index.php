@@ -228,7 +228,7 @@ MENÜ
                             <!--<a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=-6" style="color:black">BuLi 2014/15</a>-->
                             
                             <?php
-                            if (allow_verwaltung()){
+                            if (allow_main_verwaltung()){
                                 echo "<div class=\"dropdown-divider\"></div>
                                       <div class=\"dropdown-header\">Verwaltung</div>
                                       <a class=\"dropdown-item\" href=\"?year=-11\" style=\"color:black\">Verwaltung</a>";
@@ -394,7 +394,7 @@ MENÜ
 ## Wenn die Datenbank komplett leer ist, wurde gerade eine neue Saison erstellt. 
 ## Dann springen wir auf die Seite, zum weiteren Erstellen der Saison
 if (check_if_db_empty() || (isset($_GET["setup"]) &&  $_GET["setup"]== 1)) {
-    if (allow_verwaltung()){
+    if (allow_main_verwaltung()){
         ## Nur mit Verwaltungsrechten aufrufbar!
         include("src/setup/setup.php");
         exit;
@@ -410,7 +410,7 @@ if (check_if_db_empty() || (isset($_GET["setup"]) &&  $_GET["setup"]== 1)) {
 }
 
 if (get_wettbewerb_code(get_curr_wett()) == "Verwaltung") {
-    if (allow_verwaltung()){
+    if (allow_main_verwaltung()){
         ## Nur mit Verwaltungsrechten aufrufbar!
         include_once("src/setup/new_wettbewerb.php");
         ## TODO: im Verwaltungsmenü hinzufügen, welche Wettbewerbe aktiv sind usw.
