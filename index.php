@@ -6,10 +6,13 @@ header('Content-Type: text/html; charset=UTF-8');
 require_once("../auth/include/security.inc.php");
 is_logged();
 
+#set_global_wett_id(8);
+
+
 $wartung = 0;
-$aktuelle_wett_id = [8];
+$aktuelle_wett_id = get_aktuelle_wett_id();
 $g_modus = "BuLi";
-$global_wett_id = "8";
+$global_wett_id = get_global_wett_id();
 $subdomain = explode(".",$_SERVER['SERVER_NAME'])[0];
 $fulldomain = (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://" . $_SERVER['HTTP_HOST'];
 
@@ -101,10 +104,14 @@ if (is_active_wettbewerb()){
     #check_in_manually($player, 7,0);
     
     #require_once("src/include/code/refresh.php");
+    #require_once("src/include/code/get_games.inc.php");
+
     #for ($i=1;$i<35;$i++){
         #update_tabelle($i);
         #update_rangliste($i);
         #update_tabelle_platz($i);
+        #precompute_all_tore_to_db($i, NULL); 
+        #precompute_all_tipps_to_db($i, "Spieltag");   
     #}
 #}
 
@@ -218,6 +225,7 @@ MENÜ
                         </button>
                         <div class="dropdown-menu">
                             <div class="dropdown-header">Aktuelle Saison</div>
+                            <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=9" style="color:black">BuLi 2025/26</a>
                             <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=8" style="color:black">BuLi 2024/25</a>
                             <div class="dropdown-divider"></div>
                             <div class="dropdown-header">Vergangene</div>
@@ -237,6 +245,7 @@ MENÜ
                             <!--<a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=-6" style="color:black">BuLi 2014/15</a>-->
                             <?php
                             if (allow_verwaltung()){
+
                                 #echo "<div class=\"dropdown-divider\"></div>
                                 #    <div class=\"dropdown-header\">Turniere</div>
                                 #    <a class=\"dropdown-item\" href=\"?year=7\" style=\"color:black\">EM 2024</a>";
@@ -398,6 +407,42 @@ MENÜ
 </div>
 
 
+<?php 
+## Wenn die Datenbank komplett leer ist, wurde gerade eine neue Saison erstellt. 
+## Dann springen wir auf die Seite, zum weiteren Erstellen der Saison
+if (check_if_db_empty() || (isset($_GET["setup"]) &&  $_GET["setup"]== 1)) {
+    if (allow_verwaltung()){
+        ## Nur mit Verwaltungsrechten aufrufbar!
+        include("src/setup/setup.php");
+        exit;
+    } else {
+        ## Fehler anzeigen, falls hier jemand landet..
+        echo "<div class=\"alert alert-danger\"><strong>Hier ist etwas schiefgelaufen..</strong> Dieser Wettbewerb wurde noch nicht erstellt.
+        Du solltest hier eigentlich nicht sein! Durch den folgenden Button kommst du wieder zurück!";
+        echo "<br>";
+        echo '<a href="?year=reset" class="btn btn-primary">Zurück!</a>';
+        echo "</div>";
+        exit;
+    }
+}
+
+if (get_wettbewerb_code(get_curr_wett()) == "Verwaltung") {
+    if (allow_verwaltung()){
+        ## Nur mit Verwaltungsrechten aufrufbar!
+        include_once("src/setup/new_wettbewerb.php");
+        exit;
+    } else {
+        ## Fehler anzeigen, falls hier jemand landet..
+        echo "<div class=\"alert alert-danger\"><strong>Hier ist etwas schiefgelaufen..</strong> Du hast keinen Zugriff auf diese Seite!.
+        Du solltest hier eigentlich nicht sein! Durch den folgenden Button kommst du wieder zurück!";
+        echo "<br>";
+        echo '<a href="?year=reset" class="btn btn-primary">Zurück!</a>';
+        echo "</div>";
+        exit;
+    }
+}
+?>
+
 <!--
 ####################################################################################
 ### BODY
@@ -448,8 +493,12 @@ MENÜ
                 switch ($index) {
                     case "":
                         if (get_wettbewerb_code(get_curr_wett()) == "Überblick"){
-                         include_once("src/rangliste_overview.php");
-                         break;
+                            include_once("src/rangliste_overview.php");
+                            break;
+                        }
+                        if (get_wettbewerb_code(get_curr_wett()) == "Verwaltung"){
+                            include_once("src/rangliste_overview.php");
+                            break;
                         }
                         include_once("src/pages/hello.php");
                         break;
@@ -517,12 +566,8 @@ MENÜ
                         break;
                     case 15:
                         echo "<h2>Statistiken</h2>";
-                        include_once("src/pages/tabellenverlauf.php");
+                        #include_once("src/pages/tabellenverlauf.php");
                         #include_once("src/newbot.php");
-                        break;
-                    case 16:
-                        echo "<h2>TEST</h2>";
-                        include_once("src/liga_anlegen.php");
                         break;
                     default:
                         include_once("src/pages/error.php");

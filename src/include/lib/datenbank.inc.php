@@ -37,9 +37,25 @@ function new_db_connection($array){
   $g_pdo = new PDO("mysql:host=$db_host;dbname=$db_name;charset=utf8", $db_ben, $db_pass);
 }
 
+function check_if_db_empty(){
+    ## Checks if DB is empty. 
+    ## Necessary for creating new seasons
+    global $g_pdo;
+    
+    // Alle Tabellen in dieser DB abfragen
+    $stmt = $g_pdo->query("SHOW TABLES");
+    $tables = $stmt->fetchAll(PDO::FETCH_NUM);
+    
+    // Prüfen, ob keine Tabellen vorhanden sind
+    return (count($tables) === 0);
+}
+
+
+
+
+
+
 /*
-
-
 // langsam aber sicher -->
 
 $stmt = $g_pdo->prepare("SELECT user_nr,user_name FROM User WHERE team = :username AND user_nr = :usernr ORDER BY user_nr ASC;");
@@ -74,7 +90,5 @@ foreach ($g_pdo->query($sql) as $row) {
 
 }
 */
-
-$abcdef = "HALLOOOOO";
 
 ?>

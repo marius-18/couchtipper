@@ -7,7 +7,7 @@
 function get_curr_wett(){
     global $global_wett_id;
     
-    if (wettbewerb_has_parts($global_wett_id)){
+    if (wettbewerb_has_parts($global_wett_id) && (!check_if_db_empty())){
         // Decider: Hinrunde oder Rückrunde ?!
         if (akt_spieltag() <= 17 ) {
             $part = 0;
