@@ -1,4 +1,7 @@
-
+    body {
+        font-family: 'Noto Sans';
+    }
+    
   .stockerl {
     width: 30%;
     display:inline-block;

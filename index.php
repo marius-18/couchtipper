@@ -6,8 +6,6 @@ header('Content-Type: text/html; charset=UTF-8');
 require_once("../auth/include/security.inc.php");
 is_logged();
 
-#set_global_wett_id(8);
-
 
 $wartung = 0;
 $aktuelle_wett_id = get_aktuelle_wett_id();
@@ -18,13 +16,14 @@ $fulldomain = (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://" . $_SERVER['
 
 $g_nachholspiel = NULL;
 
-#if (($wartung) && ($subdomain == "code")){
-if ((1) && ($subdomain == "code")){
+if ($subdomain == "code"){
+    ## Auf code.couchtipper.de werden alle PHP Fehler angezeigt
     ini_set('display_errors', 1);
     ini_set('error_reporting', E_ALL ^  E_NOTICE); #E_NOTICE
 }
 
 if ($wartung && ($subdomain != "code")){
+    ## Wenn Wartungsmodus an ist, schalten wir auf die entsprechende Fehlerseite
     include_once("wartung.php");
     exit;
 }
@@ -70,38 +69,29 @@ if (isset($_GET["index"])){
 }
 
 if ($index == "api"){
+    ## Für API calls leiten wir direkt weiter
     include_once("src/api/crontab.php");
     exit;
 }
 
 if ($index == "cal"){
+    ## Für den Calendar wird auch weitergeleitet
     include_once("src/api/calendar.php");
     exit;
 }
 
-// Wettbewerb check in (nur im aktiven Wettbewerb!!)
-#TODO: Der checkin functioniert so nicht!! ANPASSEN!
-#TODO: checkin nur, wenn der wettbewerb "aktiv" ist..
+### CHECK IN
 if (is_active_wettbewerb()){
-    #TODO:
-    ## Check in page ändern..
-    #funktion is_checked_in einführen und dann Tipps seite sperren
-    ## Dann Statt "du hast noch nicht bezahlt" einfach "Du bist noch nicht im Wettbewerb eingetragen".. Dann Verlinken zur Seite.. oder einfach auf Hello? Statt dem Modal..
-    ## Da dann einfach alle Aktiven Wettbewerbe auflisten, dann kann man auswählen wo man
-    ## tippen will und sich eintragen.. mit bestätigung über den einsatz oder so..
-
-    #TODO: weiter: unter "Mein Konto" alle laufenden Wettbewerbe anzeigen
+    ## Bei aktivem Wettbewerb, können sich User selbst einchecken
     if (isset($_GET["new_check_in"]) && $_GET["new_check_in"] == 1){
+        ## Setzen der Session Variable, damit das Modal nur beim ersten Besuch angezeigt wird.
         $_SESSION["seen_check_in_modal"] = 0;
     }
+    ## Zeigt das Modal an
     check_in_modal();
 }
 
 #if ((1) && ($subdomain == "code")){
-    #$player = [3,4,5,6,7,8,9,10,11,12,13,14,15,17,20,21];
-    #$player = [3,5,6,7,13,17,29,76,77,78,79];
-    #$player = [55];
-    #check_in_manually($player, 7,0);
     
     #require_once("src/include/code/refresh.php");
     #require_once("src/include/code/get_games.inc.php");
@@ -115,21 +105,13 @@ if (is_active_wettbewerb()){
     #}
 #}
 
-####### DU HAST NOCH NICHT BEZAHLT
-### BITTE BITTE SCHÖNER MACHEN!!
-
-
-#if ((!check_cash(get_curr_wett())) && (!$_SESSION['bezahlt']) && is_logged() && (get_usernr() != -10) && is_checked_in() && false){
-#        //$name123 = get_usernr();
-#        echo "<script language='javascript'>alert ('Du hast noch nicht bezahlt!\\nDenk bitte daran, demnächst zu bezahlen :)')</script>";
-#        $_SESSION['bezahlt'] = 1;
-#}
-
 ## Beim Wechseln der Saison wollen wir auf der Selben Seite bleiben
 ## TODO: Das sollte auch beim cookie reset passieren...
 $url_suffix = "";
 $url_suffix_no_year = "";
 foreach ($_GET as $url_parameter => $url_value){
+    ## Speichert alle GET parameter in der variable. 
+    ## Dann können wir diese später für Links nutzen.
     $url_suffix .= "$url_parameter=$url_value&";
     if ($url_parameter != "year"){
         $url_suffix_no_year .= "$url_parameter=$url_value&";        
@@ -144,39 +126,40 @@ foreach ($_GET as $url_parameter => $url_value){
     <title><?php echo get_wettbewerb_title(get_curr_wett());?></title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- Bootstrap Style Sheet -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
-
+    
+    <!-- Bootstrap & Ajax JS Code -->
     <script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
-
+    
+    <!-- Font Awesome Icons -->
     <script src="https://kit.fontawesome.com/59d142c614.js" crossorigin="anonymous"></script>
-    <!--
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
-    -->
-
-    <script src=https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.16.0/bootstrap-table.min.js></script> <!-- sortierbare Tabellen! (braucht jquery) --> 
-    <link href=https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.16.0/bootstrap-table.min.css rel=stylesheet> <!-- stylesheet für sortierbare Tabellen -->
-
-    <link href="src/include/styles/main_style.css?v=2" rel="stylesheet" type="text/css">
     
-    <script src="src/include/scripts/ausblenden.js?v=<?php echo rand();?>"></script> <!-- Zum Ein- und ausblenden verschiedener Elemente -->
-
-    <script src="src/include/scripts/update.js?v=1"></script> <!-- Um neue Einstellungen zu updaten -->
-
-
-    <script src="src/include/scripts/bootstrap.js?v=3"></script> <!-- Für Bootstrap steuerungen -->
+    <!-- Sortierbare Tabellen -->
+    <script src=https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.16.0/bootstrap-table.min.js></script>
+    <link href=https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.16.0/bootstrap-table.min.css rel=stylesheet>
     
+    <!-- Schriftart einbinden -->
+    <link href='https://fonts.googleapis.com/css?family=Noto Sans' rel='stylesheet'>
+    
+    <!-- Main Style Sheet -->
+    <link href="src/include/styles/main_style.css?v=<?php echo 11; # echo rand();?>" rel="stylesheet" type="text/css">
+    
+    <!-- JS Code zum Ausblenden von Elementen -->
+    <script src="src/include/scripts/ausblenden.js?v=<?php echo 10; #echo rand();?>"></script>
+    
+    <!-- JS Code um neue Einstellungen zu updaten -->
+    <script src="src/include/scripts/update.js?v=1"></script>
+    
+    <!-- JS Code zum steuern von Bootstrap Elementen -->
+    <script src="src/include/scripts/bootstrap.js?v=3"></script>
+    
+    <!-- Logos -->
     <link rel="icon" type="image/png" href="images/logo3-rund.png">
     <link rel="apple-touch-icon" href="images/logo3.png"/>
-
-<link href='https://fonts.googleapis.com/css?family=Noto Sans' rel='stylesheet'>
-<style>
-body {
-    font-family: 'Noto Sans';
-}
-</style>
 </head>
 
 
@@ -243,14 +226,15 @@ MENÜ
                             <!--<a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=-4" style="color:black">EM 2016</a>-->
                             <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=-5" style="color:black">BuLi 2015/16</a>
                             <!--<a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=-6" style="color:black">BuLi 2014/15</a>-->
+                            
                             <?php
                             if (allow_verwaltung()){
-
-                                #echo "<div class=\"dropdown-divider\"></div>
-                                #    <div class=\"dropdown-header\">Turniere</div>
-                                #    <a class=\"dropdown-item\" href=\"?year=7\" style=\"color:black\">EM 2024</a>";
+                                echo "<div class=\"dropdown-divider\"></div>
+                                      <div class=\"dropdown-header\">Verwaltung</div>
+                                      <a class=\"dropdown-item\" href=\"?year=-11\" style=\"color:black\">Verwaltung</a>";
                             }
                             ?>
+                            
                         </div>
                     </div>
                 </span>
@@ -363,7 +347,7 @@ MENÜ
     </nav>
 
     <?php
-    
+        ## Wer noch nicht im Wettbewerb eingecheckt ist, bekommt einen Banner angezeigt
         if ((!is_checked_in()) && (is_logged()) && (is_active_wettbewerb()) ) {  
             echo "<div class=\"alert alert-warning text-center\" style=\"margin-bottom:0\">
                 <strong>Achtung!</strong> Du bist im aktuellen Wettbewerb noch nicht eingecheckt! 
@@ -371,6 +355,7 @@ MENÜ
                 </div>";
         }
         
+        ## Wer schon im Wettbewerb eingecheckt ist, aber noch nicht bezahlt hat bekommt einen Banner angezeigt        
         elseif ((!check_cash(get_curr_wett())) && (is_logged()) && (is_active_wettbewerb()) ) {  
             echo "<div class=\"alert alert-danger text-center\" style=\"margin-bottom:0\">
                 <a href=\"?index=11#main\" class=\"alert-link\"> 
@@ -381,10 +366,8 @@ MENÜ
                 </div>";
         }
         
-        
-    
     ?>
-</div>
+</div><!-- End Sticky Top -->
 
 
 
@@ -430,6 +413,8 @@ if (get_wettbewerb_code(get_curr_wett()) == "Verwaltung") {
     if (allow_verwaltung()){
         ## Nur mit Verwaltungsrechten aufrufbar!
         include_once("src/setup/new_wettbewerb.php");
+        ## TODO: im Verwaltungsmenü hinzufügen, welche Wettbewerbe aktiv sind usw.
+        ### set_global_wett_id(8);
         exit;
     } else {
         ## Fehler anzeigen, falls hier jemand landet..
@@ -594,6 +579,3 @@ if (get_wettbewerb_code(get_curr_wett()) == "Verwaltung") {
 </div>
 </body>
 </html>
- 
-      
- 
