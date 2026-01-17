@@ -183,9 +183,9 @@ function create_cal($team){
 
 $team = $_GET['team'];
 
-if (isset($_GET['year'])){
+#if (isset($_GET['year'])){
     create_cal($team);
-}
+#}
 
 
 ?>

@@ -232,9 +232,19 @@ if (get_fav_team() != ""){
     $calendar_year = get_curr_wett()[0];
     echo "<div class=\"alert alert-info\"> Wenn du keine Spiele deiner Lieblingsmannschaft <strong>".get_team_open_db_name(get_fav_team())."</strong> mehr verpassen willst,
     kannst du dir durch einen Klick auf den Button, den Kalender mit allen Spielen auf dein Gerät exportieren!
-    </div>    
-    <button type=\"button\" class=\"btn btn-info\" onclick=\"window.location.href='webcal://couchtipper.de?index=cal&team=$my_team&year=$calendar_year'\">Kalender exportieren!</button>
-    ";
+    </div>
+    <div class=\"alert alert-secondary\">
+    Für Geräte, die <strong>webcal</strong> unterstützen <br> (z.B. iPhone, iPad, Mac oder Outlook-Installationen auf Windows):
+    <br>
+    <button type=\"button\" class=\"btn btn-info\" onclick=\"window.location.href='webcal://couchtipper.de?index=cal&team=$my_team&year=$calendar_year'\">Kalender abonnieren!</button>
+	</div>
+    <div class=\"alert alert-secondary\">
+    Wenn <strong>kein webcal</strong> unterstützt wird: <br> 
+    Einfach den Link kopieren und im Kalender als URL hinzufügen. 
+    <br>
+    <button type=\"button\" class=\"btn btn-info\" onclick=\"copyText('https://couchtipper.de?index=cal&team=$my_team&year=$calendar_year')\">Kalenderlink kopieren!</button>
+    </div>
+";
     
 } else {
     echo "<div class=\"alert alert-danger\"><strong>Achtung!</strong> Du hast noch kein Lieblingsteam ausgew&auml;hlt. Die Funktion steht dir deshalb noch nicht zur Verf&uuml;gung.

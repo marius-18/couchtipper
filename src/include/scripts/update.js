@@ -65,3 +65,14 @@ function toggle_bot(bot, modus)
 }
 
 
+function copyText(text) {
+    navigator.clipboard.writeText(text)
+        .then(() => {
+          alert("Text wurde in die Zwischenablage kopiert!");
+        })
+        .catch(err => {
+          console.error("Fehler beim Kopieren:", err);
+        });
+}
+
+
