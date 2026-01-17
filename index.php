@@ -80,6 +80,17 @@ if ($index == "cal"){
     exit;
 }
 
+if ($index == "rebuild"){
+    ## Um die vorberechneten Werte der DB komplett neu zu setzen
+    require_once("src/include/code/refresh.php");
+    require_once("src/include/code/get_games.inc.php");
+
+    rebuild_rangliste();
+    rebuild_tabelle();
+    rebuild_full_precomputation();
+    exit;
+}
+
 ### CHECK IN
 if (is_active_wettbewerb()){
     ## Bei aktivem Wettbewerb, können sich User selbst einchecken
@@ -90,20 +101,6 @@ if (is_active_wettbewerb()){
     ## Zeigt das Modal an
     check_in_modal();
 }
-
-#if ((1) && ($subdomain == "code")){
-    
-    #require_once("src/include/code/refresh.php");
-    #require_once("src/include/code/get_games.inc.php");
-
-    #for ($i=1;$i<35;$i++){
-        #update_tabelle($i);
-        #update_rangliste($i);
-        #update_tabelle_platz($i);
-        #precompute_all_tore_to_db($i, NULL); 
-        #precompute_all_tipps_to_db($i, "Spieltag");   
-    #}
-#}
 
 ## Beim Wechseln der Saison wollen wir auf der Selben Seite bleiben
 ## TODO: Das sollte auch beim cookie reset passieren...
@@ -152,7 +149,7 @@ foreach ($_GET as $url_parameter => $url_value){
     <script src="src/include/scripts/ausblenden.js?v=<?php echo 10; #echo rand();?>"></script>
     
     <!-- JS Code um neue Einstellungen zu updaten -->
-    <script src="src/include/scripts/update.js?v=1"></script>
+    <script src="src/include/scripts/update.js?v=3"></script>
     
     <!-- JS Code zum steuern von Bootstrap Elementen -->
     <script src="src/include/scripts/bootstrap.js?v=3"></script>
@@ -207,6 +204,7 @@ MENÜ
                             <?php echo get_wettbewerb_code(get_curr_wett()). " " .get_wettbewerb_jahr(get_curr_wett());?>
                         </button>
                         <div class="dropdown-menu">
+                            <!-- ## TODO: Automatisieren! -->
                             <div class="dropdown-header">Aktuelle Saison</div>
                             <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=9" style="color:black">BuLi 2025/26</a>
                             <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=8" style="color:black">BuLi 2024/25</a>

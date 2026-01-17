@@ -168,6 +168,15 @@ function get_precompute_tore($spieltag = NULL){
 }
 
 
+function rebuild_full_precomputation(){
+    $max_spt = get_max_spieltage();
+    for ($i=1; $i<=$max_spt; $i++){
+        echo "Precompute Spieltag " . $i . ".<br>";
+        precompute_all_tipps_to_db($i, "Spieltag");
+        precompute_all_tore_to_db($i, NULL);
+    }
+}
+
 
 
 ?>

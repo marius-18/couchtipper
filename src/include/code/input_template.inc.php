@@ -156,11 +156,9 @@ function input($spieltag, $modus, $admin, $admin_nr){
 
                             if ($modus == "Ergebnisse"){
                                 update_tabelle($input_spt);
-                                //clear_rangliste();
                                 update_rangliste($input_spt);
                             }
                             if ($modus == "Tipps"){
-                                //clear_rangliste();
                                 update_rangliste($input_spt);
                             }
 
@@ -231,7 +229,6 @@ function input_cronjob($input_spt){
                 if ($result) {
                     $error_msg = "Die Ergebnisse wurden fehlerlos eingegeben.";
                     update_tabelle($input_spt);
-                    //clear_rangliste();
                     update_rangliste($input_spt);
                 }
             }

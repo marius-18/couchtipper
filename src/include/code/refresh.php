@@ -294,25 +294,96 @@ function update_rangliste_position($spieltag) {
 }
 
 
-#update_rangliste_position(18);
-#clear_rangliste();
 
-function clear_rangliste() {
+function rebuild_rangliste() {
     global $g_pdo;
+    echo "Rebuild der Rangliste wird gestartet.<br>";
 
-    $sql = "SELECT user_nr FROM User WHERE 1";
+    ## Tabelle Rangliste wird komplett geleert
+    $sql_insert = "TRUNCATE TABLE `Rangliste`;";
+    $statement = $g_pdo->prepare($sql_insert);
+    $result = $statement->execute();
 
-    foreach ($g_pdo->query($sql) as $row) {
-        $nr = $row['user_nr'];
-
-        $sql_insert = "INSERT INTO `Rangliste`(`user_nr`, `richtig`, `tendenz`, `differenz`, `punkte`, `spieltag`) 
-                        VALUES ($nr,0,0,0,0,1)";
-        $statement = $g_pdo->prepare($sql_insert);
-        $result = $statement->execute();
-
+    ## Für den ersten Spieltag jeden Spieler mit 0 initialisieren,
+    ## damit Rangliste nicht leer ist!
+    $hinrunde_user = all_user(get_hinrunde(get_curr_wett()));
+    foreach ($hinrunde_user as $id => $name){
+        check_in_rangliste(1,$id);
     }
 
+    ## In Liga Wettbewerben auch die Rückrunde neu anlegen!
+    if (wettbewerb_has_parts(get_curr_wett()[0])){
+        $rueckrunde_user = all_user(get_rueckrunde(get_curr_wett()));
+        foreach ($hinrunde_user as $id => $name){
+            check_in_rangliste(18,$id);
+        }
+    }
+
+    $max_spt = get_max_spieltage();
+    for ($i=1; $i<=$max_spt; $i++){
+        #echo "Update Spieltag " . $i ."<br>";
+        update_rangliste($i);
+    }
+    echo "Rebuild der Rangliste erfolgreich beendet.<br><br>";
+
 }
+
+
+function rebuild_tabelle() {
+    global $g_pdo;
+    echo "Rebuild der Tabelle wird gestartet.<br>";
+
+    ## TODO: Hier muss nochmal geschaut werden für WM/EM wie die Tabelle erstellt werden muss..
+
+    ## Tabelle Rangliste wird komplett geleert
+    $sql_insert = "TRUNCATE TABLE `Tabelle`;";
+    $statement = $g_pdo->prepare($sql_insert);
+    $result = $statement->execute();
+
+    ## Für den ersten Spieltag jeden Spieler mit 0 initialisieren,
+    ## damit Rangliste nicht leer ist!
+    $hinrunde_teams = get_teams_from_wett(get_curr_wett());
+
+    foreach ($hinrunde_teams as $key => $team_nr){
+        prepare_tabelle($team_nr);
+    }
+
+    $max_spt = get_max_spieltage();
+    for ($i=1; $i<=$max_spt; $i++){
+        #echo "Update Spieltag " . $i ."<br>";
+        update_tabelle($i);
+    }
+    echo "Rebuild der Tabelle erfolgreich beendet.<br><br>";
+
+
+}
+
+function prepare_tabelle($team_nr){
+    global $g_pdo;
+
+    ## TODO: Passt das auch so für WM/EM??
+    $stmt = $g_pdo->prepare("
+        INSERT INTO `Tabelle`
+            (`team_nr`, `sieg`, `unentschieden`, `niederlage`, `punkte`, `tore`, `gegentore`, `heim`, `spieltag`, `platz`)
+        VALUES
+            (:id, 0, 0, 0, 0, 0, 0, 0, 1, 0),
+            (:id, 0, 0, 0, 0, 0, 0, 0, 18, 0),
+            (:id, 0, 0, 0, 0, 0, 0, 1, 2, 0)
+        ON DUPLICATE KEY UPDATE
+            `sieg` = VALUES(`sieg`),
+            `unentschieden` = VALUES(`unentschieden`),
+            `niederlage` = VALUES(`niederlage`),
+            `punkte` = VALUES(`punkte`),
+            `tore` = VALUES(`tore`),
+            `gegentore` = VALUES(`gegentore`),
+            `heim` = VALUES(`heim`),
+            `platz` = VALUES(`platz`);
+        ");
+
+    $params = array('id' => $team_nr);
+    $stmt->execute($params);
+}
+
 
 function ko_sieger($spieltag, $spiel){
     global $g_pdo;

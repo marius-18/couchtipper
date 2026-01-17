@@ -80,6 +80,20 @@ function get_all_teams(){
     return array($team_name, $open_db_name, $city, $stadium);
 }
 
+function get_teams_from_wett($array){
+    ## Returns an array of all team nr. that are in the competition
+    global $g_pdo;
+
+    $sql = "SELECT DISTINCT team1 AS team_id FROM `Spieltage`
+            UNION SELECT team2 FROM `Spieltage` ";
+
+    $team_nr = array();
+    foreach ($g_pdo->query($sql) as $row) {
+        array_push($team_nr, $row['team_id']);
+    }
+    return $team_nr;
+}
+
 function add_team($team_name, $open_db_name, $city, $stadium){
     ## Adds a team into DB
     global $g_pdo;
@@ -91,5 +105,15 @@ function add_team($team_name, $open_db_name, $city, $stadium){
     
     return $stmt->execute($params);
     
+}
+
+function get_max_spieltage(){
+    global $g_pdo;
+    $sql_insert = "SELECT count(spieltag) as anzahl FROM `Datum` WHERE 1;";
+    $statement = $g_pdo->prepare($sql_insert);
+    $result = $statement->execute();
+    $result = $statement->fetch();
+
+    return $result['anzahl'];
 }
 ?>

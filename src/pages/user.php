@@ -33,6 +33,16 @@ if (isset($_POST["add_missing_player"]) && is_numeric($_POST["add_missing_player
 }
 
 #########################################################################################
+########## D A T E N B A N K   R E B U I L D
+#########################################################################################
+
+### Überschrift
+echo "<div style=\"text-align:left\"><font size =\"+2\"><u>Datenbanken neu aufsetzen</u></font></div><br>";
+
+echo "<a href=\"?index=rebuild\" class=\"btn btn-primary\">Datenbank Rebuild durchführen</a>";
+
+
+#########################################################################################
 ########## B E Z A H L U N G
 #########################################################################################
 
