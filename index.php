@@ -7,7 +7,7 @@ require_once("../auth/include/security.inc.php");
 is_logged();
 
 
-$wartung = 0;
+$wartung = 1;
 $aktuelle_wett_id = get_aktuelle_wett_id();
 $g_modus = "BuLi";
 $global_wett_id = get_global_wett_id();
@@ -61,6 +61,8 @@ require_once("../auth/include/permissions.inc.php");
 ### Checkt neue Besucher in den jeweiligen Wettbewerb ein.. Das kann man auch noch schöner machen.. 
 require_once("../auth/include/check_in.inc.php");
 
+### Bindet den Code der Index Seite ein
+require_once("src/include/code/index.code.php");
 
 if (isset($_GET["index"])){
     $index = $_GET["index"];
@@ -188,8 +190,6 @@ MENÜ
                 }
             ?> 
         </a>
-        
-
 
         <!-- Menü Knopf (verschwindet)                  -->
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
@@ -204,128 +204,14 @@ MENÜ
                             <?php echo get_wettbewerb_code(get_curr_wett()). " " .get_wettbewerb_jahr(get_curr_wett());?>
                         </button>
                         <div class="dropdown-menu">
-                            <!-- ## TODO: Automatisieren! -->
-                            <div class="dropdown-header">Aktuelle Saison</div>
-                            <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=9" style="color:black">BuLi 2025/26</a>
-                            <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=8" style="color:black">BuLi 2024/25</a>
-                            <div class="dropdown-divider"></div>
-                            <div class="dropdown-header">Vergangene</div>
-                            <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=7" style="color:black">EM 2024</a>
-                            <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=6" style="color:black">BuLi 2023/24</a>
-                            <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=5" style="color:black">BuLi 2022/23</a>
-                            <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=4" style="color:black">BuLi 2021/22</a>
-                            <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=3" style="color:black">EM 2021</a>
-                            <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=2" style="color:black">BuLi 2020/21</a>
-                            <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=1" style="color:black">BuLi 2019/20</a>
-                            <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=0" style="color:black">BuLi 2018/19</a>
-                            <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=-1" style="color:black">WM 2018</a>
-                            <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=-2" style="color:black">BuLi 2017/18</a>
-                            <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=-3" style="color:black">BuLi 2016/17</a>
-                            <!--<a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=-4" style="color:black">EM 2016</a>-->
-                            <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=-5" style="color:black">BuLi 2015/16</a>
-                            <!--<a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=-6" style="color:black">BuLi 2014/15</a>-->
-                            
-                            <?php
-                            if (allow_main_verwaltung()){
-                                echo "<div class=\"dropdown-divider\"></div>
-                                      <div class=\"dropdown-header\">Verwaltung</div>
-                                      <a class=\"dropdown-item\" href=\"?year=-11\" style=\"color:black\">Verwaltung</a>";
-                            }
-                            ?>
-                            
+                            <?php print_year_dropdown($url_suffix_no_year); ?>
                         </div>
                     </div>
                 </span>
             </ul>
             
             <ul class="nav navbar-nav navbar-left">
-                <?php 
-                    if (get_wettbewerb_code(get_curr_wett()) == "BuLi"){
-                        echo "
-                            <li class=\"nav-item\">
-                                <a class=\"nav-link\" href=\"?index=1#main\">Bundesliga-Tabelle</a>
-                            </li>";
-                    } 
-                    if (is_big_tournament(get_curr_wett())) {
-                        echo "
-                            <li class=\"nav-item\">
-                                <a class=\"nav-link\" href=\"?index=1.1#main\">Gruppenphase</a>
-                            </li>";                   
-                        echo "
-                            <li class=\"nav-item\">
-                                <a class=\"nav-link\" href=\"?index=1.2#main\">KO-Runde</a>
-                            </li>";   
-                    }
-                ?>
-                <li class="nav-item">
-                    <a class="nav-link" href="?index=2#main">Spieltage</a>
-                </li>
-                <?php
-                    if (!is_big_tournament(get_curr_wett())) {
-                        echo "
-                            <li class=\"nav-item\">
-                                <a class= \"nav-link\" href=\"?index=3#main\">Restprogramm</a>
-                            </li>";
-                    }
-                ?>
-                <li class="nav-item">
-                    <a class="nav-link" href="?index=4#main">Rangliste</a>
-                </li>   
-                <?php if (is_logged()){ echo "
-                <li class=\"nav-item\">
-                    <a class=\"nav-link\" href=\"?index=5#main\">Tipps</a>
-                </li>";
-                }
-                ?>
-                <?php if (allow_erg()){ echo "
-                <li class=\"nav-item\">
-                    <a class=\"nav-link\" href=\"?index=6#main\">Ergebnisse</a>
-                </li>";
-                }
-                ?>
-                <?php if (is_logged() && !is_big_tournament(get_curr_wett())) { echo "
-                <li class=\"nav-item\">
-                    <a class=\"nav-link\" href=\"?index=12#main\">Tagessieger</a>
-                </li>";
-                }
-                ?>
-                
-                <?php if (is_logged()){ echo "
-                <li class=\"nav-item\">
-                    <a class=\"nav-link\" href=\"?index=10#main\">Gewinnverteilung</a>
-                </li>";
-                }
-                ?>   
-                
-                <?php if (is_logged() && (is_active_wettbewerb())){ echo "
-                <li class=\"nav-item\">
-                    <a class=\"nav-link\" href=\"?index=7#main\">Mein Konto</a>
-                </li>";
-                }
-                ?>
-                <?php if (allow_date()){ echo "
-                <li class=\"nav-item\">
-                    <a class=\"nav-link\" href=\"?index=8#main\">Spiele terminieren</a>
-                </li>";
-                }
-                ?>                 
-                <?php if (allow_verwaltung()){ echo "
-                <li class=\"nav-item\">
-                    <a class=\"nav-link\" href=\"?index=9#main\">Verwaltung</a>
-                </li>";
-                }
-                ?> 
-                <?php if (allow_erg()){ echo "
-                <li class=\"nav-item\">
-                    <a class=\"nav-link\" href=\"?index=15#main\">Stats</a>
-                </li>";
-                }
-                ?> 
-                                            
-                <li class="nav-item">
-                    <a class="nav-link" href="?index=11#main">FAQ</a>
-                </li>
-                
+                <?php print_nav();?>
             </ul>
             
             <ul class="nav navbar-nav ml-auto">              
@@ -391,7 +277,7 @@ MENÜ
 <?php 
 ## Wenn die Datenbank komplett leer ist, wurde gerade eine neue Saison erstellt. 
 ## Dann springen wir auf die Seite, zum weiteren Erstellen der Saison
-if (check_if_db_empty() || (isset($_GET["setup"]) &&  $_GET["setup"]== 1)) {
+if (check_if_db_empty() || (isset($_GET["setup"]) &&  $_GET["setup"] == 1)) {
     if (allow_main_verwaltung()){
         ## Nur mit Verwaltungsrechten aufrufbar!
         include("src/setup/setup.php");
@@ -471,93 +357,7 @@ if (get_wettbewerb_code(get_curr_wett()) == "Verwaltung") {
     
         <!-- HAUPTFELD  -->
         <div class="col-lg-6 hidden-md-up fenster text-center rounded main">
-      
-            <?php
-                switch ($index) {
-                    case "":
-                        if (get_wettbewerb_code(get_curr_wett()) == "Überblick"){
-                            include_once("src/rangliste_overview.php");
-                            break;
-                        }
-                        if (get_wettbewerb_code(get_curr_wett()) == "Verwaltung"){
-                            include_once("src/rangliste_overview.php");
-                            break;
-                        }
-                        include_once("src/pages/hello.php");
-                        break;
-                    case 1:
-                        echo "<h2> Bundesliga-Tabelle</h2>";
-                        include_once("src/pages/tabelle.php");
-                        break;
-                    case 1.1:
-                        echo "<h2> Gruppenphase</h2>";
-                        include_once("src/pages/wm_tabelle.php");
-                        break;
-                    case 1.2:
-                        echo "<h2> KO-Runde</h2>";
-                        include_once("src/pages/ko.php");
-                        break;
-                    case 2: 
-                        echo "<h2>Spieltage</h2>";
-                        include_once("src/pages/spieltag.php");
-                        break;
-                    case 3:
-                        echo "<h2>Restprogramm</h2>";
-                        include_once("src/pages/restprogramm.php");
-                        break;
-                    case 4:
-                        echo "<h2>Rangliste</h2>";
-                        include_once("src/pages/rangliste.php");
-                        break;
-                    case 5:
-                        echo "<h2>Tipps</h2>";
-                        include_once("src/pages/tipp.php");
-                        break;
-                    case 6:
-                        echo "<h2>Ergebnisse eingeben</h2>";
-                        include_once("src/pages/ergebnis.php");
-                        break;
-                    case 7:
-                        echo "<h2>Mein Konto</h2>";
-                        include_once("src/pages/konto.php");
-                        break;
-                    case 8:
-                        echo "<h2>Spiele terminieren</h2>";
-                        include_once("src/pages/datum_spiele_term.php");
-                        echo "<h2>Datum eingeben</h2>";
-                        include_once("src/pages/datum_set_spieltag.php");
-                        break;
-                    case 9:
-                        echo "<h2>Verwaltung</h2>";
-                        include_once("src/pages/user.php");
-                        break;
-                    case 10:
-                        echo "<h2>Gewinnverteilung</h2>";
-                        include_once("src/pages/gewinn.php");
-                        break;
-                    case 11:
-                        echo "<h2>FAQ</h2>";
-                        if (!is_big_tournament(get_curr_wett())){
-                            include_once("src/pages/faq.php");
-                        } else {
-                            include_once("src/pages/faq_em.php");                            
-                        }
-                        break;
-                    case 12: 
-                        echo "<h2>Tagessieger</h2>";
-                        include_once("src/pages/tagessieger.php");
-                        break;
-                    case 15:
-                        echo "<h2>Statistiken</h2>";
-                        #include_once("src/pages/tabellenverlauf.php");
-                        #include_once("src/newbot.php");
-                        break;
-                    default:
-                        include_once("src/pages/error.php");
-                        break;
-                    
-                }
-            ?>
+            <?php print_pages();?>
         </div>
         
                 <!-- NICHT SICHTBAR; QUASI Rechter RAHMEN -->
