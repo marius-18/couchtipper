@@ -1,86 +1,103 @@
 <div class="container-fluid hintergrund" style="margin-top:0px; padding-bottom:55px" id="main">
-    <div class="row centering justify-content-around">
+  <div class="row centering justify-content-around">
+
     <!-- NICHT SICHTBAR; QUASI LINKER RAHMEN -->
-        <div class="col-lg-1 d-none d-lg-block d-lg-block text-center">
-            <hr class="d-sm-none">
-        </div>
-        
-        <div class="col-lg-10 d-none d-xl-block d-lg-block text-center fenster rounded main">
- 
- <h2>Neuen Wettbewerb anlegen</h2>
+    <div class="col-lg-1 d-none d-lg-block d-lg-block text-center">
+      <hr class="d-sm-none">
+    </div>
 
 
-<div class="container-fluid">
+    <div class="col-lg-10 hidden-md-up fenster text-center rounded main">
+      <h2>Neuen Wettbewerb anlegen</h2>
+
+      <div class="container-fluid">
+
+          <?php show_new_wettbewerb(); ?>
+
+      </div><!-- End Container -->
+    </div><!-- End Fenster -->
+
+
+    <!-- NICHT SICHTBAR; QUASI LINKER RAHMEN -->
+    <div class="col-lg-1 d-none d-lg-block d-lg-block text-center">
+      <hr class="d-sm-none">
+    </div>
+
+
+  </div><!-- End Row -->
+</div><!-- End Background -->
+
+
+
+
 
 <?php
-
-if (!allow_main_verwaltung()){
-    echo "<div class=\"alert alert-danger\"> Dieser Bereich ist <strong>nur f&uuml;r Administratoren</strong>!<br>
+function show_new_wettbewerb(){
+    ## Prüfe Berechtigungen
+    if (!allow_main_verwaltung()){
+        echo "<div class=\"alert alert-danger\"> Dieser Bereich ist <strong>nur f&uuml;r Administratoren</strong>!<br>
         Frage beim Administrator nach, um Rechte zum &Auml;ndern von Rechten zu bekommen.</div>";
-    echo "</div>";
-    return 0;
-}
+        echo "</div>";
+        return 0;
+    }
 
-include_once("src/setup/new_wettbewerb.inc.php");
+    ## Include code file
+    include_once("src/setup/new_wettbewerb.inc.php");
 
-$nextId = get_max_wett_id() + 1;
+    $nextId = get_max_wett_id() + 1;
 
-// Hole die Saison ID aus dem GET.
-$saison_id = $_GET["saison_id"] ?? null;
-if ($saison_id === null) {
-    ## Wenn keine Saison ID übergeben wurde => Neue Saison wird erstellt
-    $saison_id = $nextId;
-}
+    // Hole die Saison ID aus dem GET.
+    $saison_id = $_GET["saison_id"] ?? null;
+    if ($saison_id === null) {
+        ## Wenn keine Saison ID übergeben wurde => Neue Saison wird erstellt
+        $saison_id = $nextId;
+    }
 
-## Hinrunde oder Rückrunde
-$runde = $_POST['runde'] ?? '0';
-    
-## UPDATE THE DATABASE
-$update_msg_create = create_db_entries_update($saison_id);
-$update_msg_edit = edit_db_entries_update($saison_id);
-$update_msg_copy = copy_db_entries_update($saison_id);
+    ## Hinrunde oder Rückrunde
+    $runde = $_POST['runde'] ?? '0';
 
 
+    ## UPDATE THE DATABASE
+    $update_msg_create = create_db_entries_update($saison_id);
+    $update_msg_edit = edit_db_entries_update($saison_id);
+    $update_msg_copy = copy_db_entries_update($saison_id);
+
+    echo get_saison_select_form_html($saison_id);
+
+    // Helper: Querystring bauen
+    function qs(array $overrides = []) {
+        $params = array_merge($_GET, $overrides);
+        return '?' . http_build_query($params);
+    }
+
+    // Tabs einmalig pflegen – alles andere passt sich automatisch an
+    $tabs = [
+      1 => '1. DB-Zugang',
+      2 => '2. Kopieren',
+      3 => '3. Bearbeiten',
+      4 => '4. Saison erstellen',
+      // 5 => '5. …',
+    ];
+
+
+    // Schritt bestimmen & validieren
+    $orderedKeys = array_keys($tabs);
+    sort($orderedKeys, SORT_NUMERIC);
+    $firstKey = $orderedKeys[0];
+    $lastKey  = $orderedKeys[count($orderedKeys)-1];
+
+    $step = isset($_GET['step']) ? (int)$_GET['step'] : $firstKey;
+
+    if (!in_array($step, $orderedKeys, true)) $step = $firstKey;
+
+    $pos     = array_search($step, $orderedKeys, true);               // 0-basiert
+    $percent = (int)round((($pos+1)/count($orderedKeys))*100);
+    $prevKey = $orderedKeys[max(0, $pos-1)];
+    $nextKey = $orderedKeys[min(count($orderedKeys)-1, $pos+1)];
+
+
+    ob_start();
 ?>
-
-
-
-<?php
-
-
-echo get_saison_select_form_html($saison_id);
-
-
-// Helper: Querystring bauen
-function qs(array $overrides = []) {
-    $params = array_merge($_GET, $overrides);
-    return '?' . http_build_query($params);
-}
-
-// Tabs einmalig pflegen – alles andere passt sich automatisch an
-$tabs = [
-  1 => '1. DB-Zugang',
-  2 => '2. Kopieren',
-  3 => '3. Bearbeiten',
-  4 => '4. Saison erstellen',
-  // 5 => '5. …',
-];
-
-// Schritt bestimmen & validieren
-$orderedKeys = array_keys($tabs);
-sort($orderedKeys, SORT_NUMERIC);
-$firstKey = $orderedKeys[0];
-$lastKey  = $orderedKeys[count($orderedKeys)-1];
-
-$step = isset($_GET['step']) ? (int)$_GET['step'] : $firstKey;
-if (!in_array($step, $orderedKeys, true)) $step = $firstKey;
-
-$pos     = array_search($step, $orderedKeys, true);               // 0-basiert
-$percent = (int)round((($pos+1)/count($orderedKeys))*100);
-$prevKey = $orderedKeys[max(0, $pos-1)];
-$nextKey = $orderedKeys[min(count($orderedKeys)-1, $pos+1)];
-?>
-
 
 
 <div class="container my-3">
@@ -105,27 +122,34 @@ $nextKey = $orderedKeys[min(count($orderedKeys)-1, $pos+1)];
     // Nur hier im switch Inhalte pflegen/erweitern
     switch ($step) {
       case 1:
+        ## Schritt 1: DB_Zugang
         echo create_db_entries_form_html($saison_id);
         echo "<br>", $update_msg_create;
         break;
 
       case 2:
+        ## Schritt 2: Kopieren
         echo copy_db_entries_form_html($saison_id);
         echo "<br>", $update_msg_copy;
         break;
 
       case 3:
+        ## Schritt 3: Bearbeiten
         echo edit_db_entries_form_html($saison_id, $runde);
         echo "<br>", $update_msg_edit;
         break;
 
       case 4:
+        ## Schritt 4: Saison erstellen
         echo "<div class=\"alert alert-info\"><strong>Erfolg!</strong> Die Datenbankzugänge wurden jetzt richtig erstellt. Jetzt muss die Datenbank noch gefüllt werden. Weiter gehts hier!<br><br>";
         echo '<a href="?year='.$saison_id.'" class="btn btn-primary">Saison erstellen</a>';
         echo "</div> <br>";
         break;
     }
     ?>
+
+
+
   </div>
 
   <div class="d-flex justify-content-between mt-3">
@@ -135,25 +159,11 @@ $nextKey = $orderedKeys[min(count($orderedKeys)-1, $pos+1)];
     <a class="btn btn-primary <?= $step === $lastKey ? 'disabled' : '' ?>"
        href="<?= htmlspecialchars(qs(['step'=>$nextKey])) ?>">Weiter</a>
   </div>
-</div>
+</div> <!-- End of My Container -->
 
 
-
-
-
-
-
-
-
-</div><!-- End Container -->
-
-
-</div><!-- End Fenster -->
-
-<!-- NICHT SICHTBAR; QUASI LINKER RAHMEN -->
-<div class="col-lg-1 d-none d-lg-block d-lg-block text-center">
-    <hr class="d-sm-none">
-</div>
-    
-</div><!-- End Row -->
-</div><!-- End Background -->
+    <?php
+    ## Gebe den HTML Code aus
+    echo ob_get_clean();
+} ## Ende der Show Function
+?>
