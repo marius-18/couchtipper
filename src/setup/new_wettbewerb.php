@@ -1,32 +1,8 @@
-<div class="container-fluid hintergrund" style="margin-top:0px; padding-bottom:55px" id="main">
-  <div class="row centering justify-content-around">
-
-    <!-- NICHT SICHTBAR; QUASI LINKER RAHMEN -->
-    <div class="col-lg-1 d-none d-lg-block d-lg-block text-center">
-      <hr class="d-sm-none">
-    </div>
 
 
-    <div class="col-lg-10 hidden-md-up fenster text-center rounded main">
-      <h2>Neuen Wettbewerb anlegen</h2>
-
-      <div class="container-fluid">
-
-          <?php show_new_wettbewerb(); ?>
-
-      </div><!-- End Container -->
-    </div><!-- End Fenster -->
-
-
-    <!-- NICHT SICHTBAR; QUASI LINKER RAHMEN -->
-    <div class="col-lg-1 d-none d-lg-block d-lg-block text-center">
-      <hr class="d-sm-none">
-    </div>
-
-
-  </div><!-- End Row -->
-</div><!-- End Background -->
-
+<div class="container-fluid">
+  <?php show_new_wettbewerb(); ?>
+</div><!-- End Container -->
 
 
 

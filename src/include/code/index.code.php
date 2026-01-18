@@ -2,8 +2,8 @@
 
 function print_pages(){
     global $index;
-    if (get_wettbewerb_code(get_curr_wett()) == "Überblick"){
-        #include_once("src/rangliste_overview.php");
+    ## Im Übersicht Modus die entsprechenden Seiten anzeigen.
+    if (get_wettbewerb_code(get_curr_wett()) == "Übersicht"){
         switch ($index) {
             case "":
                 include_once("src/pages/hello_overview.php");
@@ -13,11 +13,30 @@ function print_pages(){
                 include_once("src/gesamt_tabelle.php");
                 break;
             case 2:
-                echo "<h2>Saison Übersicht</h2>";
-                include_once("src/rangliste_overview.php");
+                echo "<h2>Punkte nach Saison</h2>";
+                include_once("src/gesamt_tabelle.php");
+                break;
+            case 3:
+                echo "<h2>Platzierungen nach Saison</h2>";
+                include_once("src/gesamt_tabelle.php");
                 break;
             default:
                 include_once("src/pages/error.php");
+                break;
+        }
+        return 0;
+    }
+
+    ## Hier für Verwaltung!
+    if ((get_wettbewerb_code(get_curr_wett()) == "Verwaltung") ||
+    (check_if_db_empty() || (isset($_GET["setup"]) &&  $_GET["setup"] == 1))) {
+        switch ($index) {
+            case "":
+                include_once("src/pages/hello_overview.php");
+                break;
+            case 1:
+                echo "<h2>Neuen Wettbewerb anlegen</h2>";
+                include_once("src/pages/system_verwaltung.php");
                 break;
         }
         return 0;
@@ -102,22 +121,51 @@ function print_pages(){
 
 }
 
+function print_pages_left(){
+    global $index;
+    if (($index != 4) && ($index != 2) && ($index != 5) && ($index != "1.2") && ($index != "16")){
+        echo "<h2>Rangliste:</h2>";
+        include_once("src/pages/rangliste_links.php");
+    }
+
+    if (($index == 5) || ($index == 2) || ($index == "1.2")){
+        if (get_wettbewerb_code(get_curr_wett()) == "BuLi"){
+            echo "<h2>Bundesliga-Tabelle:</h2>";
+            include_once("src/pages/tabelle.php");
+        }
+
+        if (is_big_tournament(get_curr_wett())){
+            echo "<h2>Gruppen-Tabellen:</h2>";
+            include_once("src/pages/nur_tabelle.php");
+        }
+    }
+}
+
 function print_nav(){
-    if (get_wettbewerb_code(get_curr_wett()) == "Verwaltung"){
+    if ((get_wettbewerb_code(get_curr_wett()) == "Verwaltung") ||
+    (check_if_db_empty() || (isset($_GET["setup"]) &&  $_GET["setup"] == 1))){
+        echo "
+            <li class=\"nav-item\">
+                <a class=\"nav-link\" href=\"?index=1#main\">Neuen Wettbewerb anlegen</a>
+            </li>";
         return 0;
     }
 
-    if (get_wettbewerb_code(get_curr_wett()) == "Überblick"){
-        ## Spieltage
+    if (get_wettbewerb_code(get_curr_wett()) == "Übersicht"){
+        ## Überblicks Seite!
         echo "
             <li class=\"nav-item\">
-                <a class=\"nav-link\" href=\"?index=1#main\">Gesamt Tabelle</a>
+                <a class=\"nav-link\" href=\"?index=1#main\">All-Time Tabelle</a>
             </li>";
 
-        ## Spieltage
         echo "
             <li class=\"nav-item\">
-                <a class=\"nav-link\" href=\"?index=2#main\">Saisons</a>
+                <a class=\"nav-link\" href=\"?index=2#main\">Punkte nach Saisons</a>
+            </li>";
+
+        echo "
+            <li class=\"nav-item\">
+                <a class=\"nav-link\" href=\"?index=3#main\">Platzierung nach Saisons</a>
             </li>";
         return 0;
     }
@@ -263,8 +311,10 @@ function print_year_dropdown($url_suffix_no_year){
 
     if (allow_main_verwaltung()){
         echo "<div class=\"dropdown-divider\"></div>
-              <div class=\"dropdown-header\">Verwaltung</div>
+              <div class=\"dropdown-header\">Sonstiges</div>
               <a class=\"dropdown-item\" href=\"?year=-11\" style=\"color:black\">Verwaltung</a>";
+        echo "
+              <a class=\"dropdown-item\" href=\"?year=-10\" style=\"color:black\">Übersicht</a>";
     }
 }
 

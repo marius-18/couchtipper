@@ -286,7 +286,12 @@ function select_season($selected_seasons){
     foreach ($code as $id => $wett){
     
         if (in_array($id, $seasons)){
-            $checked = "btn-success";
+            if ($wett == "BuLi"){
+                $checked = "btn-success";
+            } else {
+                ## TODO:
+                $checked = "btn-success";
+            }
             $check_val = $id;
             $checked_wetts .= "$id ";
 
@@ -342,7 +347,7 @@ function select_season($selected_seasons){
                         onclick = \"seasons_all_off($all_wetts)\">Nichts</label>
                    </div>";    
 
- 
+    echo "<div class=\"container\">";
     echo $all_button;
     echo $buli_button;
     echo $turn_button;
@@ -357,7 +362,8 @@ function select_season($selected_seasons){
             <input type=\"hidden\"  class=\"$checked_wetts\" id=\"seasons_speicherung\" name=\"seasons_speicherung\" value = \"$checked_wetts\">
                 <button type=\"submit\" class=\"btn btn-primary\">Tabelle Berechnen</button>
           </form><br>";
-    
+    echo "</div>";
+
     return $seasons;
 }
 

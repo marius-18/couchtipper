@@ -7,7 +7,7 @@ require_once("../auth/include/security.inc.php");
 is_logged();
 
 
-$wartung = 1;
+$wartung = 0;
 $aktuelle_wett_id = get_aktuelle_wett_id();
 $g_modus = "BuLi";
 $global_wett_id = get_global_wett_id();
@@ -275,41 +275,7 @@ MENÜ
 
 
 <?php 
-## Wenn die Datenbank komplett leer ist, wurde gerade eine neue Saison erstellt. 
-## Dann springen wir auf die Seite, zum weiteren Erstellen der Saison
-if (check_if_db_empty() || (isset($_GET["setup"]) &&  $_GET["setup"] == 1)) {
-    if (allow_main_verwaltung()){
-        ## Nur mit Verwaltungsrechten aufrufbar!
-        include("src/setup/setup.php");
-        exit;
-    } else {
-        ## Fehler anzeigen, falls hier jemand landet..
-        echo "<div class=\"alert alert-danger\"><strong>Hier ist etwas schiefgelaufen..</strong> Dieser Wettbewerb wurde noch nicht erstellt.
-        Du solltest hier eigentlich nicht sein! Durch den folgenden Button kommst du wieder zurück!";
-        echo "<br>";
-        echo '<a href="?year=reset" class="btn btn-primary">Zurück!</a>';
-        echo "</div>";
-        exit;
-    }
-}
 
-if (get_wettbewerb_code(get_curr_wett()) == "Verwaltung") {
-    if (allow_main_verwaltung()){
-        ## Nur mit Verwaltungsrechten aufrufbar!
-        include_once("src/setup/new_wettbewerb.php");
-        ## TODO: im Verwaltungsmenü hinzufügen, welche Wettbewerbe aktiv sind usw.
-        ### set_global_wett_id(8);
-        exit;
-    } else {
-        ## Fehler anzeigen, falls hier jemand landet..
-        echo "<div class=\"alert alert-danger\"><strong>Hier ist etwas schiefgelaufen..</strong> Du hast keinen Zugriff auf diese Seite!.
-        Du solltest hier eigentlich nicht sein! Durch den folgenden Button kommst du wieder zurück!";
-        echo "<br>";
-        echo '<a href="?year=reset" class="btn btn-primary">Zurück!</a>';
-        echo "</div>";
-        exit;
-    }
-}
 ?>
 
 <!--
@@ -325,38 +291,36 @@ if (get_wettbewerb_code(get_curr_wett()) == "Verwaltung") {
         <div class="col-lg-0 d-none d-lg-block d-lg-block text-center">
             <hr class="d-sm-none">
         </div>
-        
+
+        <?php
+            ## Bei Verwaltung & Übersicht nur ein Fenster in der Mitte anzeigen!
+            if ((get_wettbewerb_code(get_curr_wett()) != "Verwaltung") &&
+                (get_wettbewerb_code(get_curr_wett()) != "Übersicht") &&
+                (!(check_if_db_empty() || (isset($_GET["setup"]) && $_GET["setup"] == 1)))
+                ){
+                    $main_window_width = 6;
+        ?>
+
         <!-- Linkes Fenster, Standard Rangliste, sonst ...? mobil nicht sichtbar! -->
         <div class="col-lg-4 d-none d-xl-block d-lg-block text-center fenster rounded main">
-            <?php
-                if (($index != 4) && ($index != 2) && ($index != 5) && ($index != "1.2") && ($index != "16")){
-                    echo "<h2>Rangliste:</h2>";
-                    include_once("src/pages/rangliste_links.php");
-                }
-
-                 if (($index == 5) || ($index == 2) || ($index == "1.2")){
-                    if (get_wettbewerb_code(get_curr_wett()) == "BuLi"){
-                        echo "<h2>Bundesliga-Tabelle:</h2>";
-                        include_once("src/pages/tabelle.php");
-                    }
-                    if (is_big_tournament(get_curr_wett())){
-                        echo "<h2>Gruppen-Tabellen:</h2>";
-                        include_once("src/pages/nur_tabelle.php");
-                    }
-                }
-                
-            ?>
-
+            <?php print_pages_left(); ?>
             <hr class="d-sm-none">
         </div>
+
 
         <!-- NICHT SICHTBAR; QUASI - MITTEL - RAHMEN -->
         <div class="col-lg-0 d-none d-xl-block d-lg-block text-center">
             <hr class="d-sm-none">
         </div>
+
+        <?php
+            } else {
+                $main_window_width = 10;
+            }
+        ?>
     
         <!-- HAUPTFELD  -->
-        <div class="col-lg-6 hidden-md-up fenster text-center rounded main">
+        <div class="col-lg-<?php echo $main_window_width; ?> hidden-md-up fenster text-center rounded main">
             <?php print_pages();?>
         </div>
         
