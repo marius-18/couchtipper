@@ -61,6 +61,8 @@ if (isset($_POST["automated_input"])){
     }
 }
 
+global $g_pdo;
+
 ## Datum des Spieltags aus DB holen
 $sql = "SELECT datum FROM Datum WHERE spieltag = $real_spieltag";
 foreach ($g_pdo->query($sql) as $row) {
