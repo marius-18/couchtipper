@@ -289,9 +289,9 @@ function print_year_dropdown($url_suffix_no_year){
     <!-- ## TODO: Automatisieren! -->
     <div class="dropdown-header">Aktuelle Saison</div>
     <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=9" style="color:black">BuLi 2025/26</a>
-    <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=8" style="color:black">BuLi 2024/25</a>
     <div class="dropdown-divider"></div>
     <div class="dropdown-header">Vergangene</div>
+    <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=8" style="color:black">BuLi 2024/25</a>
     <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=7" style="color:black">EM 2024</a>
     <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=6" style="color:black">BuLi 2023/24</a>
     <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=5" style="color:black">BuLi 2022/23</a>
