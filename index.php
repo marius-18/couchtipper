@@ -82,6 +82,12 @@ if ($index == "cal"){
     exit;
 }
 
+if ($index == "sql_dump"){
+    ## Für den Calendar wird auch weitergeleitet
+    include_once("src/api/sql_dump.php");
+    exit;
+}
+
 if ($index == "rebuild"){
     ## Um die vorberechneten Werte der DB komplett neu zu setzen
     require_once("src/include/code/refresh.php");
