@@ -82,7 +82,7 @@ function print_games($args, $modus, $change){
         ## Heim Team Name
         echo "<td class=\"align-middle\" align=\"right\"  onclick=\"game_details_ausblenden($visible_index, $anz_spiele,'')\"><b>$team_heim[$i]</b></td>";
     
-        if (($modus == "Spieltag") && ($team_heim_nr[$i] <= 32) ) {
+        if (($modus == "Spieltag") && ($team_heim_nr[$i] > 0) ) {
             ## Heim Team Logo
             echo "<td  class=\"align-middle\" align=\"right\"  onclick=\"game_details_ausblenden($visible_index, $anz_spiele,'')\">
                   <img src=\"images/$img_folder/$team_heim_nr[$i].$endung\" width=\"30\"></td>";
@@ -91,7 +91,7 @@ function print_games($args, $modus, $change){
         ## Ergebnis
         echo "<td align=\"center\" class=\"align-middle text-nowrap\">$tipp_anzeiger_start<b>$tore_heim[$i] : $tore_aus[$i]</b>$tipp_anzeiger_ende</td>";
     
-        if (($modus == "Spieltag") && ($team_aus_nr[$i] <= 32)) {
+        if (($modus == "Spieltag") && ($team_aus_nr[$i] > 0)) {
             ## Auswärts Team Logo
             echo "<td  class=\"align-middle\" align=\"left\"  onclick=\"game_details_ausblenden($visible_index, $anz_spiele,'')\">
                   <img src=\"images/$img_folder/$team_aus_nr[$i].$endung\" width=\"30\"></td>";
@@ -264,7 +264,13 @@ function print_game_details($modus, $sp_nr, $real_sp_nr, $punkte, $alle_tore, $v
     
     echo "<div class=\"container container-fluid\"  style=\"margin-bottom:5px\">";
     
-    echo "<h5><span class=\"badge badge-light p-2\"> 🏟️ $stadion</span></h5>";
+    if (is_big_tournament(get_curr_wett())){
+        $spielort = $stadion . ", " . $stadt;
+    } else {
+        $spielort = $stadion;
+    }
+
+    echo "<h5><span class=\"badge badge-light p-2\"> 🏟️ $spielort</span></h5>";
     #echo "<hr>";
     echo "</div>";
     
@@ -338,9 +344,9 @@ function print_all_game_details($args, $my_spieltag){
     
     ## Print the details of the game
     if (isset($punkte[$my_spieltag])){
-        print_game_details($modus, $my_spnr, $identity, $punkte[$my_spieltag], $alle_tore, $visible_index, $other_tipps_args, $gruppe, $stadt, $stadion, 0, 0);        
+        print_game_details($modus, $my_spnr, $identity, $punkte[$my_spieltag], $alle_tore, $visible_index, $other_tipps_args, $gruppe, $stadt, $stadion, 0, 0);
     } else {
-        print_game_details($modus, $my_spnr, $identity, [], $alle_tore, $visible_index, $other_tipps_args, $gruppe, $stadt, $stadion, 0, 0);                
+        print_game_details($modus, $my_spnr, $identity, [], $alle_tore, $visible_index, $other_tipps_args, $gruppe, $stadt, $stadion, 0, 0);
     }
 }
 

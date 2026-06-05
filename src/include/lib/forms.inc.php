@@ -199,54 +199,50 @@ function select_team(){
 }
 
 
-function select_gruppe(){
-    if (get_wettbewerb_code(get_curr_wett())  == "WM"){
-        ## ASCII Code bis Gruppe H
-        $max = 72;
-    }
-    if (get_wettbewerb_code(get_curr_wett())  == "EM"){
-        ## ASCII Code bis Gruppe F
-        $max = 70;
-    }
+function select_gruppe($gruppen){
+    ## Zeigt das Select Formular für alle Gruppen an
+
+    ## ASCII Code der höchsten Gruppe
+    $max = ord(max($gruppen));
+
+    ## Show left arrow for previous groups
     echo "
-        <table class=\"table table-borderless\">
-            <tr>
-                <td>
-                    <button style=\"touch-action: manipulation;\" onclick=\"changeGroupTablePrev(". $max .")\" class=\"btn btn-link\"><i class=\"fas fa-arrow-left fa-lg\"></i></button>
-                </td>
-        ";
-    
-    
-    echo "
-        <td>
-        <ul class=\"pagination justify-content-center\">
-            <li id=\"LgroupA\" class=\"page-item active big_tournament_group_menu\"><a class=\"page-link\" onclick=\"changeGroupTable('groupA')\">A</a></li>
-            <li id=\"LgroupB\" class=\"page-item big_tournament_group_menu\"><a class=\"page-link\" onclick=\"changeGroupTable('groupB')\">B</a></li>
-            <li id=\"LgroupC\" class=\"page-item big_tournament_group_menu\"><a class=\"page-link\" onclick=\"changeGroupTable('groupC')\">C</a></li>
-            <li id=\"LgroupD\" class=\"page-item big_tournament_group_menu\"><a class=\"page-link\" onclick=\"changeGroupTable('groupD')\">D</a></li>
-            <li id=\"LgroupE\" class=\"page-item big_tournament_group_menu\"><a class=\"page-link\" onclick=\"changeGroupTable('groupE')\">E</a></li>
-            <li id=\"LgroupF\" class=\"page-item big_tournament_group_menu\"><a class=\"page-link\" onclick=\"changeGroupTable('groupF')\">F</a></li>";
-            if (get_wettbewerb_code(get_curr_wett())  == "WM"){
-                echo " <li id=\"LgroupG\" class=\"page-item big_tournament_group_menu\"><a class=\"page-link\" onclick=\"changeGroupTable('groupG')\">G</a></li>";
-                echo " <li id=\"LgroupH\" class=\"page-item big_tournament_group_menu\"><a class=\"page-link\" onclick=\"changeGroupTable('groupH')\">H</a></li>";
-            }
-            echo "
-        </ul>   
-        </td>
+    <table class=\"table table-borderless mb-0\">
+        <tr>
+            <td class=\"align-middle text-start\" style=\"width: 50px;\">
+                <button style=\"touch-action: manipulation;\" onclick=\"changeGroupTablePrev(". $max .")\" class=\"btn btn-link\">
+                    <i class=\"fas fa-arrow-left fa-lg\"></i>
+                </button>
+            </td>
+
+            <td class=\"align-middle\">
+                <ul class=\"pagination justify-content-center flex-wrap mb-0\">
     ";
 
-    
+    foreach ($gruppen as $gruppe){
+        echo "
+        <li id=\"Lgroup".$gruppe."\" class=\"page-item big_tournament_group_menu\">
+            <a class=\"page-link\" onclick=\"changeGroupTable('group".$gruppe."')\">".$gruppe."</a>
+        </li>";
+    }
+
+    ## Show right arrow for next groups
     echo "
-                <td>
-                    <button style=\"touch-action: manipulation;\" onclick=\"changeGroupTableNext(". $max .")\" class=\"btn btn-link\"><i class=\"fas fa-arrow-right fa-lg\"></i></button>
-                    <input type=\"hidden\" id=\"curr_group\" value=\"A\"></input>
-                </td>
-            </tr>
-        </table>
+                </ul>
+            </td>
+
+            <td class=\"align-middle text-end\" style=\"width: 50px;\">
+                <button style=\"touch-action: manipulation;\" onclick=\"changeGroupTableNext(". $max .")\" class=\"btn btn-link\">
+                    <i class=\"fas fa-arrow-right fa-lg\"></i>
+                </button>
+                <input type=\"hidden\" id=\"curr_group\" value=\"A\">
+            </td>
+        </tr>
+    </table>
     ";
+
 
     ## Mit Pfeiltasten durch Gruppen navigieren
-
     echo "<script>
     document.addEventListener('keydown', function(event) {
     switch (event.keyCode) {

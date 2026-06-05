@@ -52,12 +52,12 @@ function get_games ($spieltag, $modus, $change, $user_nr) {
         $sp_nr = $row['sp_nr'];
         $team_heim [$sp_nr] = $row['Team_name1'];
         $team_aus [$sp_nr] = $row['Team_name2'];
-        $datum [$sp_nr] = $row['datum'];
+        $datum [$sp_nr] = $row['datum'] ?? 0;
         $team_heim_nr [$sp_nr] = $row['Team_nr1'];
         $team_aus_nr [$sp_nr] = $row['Team_nr2'];
         $real_sp_nr [$sp_nr] = $sp_nr;
-        $stadion[$sp_nr] = $row['stadion'];
-        $stadt[$sp_nr] = $row['stadt'];
+        $stadion[$sp_nr] = $row['stadion'] ?? "";
+        $stadt[$sp_nr] = $row['stadt'] ?? "";
         
     }
 
@@ -189,45 +189,17 @@ function get_open_db_spieltag($modus, $jahr, $spieltag){
         #$matches = get_open_db_spieltag(get_openliga_shortcut(get_curr_wett()), $jahr, $opl_spieltag);
         $spieltag = $opl_spieltag;
     } elseif (get_wettbewerb_code(get_curr_wett())  == "WM") {
-        switch ($spieltag) {
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-            case 6:
-            case 7:
-            case 8:
-            case 9:   
-            case 10:
-            case 11:
-            case 12:
-            case 13:  
-            case 14:
-            case 15:
-                $opl_spieltag = 1;
-                break;
-            case 16:
-            case 17:
-            case 18:
-            case 19:
-                $opl_spieltag = 2;
-                break;
-            case 20:
-            case 21:
-                $opl_spieltag = 3;
-                break;
-            case 22:
-            case 23:
-                $opl_spieltag = 4;
-                break;
-            case 24:
-                $opl_spieltag = 5;
-                break;
-            case 25:
-                $opl_spieltag = 6;
-                break;
-        }
+        ## TODO: Das muss noch besser gemacht werden!!
+        $opl_spieltag = match (true) {
+            $spieltag >= 1 && $spieltag <= 15 => 1,
+            $spieltag >= 16 && $spieltag <= 19 => 2,
+            $spieltag >= 20 && $spieltag <= 21 => 3,
+            $spieltag >= 22 && $spieltag <= 23 => 4,
+            $spieltag == 24 => 5,
+            $spieltag == 25 => 6,
+            default => null,
+        };
+
         $spieltag = $opl_spieltag;
         #$matches = get_open_db_spieltag(get_openliga_shortcut(get_curr_wett()), $jahr, $opl_spieltag);
         #print_r($matches);
@@ -736,13 +708,13 @@ function get_group_games($gruppe){
         $max_gruppen_spt = 13; // nach dem 13. Spieltag keine Gruppenspiele mehr!
     }
     if (get_wettbewerb_code(get_curr_wett())  == "WM"){
-        $max_gruppen_spt = 15; // nach dem 15. Spieltag keine Gruppenspiele mehr!
+        if (get_wettbewerb_jahr(get_curr_wett()) == 2018){
+            $max_gruppen_spt = 15; // nach dem 15. Spieltag keine Gruppenspiele mehr!
+        }
+        if (get_wettbewerb_jahr(get_curr_wett()) == 2026){
+            $max_gruppen_spt = 17; // nach dem 17. Spieltag keine Gruppenspiele mehr!
+        }
     }
-    
-    #   for ($i = 1; $i <= $anz_spiele; $i++){
-#      $tore_heim[$i] = "10";
-#      $tore_aus[$i] = "111";
-#   }
 
    $sql = "
      SELECT spieltag, sp_nr, t1.team_name AS Team_name1, t2.team_name AS Team_name2, 

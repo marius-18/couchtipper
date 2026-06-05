@@ -54,6 +54,7 @@ function print_pages(){
         case 1.1:
             echo "<h2> Gruppenphase</h2>";
             include_once("src/pages/wm_tabelle.php");
+            show_main_groups();
             break;
         case 1.2:
             echo "<h2> KO-Runde</h2>";
@@ -114,6 +115,9 @@ function print_pages(){
             #include_once("src/pages/tabellenverlauf.php");
             #include_once("src/newbot.php");
             break;
+        case 16:
+            include("src/setup/setup.php");
+            break;
         default:
             include_once("src/pages/error.php");
             break;
@@ -136,7 +140,8 @@ function print_pages_left(){
 
         if (is_big_tournament(get_curr_wett())){
             echo "<h2>Gruppen-Tabellen:</h2>";
-            include_once("src/pages/nur_tabelle.php");
+            include_once("src/pages/wm_tabelle.php");
+            show_small_group_overview();
         }
     }
 }
@@ -288,6 +293,7 @@ function print_year_dropdown($url_suffix_no_year){
     ?>
     <!-- ## TODO: Automatisieren! -->
     <div class="dropdown-header">Aktuelle Saison</div>
+    <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=10" style="color:black">WM 2026</a>
     <a class="dropdown-item" href="?<?php echo $url_suffix_no_year;?>year=9" style="color:black">BuLi 2025/26</a>
     <div class="dropdown-divider"></div>
     <div class="dropdown-header">Vergangene</div>

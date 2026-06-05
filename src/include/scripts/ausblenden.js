@@ -50,7 +50,7 @@ function changeGroupTable(id){
 
     
     var grps_menu = document.getElementsByClassName(" big_tournament_group_menu");
-    for (let i = 0; i < grps.length; i++) {
+    for (let i = 0; i < grps_menu.length; i++) {
       grps_menu[i].classList.remove('active');
     }
 
@@ -58,6 +58,8 @@ function changeGroupTable(id){
     document.getElementById(label).classList.add('active');
     
     document.getElementById(id).style.display = 'block';
+
+    document.getElementById("curr_group").value = id.slice(-1);
 
 }
 

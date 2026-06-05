@@ -3,52 +3,73 @@ require_once('src/include/code/tabelle.inc.php');
 require_once('src/include/code/get_games.inc.php');
 require_once('src/include/code/print_games.php');
 require_once('src/include/lib/precomputation.inc.php');
-?>
 
 
-
-<div class="container-fluid text-center" >
-
-    <?php
-      select_gruppe();
-    ?>
-    
-    <div style='display: block;' id="groupA" class="big_tournament_group">
-      <?php print_wm_tabelle(wm_tabelle("A")); print_gruppe("A");  ?>
-    </div>
-    <div style='display: none' id="groupB" class="big_tournament_group">
-      <?php print_wm_tabelle(wm_tabelle("B")); print_gruppe("B");?>
-    </div>
-    <div style='display: none' id="groupC" class="big_tournament_group">
-      <?php print_wm_tabelle(wm_tabelle("C")); print_gruppe("C"); ?>
-    </div>
-    <div style='display: none' id="groupD" class="big_tournament_group">
-      <?php  print_wm_tabelle(wm_tabelle("D")); print_gruppe("D"); ?>
-    </div>
-    <div style='display: none' id="groupE" class="big_tournament_group">
-      <?php print_wm_tabelle(wm_tabelle("E")); print_gruppe("E"); ?>
-    </div>
-    <div style='display: none' id="groupF" class="big_tournament_group">
-      <?php print_wm_tabelle(wm_tabelle("F")); print_gruppe("F"); ?>
-    </div>
-    
-    <?php
-    if (get_wettbewerb_code(get_curr_wett())  == "WM"){
-      echo "<div style='display: none' id=\"groupG\" class=\"big_tournament_group\">";
-        print_wm_tabelle(wm_tabelle("G")); 
-        print_gruppe("G");
-      echo "</div>";
-      echo "<div style='display: none' id=\"groupH\" class=\"big_tournament_group\">";
-        print_wm_tabelle(wm_tabelle("H")); 
-        print_gruppe("H");
-      echo "</div>";
+function get_groups(){
+  ## Definiere die Gruppen für die einzelnen Wettbewerbe
+  if (get_wettbewerb_code(get_curr_wett())  == "WM"){
+    if (get_wettbewerb_jahr(get_curr_wett()) == 2018){
+      $groups = ["A", "B", "C", "D", "E", "F", "G", "H"];
     }
-    ?>
-</div>
 
-<!--<script src='src/swipe.js'></script>
-<script>
-var slider3 = new Swipe(document.getElementById('slider3'));
-</script>
--->
+    if (get_wettbewerb_jahr(get_curr_wett()) == 2026){
+      $groups = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
+    }
+  }
+
+  if (get_wettbewerb_code(get_curr_wett())  == "EM"){
+    $groups = ["A", "B", "C", "D", "E", "F"];
+  }
+
+  return $groups;
+}
+
+
+function show_main_groups(){
+  ## Haupt Seite "Gruppenphase" mit Tabelle und allen Spielen
+
+  echo '<div class="container-fluid text-center" >';
+
+  $gruppen = get_groups();
+
+  ## Zeige das selection formular für die Gruppen an:
+  select_gruppe($gruppen);
+
+  ## Gehe einzelne Gruppen durch
+  foreach ($gruppen as $gruppe){
+    ## Nur Gruppe A wird zu Beginn angezeigt
+    if ($gruppe == "A"){
+      $show = "block";
+    } else {
+      $show = "none";
+    }
+
+    ## Zeige Tabelle und Spiele an
+    echo "<div style='display: ".$show.";' id=\"group".$gruppe."\" class=\"big_tournament_group\">";
+      print_wm_tabelle(wm_tabelle($gruppe));
+      print_gruppe($gruppe);
+    echo "</div>
+    ";
+  }
+
+  echo "</div>";
+}
+
+function show_small_group_overview(){
+  ## Zeigt alle Tabellen untereinander an (für die linke Spalte)
+
+  echo '<div class="container-fluid text-center" >';
+
+  $gruppen = get_groups();
+
+  foreach ($gruppen as $gruppe){
+    echo "<h5>Gruppe $gruppe</h5>";
+    print_wm_tabelle(wm_tabelle($gruppe));
+  }
+
+  echo "</div>";
+}
+
+
+?>
 
