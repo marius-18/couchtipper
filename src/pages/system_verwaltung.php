@@ -1,4 +1,5 @@
 <?php
+global $global_wett_id;
 ## Wenn die Datenbank komplett leer ist, wurde gerade eine neue Saison erstellt.
 ## Dann springen wir auf die Seite, zum weiteren Erstellen der Saison
 if (check_if_db_empty() || (isset($_GET["setup"]) &&  $_GET["setup"] == 1)) {
@@ -31,7 +32,7 @@ $error_msg =
         Du hast keinen Zugriff auf diese Seite!.
         Du solltest hier eigentlich nicht sein! Durch den folgenden Button kommst du wieder zurück!
         <br>
-        <a href=\"?year=reset\" class=\"btn btn-primary\">Zurück1!</a>
+        <a href=\"?year=reset\" class=\"btn btn-primary\">Zurück!</a>
         </div>";
 
 ?>

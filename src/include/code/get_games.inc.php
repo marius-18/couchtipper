@@ -592,6 +592,15 @@ function get_pre_games($team_nr, $min_spt){
             AND (t2.team_nr = team2)
             AND Ergebnisse.spieltag > $min_spt
             ORDER BY Ergebnisse.spieltag DESC";
+
+    $team1 = array();
+    $team2 = array();
+    $tore1 = array();
+    $tore2 = array();
+    $result = array();
+    $gegner_id = array();
+    $heimspiel = array();
+    $spieltag = array();
     
     foreach ($g_pdo->query($sql) as $row) {
         $sp_nr = $row['spieltag'] . "-" . $row['sp_nr'];

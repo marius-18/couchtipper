@@ -5,7 +5,11 @@ function select_spieltag ($spieltag) { // ACHTUNG WM EDITION
     if (get_wettbewerb_code(get_curr_wett()) == "BuLi"){
         $max_spieltage = 34;
     } elseif (get_wettbewerb_code(get_curr_wett()) == "WM"){
-        $max_spieltage = 25;
+        if (get_wettbewerb_jahr(get_curr_wett()) == "2026"){
+            $max_spieltage = 34;
+        } else {
+            $max_spieltage = 25;
+        }
     }
     else {
         $max_spieltage = 22; // Aus der datenbank!!!
@@ -56,79 +60,65 @@ function select_spieltag ($spieltag) { // ACHTUNG WM EDITION
         }
         
         if (get_wettbewerb_code(get_curr_wett()) == "EM"){
-        
-            // Das ist nur für das KO-System
-            if ($i == 14){
-                echo "  <option value=\"$i\" $select>Achtelfinale 1,2</option>
-                        ";
-            } elseif ($i == 15){
-                echo "  <option value=\"$i\" $select>Achtelfinale 3,4</option>
-                        ";
-            } elseif ($i == 16){
-                echo "  <option value=\"$i\" $select>Achtelfinale 5,6</option>
-                        ";
-            } elseif ($i == 17){
-                echo "  <option value=\"$i\" $select>Achtelfinale 7,8</option>
-                        ";
-            } elseif ($i == 18){
-                echo "  <option value=\"$i\" $select>Viertelfinale 1,2</option>
-                        ";
-            } elseif ($i == 19){
-                echo "  <option value=\"$i\" $select>Viertelfinale 3,4</option>
-                        ";
-            } elseif ($i == 20){
-                echo "  <option value=\"$i\" $select>Halbfinale 1</option>
-                        ";
-            } elseif ($i == 21){
-                echo "  <option value=\"$i\" $select>Halbfinale 2</option>
-                        ";
-            } elseif ($i == 22){
-                echo "  <option value=\"$i\" $select>Finale</option>
-                        ";
-            }  else{
-                echo "  <option value=\"$i\" $select>$i. Spieltag</option>
-                        ";
-            }
+
+            $koSpieltage = [
+                14 => 'Achtelfinale 1,2',
+                15 => 'Achtelfinale 3,4',
+                16 => 'Achtelfinale 5,6',
+                17 => 'Achtelfinale 7,8',
+                18 => 'Viertelfinale 1,2',
+                19 => 'Viertelfinale 3,4',
+                20 => 'Halbfinale 1',
+                21 => 'Halbfinale 2',
+                22 => 'Finale',
+            ];
+
+            $text = $koSpieltage[$i] ?? "$i. Spieltag";
+
+            echo "<option value=\"$i\" $select>$text</option>";
             
             
             
          }  elseif (get_wettbewerb_code(get_curr_wett()) == "WM"){
-        
-            // Das ist nur für das KO-System
-            if ($i == 16){
-                echo "  <option value=\"$i\" $select>Achtelfinale 1,2</option>
-                        ";
-            } elseif ($i == 17){
-                echo "  <option value=\"$i\" $select>Achtelfinale 3,4</option>
-                        ";
-            } elseif ($i == 18){
-                echo "  <option value=\"$i\" $select>Achtelfinale 5,6</option>
-                        ";
-            } elseif ($i == 19){
-                echo "  <option value=\"$i\" $select>Achtelfinale 7,8</option>
-                        ";
-            } elseif ($i == 20){
-                echo "  <option value=\"$i\" $select>Viertelfinale 1,2</option>
-                        ";
-            } elseif ($i == 21){
-                echo "  <option value=\"$i\" $select>Viertelfinale 3,4</option>
-                        ";
-            } elseif ($i == 22){
-                echo "  <option value=\"$i\" $select>Halbfinale 1</option>
-                        ";
-            } elseif ($i == 23){
-                echo "  <option value=\"$i\" $select>Halbfinale 2</option>
-                        ";
-            } elseif ($i == 24){
-                echo "  <option value=\"$i\" $select>Spiel um Platz 3</option>
-                        ";
-            } elseif ($i == 25){
-                echo "  <option value=\"$i\" $select>Finale</option>
-                        ";
-            }  else{
-                echo "  <option value=\"$i\" $select>$i. Spieltag</option>
-                        ";
+
+             if (get_wettbewerb_jahr(get_curr_wett()) == "2026"){
+                 $koSpieltage = [
+                     18 => 'Sechzehntelfinale 1',
+                     19 => 'Sechzehntelfinale 2,3,4',
+                     20 => 'Sechzehntelfinale 5,6,7',
+                     21 => 'Sechzehntelfinale 8,9,10',
+                     22 => 'Sechzehntelfinale 11,12,13',
+                     23 => 'Sechzehntelfinale 14,15,16',
+                     24 => 'Achtelfinale 1,2',
+                     25 => 'Achtelfinale 3,4',
+                     26 => 'Achtelfinale 5,6',
+                     27 => 'Achtelfinale 7,8',
+                     28 => 'Viertelfinale 1',
+                     29 => 'Viertelfinale 2',
+                     30 => 'Viertelfinale 3,4',
+                     31 => 'Halbfinale 1',
+                     32 => 'Halbfinale 2',
+                     33 => 'Spiel um Platz 3',
+                     34 => 'Finale',
+                 ];
+            } else {
+                $koSpieltage = [
+                16 => 'Achtelfinale 1,2',
+                17 => 'Achtelfinale 3,4',
+                18 => 'Achtelfinale 5,6',
+                19 => 'Achtelfinale 7,8',
+                20 => 'Viertelfinale 1,2',
+                21 => 'Viertelfinale 3,4',
+                22 => 'Halbfinale 1',
+                23 => 'Halbfinale 2',
+                24 => 'Spiel um Platz 3',
+                25 => 'Finale',
+                ];
             }
+
+            $text = $koSpieltage[$i] ?? "$i. Spieltag";
+
+            echo "<option value=\"$i\" $select>$text</option>";
             
             
             

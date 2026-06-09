@@ -205,51 +205,68 @@ function print_tore($alle_tore, $real_sp_nr, $sp_nr){
 function print_pre_games($team_nr1, $team_nr2){
     ## Gibt die letzten Spiele des Teams zurück
     
-    echo "<hr>";
-    echo "<div class=\"container mb-2\">";  
-    echo "<h6><b>Vergangene Spiele von ".get_team_name($team_nr1).": </b></h6>";
-    print_pre_games_badges($team_nr1);
-    echo "</div>";
-    echo "<hr>";
-    echo "<div class=\"container mt-2\">";  
-    echo "<h6><b>Vergangene Spiele von ".get_team_name($team_nr2).": </b></h6>";
-    print_pre_games_badges($team_nr2);
-    echo "</div>";  
+
+    $home = print_pre_games_badges($team_nr1);
+
+    if ($home){
+        echo "<hr>";
+        echo "<div class=\"container mb-2\">";
+        echo "<h6><b>Vergangene Spiele von ".get_team_name($team_nr1).": </b></h6>";
+        echo $home;
+        echo "</div>";
+    }
+
+    $away = print_pre_games_badges($team_nr2);
+
+    if ($away){
+        echo "<hr>";
+        echo "<div class=\"container mt-2\">";
+        echo "<h6><b>Vergangene Spiele von ".get_team_name($team_nr2).": </b></h6>";
+        $away;
+        echo "</div>";
+    }
     
     
-    echo "</div>";
+    #echo "</div>";
 }
 
 function print_pre_games_badges($team_nr){
     
     list($img_folder, $endung) = get_img_details();
-    echo "<div class=\"row\">";
-    list($team1, $team2, $tore1, $tore2, $result, $gegner_id, $heimspiel, $spieltag) = get_pre_games($team_nr, akt_spieltag()-12);   
+    $ret = "<div class=\"row\">";
+    list($team1, $team2, $tore1, $tore2, $result, $gegner_id, $heimspiel, $spieltag) = get_pre_games($team_nr, akt_spieltag()-12);
+
+    if (!$team1) {
+        return false;
+    }
+
     foreach ($team1 AS $id => $team){
         
         $short_result = $team1[$id] . " " . $tore1[$id] . " - " . $tore2[$id] . " " . $team2[$id];
 
-        echo "<div class=\"col p-1  align-middle\">";
+        $ret .= "<div class=\"col p-1  align-middle\">";
         
-        echo "<a data-html=\"true\" data-toggle=\"tooltip\" title=\"".$spieltag[$id].". Spieltag<br>$short_result\">";
+        $ret .= "<a data-html=\"true\" data-toggle=\"tooltip\" title=\"".$spieltag[$id].". Spieltag<br>$short_result\">";
         
-        echo "<div class=\"badge align-middle badge-".$result[$id]."\">";
+        $ret .= "<div class=\"badge align-middle badge-".$result[$id]."\">";
         
         if ($heimspiel[$id]){
-            echo "<i class=\"fa-solid fa-house\"></i> ";
+            $ret .= "<i class=\"fa-solid fa-house\"></i> ";
         } else {
-            echo "<i class=\"fa-solid fa-plane\"></i> ";
+            $ret .= "<i class=\"fa-solid fa-plane\"></i> ";
         }
         
-        echo "<img src=\"images/$img_folder/".$gegner_id[$id].".$endung\" style=\" max-width: 30px;   max-height:30px;\"> ";
-        #echo "<strong class=\"align-middle h5 \">N</strong> ";
-        echo "<strong class=\"align-middle h6 \">".$tore1[$id] . ":" . $tore2[$id]."</strong>";
+        $ret .= "<img src=\"images/$img_folder/".$gegner_id[$id].".$endung\" style=\" max-width: 30px;   max-height:30px;\"> ";
+        #$ret .= "<strong class=\"align-middle h5 \">N</strong> ";
+        $ret .= "<strong class=\"align-middle h6 \">".$tore1[$id] . ":" . $tore2[$id]."</strong>";
 
-        echo "</div>"; 
-        echo "</a>";
-        echo "</div>";
+        $ret .= "</div>";
+        $ret .= "</a>";
+        $ret .= "</div>";
     }
-    echo "</div>";
+    $ret .= "</div>";
+
+    return $ret;
 }
 
 

@@ -66,7 +66,9 @@ function get_times($spieltag, $modus){
         if (isset($row['datum1'])){
             $times[$sp_nr] = $row['datum1'];
         } else {
-            $times[$sp_nr] = $row['datum2'];
+            if (isset($row['datum1'])){
+                $times[$sp_nr] = $row['datum2'];
+            }
         }
     }
     
@@ -226,7 +228,7 @@ function get_possible_kickofftime($main_datum){
             ## WM Anstosszeiten
             $anstosszeiten = 
                 [
-                "Anstoss" => array("12:00", "14:00", "15:00", "16:00", "17:00", "18:00", "20:00", "21:00")
+                "Anstoss" => array("18:00", "19:00", "20:00", "21:00", "22:00", "22:30", "23:00", "00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00")
                 ];
         }
     }

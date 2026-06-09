@@ -65,18 +65,26 @@ function get_all_teams(){
     ## Returns an array of all teams that are stored in DB
     global $g_pdo;
     
-    $sql = "SELECT `team_nr`, `team_name`, `open_db_name`, `city`, `stadium` FROM `Teams` 
-            WHERE 1 
-            ORDER BY team_nr ASC";
-    
+    if (!is_big_tournament(get_curr_wett())){
+        ## Nur bei BuLi ist Stadt und Stadion direkt in der DB.
+        $sql = "SELECT `team_nr`, `team_name`, `open_db_name`, `city`, `stadium` FROM `Teams`
+                WHERE 1
+                ORDER BY team_nr ASC";
+    } else {
+        ## Bei WM/EM hat das Team ja nix mit der Stadt und dem Stadion zu tun.
+        $sql = "SELECT `team_nr`, `team_name`, `open_db_name` FROM `Teams`
+                WHERE 1
+                ORDER BY team_nr ASC";
+    }
+
     foreach ($g_pdo->query($sql) as $row) {
         $team_nr                = $row['team_nr'];
         $team_name[$team_nr]    = $row['team_name'];
         $open_db_name[$team_nr] = $row['open_db_name'];
-        $city[$team_nr]         = $row['city'];
-        $stadium[$team_nr]      = $row['stadium'];
+        $city[$team_nr]         = isset($row['city']) ?? "";
+        $stadium[$team_nr]      = isset($row['stadium']) ?? "";
     }
-    
+
     return array($team_name, $open_db_name, $city, $stadium);
 }
 
@@ -105,6 +113,24 @@ function add_team($team_name, $open_db_name, $city, $stadium){
     
     return $stmt->execute($params);
     
+}
+
+function add_team_tournament($team_name, $open_db_name, $gruppe, $update=false){
+    ## Adds a team into DB (only for tournaments!)
+    global $g_pdo;
+
+    if (!$update){
+        $stmt = $g_pdo->prepare( "INSERT INTO `Teams` (`team_name`, `open_db_name`, `gruppe`, `position`)
+                                    VALUES (:team_name, :opendb, :gruppe, 0);");
+    } else {
+        $stmt = $g_pdo->prepare("UPDATE `Teams`
+                                SET `open_db_name` = :opendb, `gruppe` = :gruppe
+                                WHERE `team_name` = :team_name;");
+    }
+
+    $params = array('team_name' => $team_name,  'opendb' => $open_db_name, 'gruppe' => $gruppe);
+
+    return $stmt->execute($params);
 }
 
 function get_max_spieltage(){
