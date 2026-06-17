@@ -6,18 +6,24 @@ function read_gameplan_from_openligaDB($modus, $jahr, $spieltag = ""){
     ## Gibt Array mit Spieltagen, Spielen, etc. zurück
     $matches = get_open_db_spieltag($modus, $jahr, $spieltag);
     $sp_nr = 1;
+
+    $ret_matches = [];
+    $last_spt = -1;
+
     foreach ($matches as $match) {
         $spt = explode(".", $match["group"]["groupName"])[0];
+
+        if ($spt != $last_spt) {
+            $sp_nr = 1;
+        }
         
         $ret_matches[$spt][$sp_nr][0] = $match["team1"]["teamName"];
         $ret_matches[$spt][$sp_nr][1] = $match["team2"]["teamName"];
         $ret_matches[$spt][$sp_nr][2] = $match["matchDateTime"];
         
-        if ($sp_nr == 9){
-            $sp_nr = 1;
-        } else {
-            $sp_nr += 1;
-        }
+        $sp_nr ++;
+        $last_spt = $spt;
+
     }
     return $ret_matches;
 }
@@ -71,12 +77,57 @@ function is_date($string){
     
 }
 
+function extract_teams($modus, $jahr, $spieltag = ""){
+    $matches = read_gameplan_from_openligaDB($modus, $jahr, $spieltag);
+
+    $teams = array();
+
+    foreach ($matches as $spieltag => $match){
+        // Geht zuerst durch alle Spieltage
+        foreach($match as $id => $details){
+            // Dann durch die Einzelnen Spiele
+#print_r($match);
+#echo "<br>";
+            // Jedes Spiel hat 2 Teams
+            if (!in_array($details[0], $teams)){
+                array_push($teams, $details[0]);
+            }
+            if (!in_array($details[1], $teams)){
+                array_push($teams, $details[1]);
+            }
+        }
+    }
+
+    return $teams;
+}
+
+function import_all_teams_tournament(){
+    ## Extract the teams from source
+
+    $modus = get_openliga_shortcut(get_curr_wett());
+    $jahr = get_wettbewerb_jahr(get_curr_wett());
+
+    $teams = extract_teams($modus, $jahr, "");
+
+    ## Get teams from DB
+    list($current_teams, $open_db_name, $city, $stadium) = get_all_teams();
+
+    ## Go through teams and add or update the Group
+    foreach($teams as $id => $team){
+        if (!in_array($team, $current_teams)){
+            add_team_tournament($team, $team, "X");
+        } else {
+            add_team_tournament($team, $team, "X", true);
+        }
+    }
+
+}
 
 function extract_season_details(){
     global $g_pdo;
     
     #$matches = read_gameplan_from_file("src/Bundesliga_Spielplan_2024_2025.csv");
-    $matches = read_gameplan_from_openligaDB("bl1", "2025");
+    $matches = read_gameplan_from_openligaDB("wm26", "2026");
     
     ## Read all teams and names from DB
     $sql = "SELECT `team_nr`, `team_name`, `open_db_name` FROM `Teams` WHERE 1";
@@ -91,18 +142,44 @@ function extract_season_details(){
     $season_teams = array();
     $season_dates = array();
     $season_matches = array();
+
+    ## tournaments have different gamedays in openligaDB..
+    $tournament_spieltag = 0;
+    $tournament_sp_nr = 0;
+    $last_day = '';
     
     ## Go through all gamedays
     foreach ($matches as $spieltag => $submatches){
         $start_datum = "3100-01-01T00:00:00";
         $unterminiert = true;
-        $season_matches[$spieltag] = array();
         
         ## Go through all matches
         foreach ($submatches as $sp_nr => $teams){
             $team1 = $teams[0];
             $team2 = $teams[1];
             $datum = $teams[2];
+
+            ## Im Turnier wird der Kalendertag zum Spieltag
+            if (is_big_tournament(get_curr_wett())) {
+                $current_day = substr($datum, 0, 10); // YYYY-MM-DD
+
+                if ($current_day != $last_day) {
+                    $tournament_spieltag++;
+                    $tournament_sp_nr = 1;
+                    $last_day = $current_day;
+
+                    $season_dates[$tournament_spieltag] = array($datum, false);
+                }
+
+                $spieltag = $tournament_spieltag;
+                $sp_nr = $tournament_sp_nr;
+                $tournament_sp_nr ++;
+            }
+
+
+            if (!isset($season_matches[$spieltag])) {
+                $season_matches[$spieltag] = array();
+            }
             
             ## Check for smallest date
             $dt1 = new DateTime($datum);
@@ -110,7 +187,7 @@ function extract_season_details(){
             if ($dt1 < $dt2){
                 $start_datum = $datum;
             }
-            
+
             ## If all dates are the same => gameday not terminated
             if ($start_datum != $datum){
                 $unterminiert = false;
@@ -126,7 +203,9 @@ function extract_season_details(){
         }
         
         ## Smallest date is the beginning of gameday
-        $season_dates[$spieltag] = array($start_datum, $unterminiert);
+        if (!isset($season_dates[$spieltag])){
+            $season_dates[$spieltag] = array($start_datum, $unterminiert);
+        }
     }
     
     return array($season_teams, $season_dates, $season_matches);
@@ -304,6 +383,9 @@ function print_all_teams(){
     list($team_name, $open_db_name, $city, $stadium) = get_all_teams();
     echo "<table class=\"table\">";
     foreach($team_name as $team_nr => $value){
+        if ($team_nr < 0){
+            continue;
+        }
         echo "<tr>";
         echo "<td>".$team_nr."</td>";
         echo "<td>".$team_name[$team_nr]."</td>";

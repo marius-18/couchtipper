@@ -11,23 +11,12 @@ include_once("src/setup/setup.inc.php");
 <!-- 
 ## Main Window
 -->
-<div class="container-fluid hintergrund" style="padding-bottom:30px; padding-top:30px;" >
     <div class="container-fluid text-center fenster rounded main p-1">
         <?php echo render_installer_menu(); ?>
     </div>
     <br>
-</div>
 
 
-<!-- 
-## Footer
--->
-<div class="jumbotron text-center grey" style="margin-bottom:0">
-    <br>
-    <p>&copy; couchtipper.de</p>
-</div>
-</body>
-</html>
 
 
 
@@ -43,6 +32,7 @@ function render_installer_menu() {
         4 => '4. Spieltage einlesen',
         5 => '5. Tabelle generieren',
         6 => '6. Benutzer eintragen',
+        7 => '7. TEST',
     ];
     // <<<
 
@@ -94,7 +84,7 @@ function render_installer_menu() {
             <?php
             
             ## Wenn DB schon erstellt, können wir schonmal die ganze Daten bestimmen
-            if (!check_if_db_empty()){
+            if ((!check_if_db_empty()) && ($step > 2)){
                 ## TODO: übergebe parameter, etc, damit Datei automatisch erstellt werden kann
                 list($season_teams, $season_dates, $season_matches) = extract_season_details();
             }
@@ -104,6 +94,7 @@ function render_installer_menu() {
             
             ## Laufende Saions schließen wir aus
             if ($jahr <= max($aktuelle_wett_id)){
+                echo "JAhr: $jahr, id: " . max($aktuelle_wett_id);
                 echo '<div class="alert alert-danger" role="alert">
                         <strong>ACHTUNG!</strong> Hier wird gerade eine laufende Saison bearbeitet... Das brechen wir lieber ab!<br>
                         Hier wird sicherheitshalber nichts in den Datenbanken geändert.
@@ -154,8 +145,44 @@ function render_installer_menu() {
                 case 1:
                     ## Datenbank laden
                     if (check_if_db_empty()){
-                        $msg = import_sql_file(__DIR__ . "/BuLi_Blanko_DB.sql");
-                        
+
+                        ?>
+
+                        <form method="post">
+                        <div class="mb-3">
+                            <label for="db_type" class="form-label">Modus auswählen</label>
+
+                            <select name="db_type" id="db_type" class="form-select">
+                                <option value="buli">Bundesliga</option>
+                                <option value="turnier">Turnier</option>
+                            </select>
+
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Importieren</button>
+                        </div>
+                        <br><br>
+
+                        </form>
+
+                        <?php
+
+                        if (isset($_POST['db_type'])) {
+                            if ($_POST['db_type'] == "buli"){
+                                $import_name = "BuLi_Blanko_DB";
+                            }
+                            if ($_POST['db_type'] == "turnier"){
+                                $import_name = "Tournament_Blanko_DB";
+                            }
+
+                            $msg = import_sql_file(__DIR__ . "/". $import_name .".sql");
+                        } else {
+                            $msg = "Fehler. Noch kein Modus ausgewählt!";
+                        }
+
+
+
                         if (strpos($msg, "Fehler") === 0) {
                             echo '<div class="alert alert-danger" role="alert">' . $msg . '</div>';
                         } else {
@@ -173,8 +200,15 @@ function render_installer_menu() {
                 case 2:
                     ## Teams aktualisieren
                     echo '<div class="alert alert-info" role="alert">Falls neue Vereine in der Liga spielen, müssen sie hier hinzugefügt werden. Die aktuelle Liste der Vereine findet sich darunter.</div>';
-                    add_team_to_db();
-                    print_all_teams();
+
+                    if (is_big_tournament(get_curr_wett())){
+                        import_all_teams_tournament();
+                        print_all_teams();
+
+                    } else {
+                        add_team_to_db();
+                        print_all_teams();
+                    }
                     
                     break;
                     
@@ -242,6 +276,12 @@ function render_installer_menu() {
                               </div>';
                     }
                     
+                    break;
+                case 7:
+                    ## Teams aktualisieren
+                    echo '<div class="alert alert-info" role="alert">Falls neue Vereine in der Liga spielen, müssen sie hier hinzugefügt werden. Die aktuelle Liste der Vereine findet sich darunter.</div>';
+                    include_once("src/test_openliga.php");
+
                     break;
                     
                 default:
