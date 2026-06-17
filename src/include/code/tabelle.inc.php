@@ -100,7 +100,7 @@ function wm_tabelle($gruppe){
    
 
 
-   array_multisort($punkte, SORT_DESC, $position, SORT_ASC, $diff, SORT_DESC, $tore, SORT_DESC, $gegentore, $team_name, $niederlage, $sieg, $unentschieden, $team_nr_a);
+   array_multisort($punkte, SORT_DESC, $diff, SORT_DESC, $position, SORT_ASC, $tore, SORT_DESC, $gegentore, $team_name, $niederlage, $sieg, $unentschieden, $team_nr_a);
     
     
     //tie breaking.. 

@@ -52,8 +52,8 @@ if (is_big_tournament(get_curr_wett())){
     ## Nur bei laufenden Wettbewerben
     if (is_active_wettbewerb()){
         echo "Update KO Runde!<br>";
-        update_gruppenbeste();
-        update_all_ko_spiele();
+        #update_gruppenbeste();
+        #update_all_ko_spiele();
         
         ## TODO: vielleicht nicht immer machen?
         precompute_all_tipps_to_db(0, "Spieltag");
@@ -216,6 +216,8 @@ function input_results(){
     if (spieltag_running()){
         echo "Spieltag läuft!<br>";
         input_cronjob(akt_spieltag());
+        ## Anpassung für WM. Bei Spielen nach 0 Uhr ist sonst der Spieltag schon rum und wird nicht mehr aktualisiert..
+        input_cronjob(akt_spieltag() - 1);
     }
     if ($g_nachholspiel !== NULL){
         input_cronjob($g_nachholspiel);

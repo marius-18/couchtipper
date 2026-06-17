@@ -154,7 +154,7 @@ foreach ($_GET as $url_parameter => $url_value){
     <link href="src/include/styles/main_style.css?v=<?php echo 11; # echo rand();?>" rel="stylesheet" type="text/css">
     
     <!-- JS Code zum Ausblenden von Elementen -->
-    <script src="src/include/scripts/ausblenden.js?v=<?php echo 10; #echo rand();?>"></script>
+    <script src="src/include/scripts/ausblenden.js?v=<?php echo 11; #echo rand();?>"></script>
     
     <!-- JS Code um neue Einstellungen zu updaten -->
     <script src="src/include/scripts/update.js?v=3"></script>

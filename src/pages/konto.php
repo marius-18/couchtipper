@@ -133,6 +133,7 @@ echo "<br><br>";
 echo "<hr>";
 echo "<div style=\"text-align:left\"><font size =\"+2\"><u>Tippgruppen</u></font></div><br>";
 
+global $aktuelle_wett_id;
 
 foreach ($aktuelle_wett_id as $id => $my_wett){
     ## Geht durch die aktiven Wettbewerbe

@@ -210,8 +210,13 @@ function select_gruppe($gruppen){
     ";
 
     foreach ($gruppen as $gruppe){
+        if ($gruppe == "A"){
+            $active = "active";
+        } else {
+            $active = "";
+        }
         echo "
-        <li id=\"Lgroup".$gruppe."\" class=\"page-item big_tournament_group_menu\">
+        <li id=\"Lgroup".$gruppe."\" class=\"$active page-item big_tournament_group_menu\">
             <a class=\"page-link\" onclick=\"changeGroupTable('group".$gruppe."')\">".$gruppe."</a>
         </li>";
     }
